@@ -1,7 +1,15 @@
 package az.edu.ada.SITE.Entity;
 
-public class Staff {
+import jakarta.persistence.*;
+import lombok.Data;
 
-    private String name;
-    private String surname;
+import java.util.List;
+
+@Data
+@Entity
+public class Staff extends User {
+    private String department;
+
+    @ManyToMany
+    private List<Project> projects;
 }
