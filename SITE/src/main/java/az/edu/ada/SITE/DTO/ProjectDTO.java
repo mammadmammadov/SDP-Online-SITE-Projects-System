@@ -1,4 +1,4 @@
 package az.edu.ada.SITE.DTO;
 
-public class Project {
+public class ProjectDTO {
 }

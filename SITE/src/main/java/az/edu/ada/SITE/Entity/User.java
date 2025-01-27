@@ -2,7 +2,9 @@ package az.edu.ada.SITE.Entity;
 
 import az.edu.ada.SITE.Enum.Role;
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
