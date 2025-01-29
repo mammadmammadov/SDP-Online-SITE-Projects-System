@@ -12,13 +12,14 @@ import lombok.*;
 public class Admin extends User {
 
     @Column(nullable = false, unique = true)
-    private String adminId;  // Unique Staff Identifier
+    private String adminId; // Unique Staff Identifier
 
+    @Column(nullable = false, unique = true)
+    private String username;
 
-    public Admin(String email, String password, String adminId) {
-        super(email, password, Role.ADMIN);
+    public Admin(String adminId, String name, String surname, String username, String email, String password) {
+        super(name, surname, username, email, password, Role.ADMIN);
         this.adminId = adminId;
     }
-
 
 }

@@ -25,18 +25,20 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides a custom implementation of UserDetailsService to retrieve user details from the database.
+     * Provides a custom implementation of UserDetailsService to retrieve user
+     * details from the database.
      */
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
-        return email -> {
-            Optional<User> user = userRepository.findByEmail(email);
-            return user.orElseThrow(() -> new UsernameNotFoundException(email + " not found"));
+        return username -> {
+            Optional<User> user = userRepository.findByUsername(username);
+            return user.orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
         };
     }
 
     /**
-     * Custom AuthenticationSuccessHandler to redirect users based on their roles after login.
+     * Custom AuthenticationSuccessHandler to redirect users based on their roles
+     * after login.
      */
     @Bean
     public AuthenticationSuccessHandler successHandler() {
@@ -64,20 +66,17 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/staff/**").hasRole("STAFF")
                         .requestMatchers("/student/**").hasRole("STUDENT")
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .formLogin(login -> login
                         .loginPage("/auth/login")
                         .successHandler(successHandler())
-                        .permitAll()
-                )
+                        .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/auth/login?logout=true")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                        .permitAll()
-                );
+                        .permitAll());
 
         return http.build();
     }

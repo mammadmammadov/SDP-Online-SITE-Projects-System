@@ -14,27 +14,28 @@ import java.util.List;
 public class Student extends User {
 
     @Column(nullable = false, unique = true)
-    private String studentId;  // Unique Student Identifier
+    private String studentId; // Unique Student Identifier
 
     @Column(nullable = false)
-    private String degree;  // Graduate or Undergraduate
+    private String username;
 
     @Column(nullable = false)
-    private String major;  // Example: Computer Science, Business
+    private String degree; // Graduate or Undergraduate
 
     @Column(nullable = false)
-    private int studyYear;  // Example: 1st Year, 2nd Year, etc.
+    private String major; // Example: Computer Science, Business
+
+    @Column(nullable = false)
+    private int studyYear; // Example: 1st Year, 2nd Year, etc.
 
     @ManyToMany
-    @JoinTable(
-            name = "student_projects",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
+    @JoinTable(name = "student_projects", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<Project> projects = new ArrayList<>();
 
-    public Student(String email, String password, String studentId, String degree, String major, int studyYear) {
-        super(email, password, Role.STUDENT);
+    public Student(String studentId, String name, String surname, String username, String email, String password,
+            String degree,
+            String major, int studyYear) {
+        super(name, surname, username, email, password, Role.STUDENT);
         this.studentId = studentId;
         this.degree = degree;
         this.major = major;

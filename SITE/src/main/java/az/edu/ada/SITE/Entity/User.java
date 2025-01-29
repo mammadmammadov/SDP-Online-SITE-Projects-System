@@ -8,16 +8,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.*;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User implements UserDetails {  // Making it abstract
+public abstract class User implements UserDetails { // Making it abstract
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String surname;
+
+    @Column(nullable = false, unique = true)
+    private String username;
 
     @Email(message = "Invalid email format")
     @Column(nullable = false, unique = true)
@@ -30,7 +39,10 @@ public abstract class User implements UserDetails {  // Making it abstract
     @Column(nullable = false)
     private Role role;
 
-    public User(String email, String password, Role role) {
+    public User(String name, String surname, String username, String email, String password, Role role) {
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -58,14 +70,22 @@ public abstract class User implements UserDetails {  // Making it abstract
     }
 
     @Override
-    public boolean isAccountNonExpired() { return true; }
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isAccountNonLocked() { return true; }
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
     @Override
-    public boolean isCredentialsNonExpired() { return true; }
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isEnabled() { return true; }
+    public boolean isEnabled() {
+        return true;
+    }
 }
