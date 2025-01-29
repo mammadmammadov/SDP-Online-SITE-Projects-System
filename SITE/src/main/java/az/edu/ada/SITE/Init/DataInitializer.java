@@ -30,7 +30,7 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(new Staff("STF00001", "Jason", "White", "jwhite00001", "staff@gmail.com",
                     passwordEncoder.encode("staff123"), "Professor",
                     "Computer Science"));
-            userRepository.save(new Student("STD00001", "Walter", "Black", "wblack00001", "student@gmail.com",
+            userRepository.save(new Student("STD00001", "Walter", "White", "wwhite00001", "student@gmail.com",
                     passwordEncoder.encode("student123"),
                     "Undergraduate", "Computer Science", 2025));
         }
