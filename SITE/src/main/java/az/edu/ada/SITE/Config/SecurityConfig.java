@@ -24,10 +24,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Provides a custom implementation of UserDetailsService to retrieve user
-     * details from the database.
-     */
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
         return email -> {
@@ -36,14 +32,10 @@ public class SecurityConfig {
         };
     }
 
-    /**
-     * Custom AuthenticationSuccessHandler to redirect users based on their roles
-     * after login.
-     */
     @Bean
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
-            User user = (User) authentication.getPrincipal(); // Assuming User implements UserDetails
+            User user = (User) authentication.getPrincipal();
             String redirectUrl = switch (user.getRole()) {
                 case ADMIN -> "/admin/welcome";
                 case STAFF -> "/staff/welcome";
@@ -53,16 +45,13 @@ public class SecurityConfig {
         };
     }
 
-    /**
-     * Security filter chain to define access rules and login/logout behavior.
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin())) // Allow H2 Console
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**", "/h2-console/**").permitAll() // Allow login page and H2 console
+                        .requestMatchers("/auth/**", "/h2-console/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/staff/**").hasRole("STAFF")
                         .requestMatchers("/student/**").hasRole("STUDENT")

@@ -12,7 +12,7 @@ import lombok.*;
 public class Admin extends User {
 
     @Column(nullable = false, unique = true)
-    private String adminId; // Unique Staff Identifier
+    private String adminId;
 
     @Column(nullable = false, unique = true)
     private String username;

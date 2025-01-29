@@ -14,16 +14,16 @@ import java.util.List;
 public class Staff extends User {
 
     @Column(nullable = false, unique = true)
-    private String staffId; // Unique Staff Identifier
+    private String staffId;
 
     @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
-    private String position; // Example: "Professor", "Lecturer"
+    private String position;
 
     @Column(nullable = false)
-    private String department; // Example: "Computer Science", "Engineering"
+    private String department;
 
     @OneToMany(mappedBy = "supervisor", cascade = CascadeType.ALL)
     private List<Project> projects = new ArrayList<>();

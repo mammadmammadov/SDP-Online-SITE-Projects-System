@@ -19,30 +19,21 @@ public class AuthController {
 
     @GetMapping("/login")
     public String showLoginPage() {
-        return "login"; // Corresponds to login.html in the templates folder
+        return "login";
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestParam String username, @RequestParam String password, Model model) {
-        System.out.println("Received login request with username: " + username);
-
+    public String loginUser(@RequestParam String email, @RequestParam String password, Model model) {
         try {
-            User user = userService.authenticate(username, password);
+            User user = userService.authenticate(email, password);
             if (user != null) {
-                System.out.println("User authenticated: " + username);
+                System.out.println("User authenticated: " + email);
                 return "redirect:" + user.getRole().getWelcomePage();
             } else {
-                System.out.println("Authentication failed for username: " + username);
-                model.addAttribute("errorMessage", "Invalid username or password. Please try again.");
-                return "login";
+                return "redirect:/auth/login?error=true";
             }
         } catch (Exception e) {
-            System.err.println("Error during authentication: " + e.getMessage());
-            model.addAttribute("errorMessage", "An unexpected error occurred.");
-            return "login";
+            return "redirect:/auth/login?error=true";
         }
     }
-
-
-
 }

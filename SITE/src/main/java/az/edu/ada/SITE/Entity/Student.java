@@ -14,19 +14,19 @@ import java.util.List;
 public class Student extends User {
 
     @Column(nullable = false, unique = true)
-    private String studentId; // Unique Student Identifier
+    private String studentId;
 
     @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
-    private String degree; // Graduate or Undergraduate
+    private String degree;
 
     @Column(nullable = false)
-    private String major; // Example: Computer Science, Business
+    private String major;
 
     @Column(nullable = false)
-    private int studyYear; // Example: 1st Year, 2nd Year, etc.
+    private int studyYear;
 
     @ManyToMany
     @JoinTable(name = "student_projects", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "project_id"))
