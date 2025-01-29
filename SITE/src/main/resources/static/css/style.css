@@ -1,0 +1,108 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+body {
+  background-image: url("https://www.ada.edu.az/assets/img/location-campus/building_b/building_b.jpg");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(5px);
+  z-index: -1;
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.logo-img {
+  margin-top: 12px;
+  width: 130px;
+  height: auto;
+  transition: all 0.3s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.2);
+}
+
+.login-card {
+  border-radius: 15px;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .logo-img {
+    width: 100px;
+  }
+
+  .login-card {
+    max-width: 100%;
+    margin: 0 1rem;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .form-control-lg {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .btn-lg {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .content-wrapper {
+    padding: 0.5rem;
+  }
+
+  .logo-img {
+    width: 80px;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .content-wrapper {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .login-card {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
