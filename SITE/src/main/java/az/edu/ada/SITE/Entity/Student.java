@@ -17,9 +17,6 @@ public class Student extends User {
     private String studentId;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String degree;
 
     @Column(nullable = false)
@@ -32,10 +29,10 @@ public class Student extends User {
     @JoinTable(name = "student_projects", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<Project> projects = new ArrayList<>();
 
-    public Student(String studentId, String name, String surname, String username, String email, String password,
+    public Student(String studentId, String name, String surname, String email, String password,
             String degree,
             String major, int studyYear) {
-        super(name, surname, username, email, password, Role.STUDENT);
+        super(name, surname, email, password, Role.STUDENT);
         this.studentId = studentId;
         this.degree = degree;
         this.major = major;

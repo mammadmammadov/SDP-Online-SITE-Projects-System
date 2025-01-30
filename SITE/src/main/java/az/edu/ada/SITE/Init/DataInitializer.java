@@ -25,12 +25,12 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (userRepository.count() == 0) {
             userRepository
-                    .save(new Admin("ADM00001", "John", "Wick", "jwick00001", "admin@ada.edu.az",
+                    .save(new Admin("ADM00001", "John", "Wick", "admin@ada.edu.az",
                             passwordEncoder.encode("admin123")));
-            userRepository.save(new Staff("STF00001", "Jason", "White", "jwhite00001", "staff@ada.edu.az",
+            userRepository.save(new Staff("STF00001", "Jason", "White", "staff@ada.edu.az",
                     passwordEncoder.encode("staff123"), "Professor",
                     "Computer Science"));
-            userRepository.save(new Student("STD00001", "Walter", "White", "wwhite00001", "student@ada.edu.az",
+            userRepository.save(new Student("STD00001", "Walter", "White", "student@ada.edu.az",
                     passwordEncoder.encode("student123"),
                     "Undergraduate", "Computer Science", 2025));
         }

@@ -1,0 +1,29 @@
+/* Global styles */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Logo */
+.logo {
+  height: 50px;
+}
+
+/* Table */
+.table th,
+.table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Button Styling */
+.btn {
+  font-size: 14px;
+}
+
+/* Footer */
+footer {
+  position: relative;
+  width: 100%;
+  bottom: 0;
+}

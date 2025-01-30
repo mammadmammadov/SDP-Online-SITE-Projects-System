@@ -25,9 +25,6 @@ public abstract class User implements UserDetails { // Making it abstract
     @Column(nullable = false)
     private String surname;
 
-    @Column(nullable = false, unique = true)
-    private String username;
-
     @Email(message = "Invalid email format")
     @Column(nullable = false, unique = true)
     private String email;
@@ -39,13 +36,17 @@ public abstract class User implements UserDetails { // Making it abstract
     @Column(nullable = false)
     private Role role;
 
-    public User(String name, String surname, String username, String email, String password, Role role) {
+    public User(String name, String surname, String email, String password, Role role) {
         this.name = name;
         this.surname = surname;
-        this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
     public enum Role {

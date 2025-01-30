@@ -16,9 +16,6 @@ public class Staff extends User {
     @Column(nullable = false, unique = true)
     private String staffId;
 
-    @Column(nullable = false, unique = true)
-    private String username;
-
     @Column(nullable = false)
     private String position;
 
@@ -28,10 +25,10 @@ public class Staff extends User {
     @OneToMany(mappedBy = "supervisor", cascade = CascadeType.ALL)
     private List<Project> projects = new ArrayList<>();
 
-    public Staff(String staffId, String name, String surname, String username, String email, String password,
+    public Staff(String staffId, String name, String surname, String email, String password,
             String position,
             String department) {
-        super(name, surname, username, email, password, Role.STAFF);
+        super(name, surname, email, password, Role.STAFF);
         this.staffId = staffId;
         this.position = position;
         this.department = department;
