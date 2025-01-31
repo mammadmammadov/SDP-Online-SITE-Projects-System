@@ -37,4 +37,8 @@ public class ProjectService {
         project.toggleStatus();
         projectRepository.save(project);
     }
+
+    public List<Project> getProjectsByStaffId(Long staffId) {
+        return projectRepository.findProjectsByStaffId(staffId);
+    }
 }

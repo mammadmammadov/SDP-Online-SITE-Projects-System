@@ -35,7 +35,11 @@ public class ProjectController {
             String fullName = user.getName() + " " + user.getSurname();
             model.addAttribute("staffName", fullName);
 
-            List<Project> projects = projectService.getAllProjects();
+            Long staffId = null;
+            if (user instanceof Staff) {
+                staffId = ((Staff) user).getId();
+            }
+            List<Project> projects = projectService.getProjectsByStaffId(staffId);
             model.addAttribute("projects", projects);
 
             return "staff_projects";
@@ -92,7 +96,6 @@ public class ProjectController {
         projectService.saveProject(project);
         return "redirect:/staff/projects";
     }
-
 
     @GetMapping("/delete/{id}")
     public String deleteProject(@PathVariable Long id) {
