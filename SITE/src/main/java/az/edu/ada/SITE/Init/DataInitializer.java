@@ -35,5 +35,4 @@ public class DataInitializer implements CommandLineRunner {
                     "Undergraduate", "Computer Science", 2025));
         }
     }
-
 }

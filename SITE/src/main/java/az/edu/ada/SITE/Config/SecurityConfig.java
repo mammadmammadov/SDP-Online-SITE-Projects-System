@@ -1,7 +1,7 @@
 package az.edu.ada.SITE.Config;
 
-import az.edu.ada.SITE.Repository.UserRepository;
 import az.edu.ada.SITE.Entity.User;
+import az.edu.ada.SITE.Repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -69,5 +69,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
 }

@@ -1,7 +1,12 @@
 package az.edu.ada.SITE.Entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "admin")
@@ -18,5 +23,4 @@ public class Admin extends User {
         super(name, surname, email, password, Role.ADMIN);
         this.adminId = adminId;
     }
-
 }

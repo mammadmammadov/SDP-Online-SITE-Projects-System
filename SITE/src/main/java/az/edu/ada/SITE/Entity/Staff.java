@@ -1,7 +1,11 @@
 package az.edu.ada.SITE.Entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +30,8 @@ public class Staff extends User {
     private List<Project> projects = new ArrayList<>();
 
     public Staff(String staffId, String name, String surname, String email, String password,
-            String position,
-            String department) {
+                 String position,
+                 String department) {
         super(name, surname, email, password, Role.STAFF);
         this.staffId = staffId;
         this.position = position;

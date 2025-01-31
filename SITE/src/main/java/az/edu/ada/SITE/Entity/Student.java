@@ -1,7 +1,11 @@
 package az.edu.ada.SITE.Entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +34,8 @@ public class Student extends User {
     private List<Project> projects = new ArrayList<>();
 
     public Student(String studentId, String name, String surname, String email, String password,
-            String degree,
-            String major, int studyYear) {
+                   String degree,
+                   String major, int studyYear) {
         super(name, surname, email, password, Role.STUDENT);
         this.studentId = studentId;
         this.degree = degree;

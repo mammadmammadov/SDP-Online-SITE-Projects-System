@@ -9,32 +9,32 @@ import java.util.Optional;
 
 @Service
 public class ProjectService {
-  private final ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
 
-  public ProjectService(ProjectRepository projectRepository) {
-    this.projectRepository = projectRepository;
-  }
+    public ProjectService(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
-  public List<Project> getAllProjects() {
-    return projectRepository.findAll();
-  }
+    public List<Project> getAllProjects() {
+        return projectRepository.findAll();
+    }
 
-  public Optional<Project> getProjectById(Long id) {
-    return projectRepository.findById(id);
-  }
+    public Optional<Project> getProjectById(Long id) {
+        return projectRepository.findById(id);
+    }
 
-  public Project saveProject(Project project) {
-    return projectRepository.save(project);
-  }
+    public Project saveProject(Project project) {
+        return projectRepository.save(project);
+    }
 
-  public void deleteProject(Long id) {
-    projectRepository.deleteById(id);
-  }
+    public void deleteProject(Long id) {
+        projectRepository.deleteById(id);
+    }
 
-  public void toggleProjectStatus(Long id) {
-    Project project = projectRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Project not found"));
-    project.toggleStatus();
-    projectRepository.save(project);
-  }
+    public void toggleProjectStatus(Long id) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        project.toggleStatus();
+        projectRepository.save(project);
+    }
 }
