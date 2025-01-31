@@ -77,6 +77,14 @@ public class ProjectController {
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Project existingProject = projectService.getProjectById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID: " + id));
+
+        if (project.getType() == null) {
+            project.setType(existingProject.getType()); // Preserve the previous type
+        }
+
         if (user instanceof Staff staff) {
             project.setSupervisor(staff);
         }
@@ -84,6 +92,7 @@ public class ProjectController {
         projectService.saveProject(project);
         return "redirect:/staff/projects";
     }
+
 
     @GetMapping("/delete/{id}")
     public String deleteProject(@PathVariable Long id) {

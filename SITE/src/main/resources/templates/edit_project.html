@@ -35,6 +35,14 @@
         </div>
 
         <div class="mb-3">
+            <label for="type" class="form-label">Project Type</label>
+            <select id="type" th:field="*{type}" class="form-select">
+                <option value="INDIVIDUAL" th:selected="*{type} == 'INDIVIDUAL'">Individual</option>
+                <option value="GROUP" th:selected="*{type} == 'GROUP'">Group</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
             <label for="status" class="form-label">Status</label>
             <select id="status" th:field="*{status}" class="form-select">
                 <option value="OPEN" th:selected="*{status} == 'OPEN'">Open</option>
