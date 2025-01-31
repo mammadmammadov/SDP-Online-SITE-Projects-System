@@ -73,7 +73,13 @@ public class ProjectController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateProject(@PathVariable Long id, @ModelAttribute Project project) {
+    public String updateProject(@PathVariable Long id, @ModelAttribute Project project, Principal principal) {
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if (user instanceof Staff staff) {
+            project.setSupervisor(staff);
+        }
         project.setId(id);
         projectService.saveProject(project);
         return "redirect:/staff/projects";
