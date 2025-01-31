@@ -30,6 +30,10 @@ public class Project {
     @Enumerated(EnumType.STRING)
     private ProjectType type;
 
+    private String category;
+
+    private String keywords;
+
     public enum ProjectType {
         INDIVIDUAL, GROUP
     }
@@ -46,9 +50,29 @@ public class Project {
     @JoinColumn(name = "staff_id", nullable = false)
     private Staff supervisor;
 
-    @ManyToMany
+    @OneToMany
     @JoinTable(name = "project_students", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> students = new ArrayList<>();
+
+    @OneToMany
+    private List<Student> acceptedStudents;
+
+    public void addStudent(Student student) {
+        if (students == null) {
+            students = new ArrayList<>();
+        }
+        students.add(student);
+    }
+
+    public void removeStudent(Student student) {
+        students.remove(student);
+    }
+
+    public void addAcceptedStudent(Student student) {
+        if (!students.contains(student)) {
+            students.add(student);
+        }
+    }
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Deliverable> deliverables = new ArrayList<>();

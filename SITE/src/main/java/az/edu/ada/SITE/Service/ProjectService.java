@@ -1,6 +1,7 @@
 package az.edu.ada.SITE.Service;
 
 import az.edu.ada.SITE.Entity.Project;
+import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +41,14 @@ public class ProjectService {
 
     public List<Project> getProjectsByStaffId(Long staffId) {
         return projectRepository.findProjectsByStaffId(staffId);
+    }
+
+    public List<Project> getProjectsByFilters(String category, String keywords, Long supervisorId) {
+        return projectRepository.findByFilters(category, keywords, supervisorId);
+    }
+
+    public void addStudentToProject(Student student, Project project) {
+        project.getStudents().add(student);
+        saveProject(project);
     }
 }

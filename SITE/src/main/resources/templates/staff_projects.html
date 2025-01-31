@@ -163,6 +163,12 @@
                   class="applicant-count"
                   th:text="${project.students.size()}"
                 ></span>
+                <a
+                  class="btn btn-outline-secondary btn-sm ms-2"
+                  th:href="@{'/staff/projects/applicants/' + ${project.id}}"
+                >
+                  <i class="fas fa-users me-2"></i>View Applicants
+                </a>
               </td>
               <td>
                 <a

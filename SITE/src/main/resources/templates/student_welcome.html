@@ -30,7 +30,9 @@
               <a class="nav-link active" href="#">Dashboard</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Browse Projects</a>
+              <a class="nav-link" th:href="@{/student/projects}"
+                >Browse Projects</a
+              >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">My Projects</a>
@@ -66,7 +68,9 @@
                 Explore available projects by filtering categories, keywords, or
                 supervisors.
               </p>
-              <a href="#" class="btn btn-primary">Search Projects</a>
+              <a th:href="@{/student/projects}" class="btn btn-primary"
+                >Search Projects</a
+              >
             </div>
           </div>
         </div>

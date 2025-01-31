@@ -34,8 +34,8 @@ public class Student extends User {
     private List<Project> projects = new ArrayList<>();
 
     public Student(String studentId, String name, String surname, String email, String password,
-                   String degree,
-                   String major, int studyYear) {
+            String degree,
+            String major, int studyYear) {
         super(name, surname, email, password, Role.STUDENT);
         this.studentId = studentId;
         this.degree = degree;
