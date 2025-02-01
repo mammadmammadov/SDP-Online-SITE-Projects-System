@@ -1,0 +1,16 @@
+.gradient-header {
+    background: linear-gradient(45deg, #4b6cb7, #182848);
+    color: white;
+}
+.form-label {
+    color: #2c3e50;
+    font-weight: 600;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #4b6cb7;
+    box-shadow: 0 0 0 0.25rem rgba(75, 108, 183, 0.25);
+}
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 3px solid #4b6cb7;
+}

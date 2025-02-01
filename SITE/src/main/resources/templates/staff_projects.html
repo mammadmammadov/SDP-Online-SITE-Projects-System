@@ -14,92 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <style>
-      :root {
-        --primary-color: #2c3e50; /* Navy blue */
-        --secondary-color: #34495e; /* Dark slate */
-        --accent-color: #18bc9c; /* Professional teal */
-        --success-color: #27ae60; /* Muted green */
-        --light-bg: #f8f9fa;
-      }
-
-      body {
-        font-family: "Roboto", sans-serif;
-        background-color: #f8f9fa;
-        min-height: 100vh;
-      }
-
-      .header {
-        background-color: var(--primary-color);
-        color: white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      .logo {
-        height: 45px;
-        filter: brightness(0) invert(1);
-      }
-
-      .btn-ada {
-        background-color: var(--accent-color);
-        color: white;
-        border-radius: 4px;
-        padding: 8px 20px;
-        font-weight: 500;
-      }
-
-      .btn-ada:hover {
-        background-color: #139a7d;
-        color: white;
-      }
-
-      .project-table {
-        background: white;
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        overflow: hidden;
-      }
-
-      .table thead {
-        background-color: var(--secondary-color);
-        color: white;
-      }
-
-      .table-hover tbody tr:hover {
-        background-color: rgba(24, 188, 156, 0.03);
-      }
-
-      .status-badge {
-        padding: 4px 12px;
-        border-radius: 4px;
-        font-size: 0.9em;
-        font-weight: 500;
-      }
-
-      .status-open {
-        background-color: #e8f5e9; /* Very light green */
-        color: var(--success-color);
-        border: 1px solid #c8e6c9;
-      }
-
-      .status-closed {
-        background-color: #ffebee; /* Very light red */
-        color: #c0392b;
-        border: 1px solid #ffcdd2;
-      }
-
-      .action-btn {
-        padding: 5px 12px;
-        font-size: 0.9em;
-        border-radius: 4px;
-      }
-
-      .applicant-count {
-        color: var(--primary-color);
-        font-weight: 500;
-        font-size: 1.05em;
-      }
-    </style>
+    <link rel="stylesheet" href="/css/staff_projects.css" />
   </head>
   <body>
     <div class="container mt-4">
@@ -121,7 +36,7 @@
           <a th:href="@{/staff/welcome}" class="btn btn-light btn-ada me-2">
             <i class="fas fa-home me-2"></i>Home
           </a>
-          <a th:href="@{/logout}" class="btn btn-light btn-ada">
+          <a th:href="@{/logout}" class="btn btn-danger ms-2">
             <i class="fas fa-sign-out-alt me-2"></i>Logout
           </a>
         </nav>

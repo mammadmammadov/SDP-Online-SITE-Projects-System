@@ -1,3 +1,25 @@
 .logo {
   height: 50px;
 }
+
+.gradient-header {
+  background: linear-gradient(45deg, #2c3e50, #3498db);
+  border-bottom: 3px solid #2980b9;
+}
+.form-label {
+  color: #2c3e50;
+  font-weight: 600;
+}
+.form-control:focus, .form-select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+.project-card {
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border-radius: 15px;
+  border: none;
+}
+.btn-success {
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  border: none;
+}
