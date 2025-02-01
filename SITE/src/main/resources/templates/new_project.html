@@ -4,10 +4,9 @@
     <title>Create New Project</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" th:href="@{/css/staff_projects.css}">
     <link rel="stylesheet" href="/css/new_project.css" />
 </head>
-<body class="bg-light">
+<body>
 <div class="container mt-4 mb-5">
 
     <header class="d-flex justify-content-between align-items-center p-4 rounded-3 shadow-lg gradient-header text-white mb-4">
@@ -25,10 +24,9 @@
         </nav>
     </header>
 
-
     <div class="card project-card shadow-lg">
         <div class="card-body p-4">
-            <form th:action="@{/staff/projects/save}" th:object="${project}" method="post">
+            <form th:action="@{/staff/projects/save}" th:object="${project}" method="post" id="projectForm">
 
                 <div class="mb-4">
                     <label for="title" class="form-label">
@@ -49,14 +47,27 @@
                               placeholder="Describe the project purpose and scope" required></textarea>
                 </div>
 
-
                 <div class="mb-4">
-                    <label for="objectives" class="form-label">
+                    <label class="form-label">
                         <i class="bi bi-list-task me-2 text-success"></i>Objectives
                     </label>
-                    <textarea class="form-control" id="objectives"
-                              th:field="*{objectives}" rows="4"
-                              placeholder="List key project objectives" required></textarea>
+                    <div class="objective-input-container">
+                        <div id="objectivesList" class="mb-3"></div>
+                        <div class="input-group">
+                            <input type="text"
+                                   class="form-control"
+                                   id="objectiveInput"
+                                   placeholder="Enter an objective and press Enter"
+                                   aria-label="Project objective">
+                            <button class="btn btn-outline-primary"
+                                    type="button"
+                                    id="addObjectiveBtn">
+                                <i class="bi bi-plus-lg"></i> Add Objective
+                            </button>
+                        </div>
+                        <small class="text-muted mt-2 d-block">Press Enter or click Add to include objectives</small>
+                    </div>
+                    <input type="hidden" th:field="*{objectives}" id="hiddenObjectives">
                 </div>
 
                 <div class="mb-4">
@@ -74,10 +85,63 @@
                         <i class="bi bi-save-fill me-2"></i>Create Project
                     </button>
                 </div>
+
             </form>
         </div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const objectives = [];
+    const objectivesList = document.getElementById('objectivesList');
+    const objectiveInput = document.getElementById('objectiveInput');
+    const hiddenObjectives = document.getElementById('hiddenObjectives');
+    const addButton = document.getElementById('addObjectiveBtn');
+
+    function updateHiddenField() {
+        hiddenObjectives.value = objectives.join('\n');
+    }
+
+    function createObjectiveTag(text) {
+        const tag = document.createElement('div');
+        tag.className = 'objective-tag';
+        tag.innerHTML = `
+            ${text}
+            <span class="tag-remove-btn" onclick="removeObjective('${text}')">
+                <i class="bi bi-x-circle"></i>
+            </span>
+        `;
+        return tag;
+    }
+
+    function addObjective() {
+        const text = objectiveInput.value.trim();
+        if (text && !objectives.includes(text)) {
+            objectives.push(text);
+            objectivesList.appendChild(createObjectiveTag(text));
+            objectiveInput.value = '';
+            updateHiddenField();
+        }
+    }
+
+    function removeObjective(text) {
+        const index = objectives.indexOf(text);
+        if (index > -1) {
+            objectives.splice(index, 1);
+            objectivesList.children[index].remove();
+            updateHiddenField();
+        }
+    }
+
+    addButton.addEventListener('click', addObjective);
+    objectiveInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addObjective();
+        }
+    });
+
+</script>
 </body>
 </html>

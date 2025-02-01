@@ -2,24 +2,36 @@
   height: 50px;
 }
 
+
 .gradient-header {
-  background: linear-gradient(45deg, #2c3e50, #3498db);
-  border-bottom: 3px solid #2980b9;
-}
-.form-label {
-  color: #2c3e50;
-  font-weight: 600;
-}
-.form-control:focus, .form-select:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
-}
-.project-card {
-  background: linear-gradient(145deg, #ffffff, #f8f9fa);
-  border-radius: 15px;
-  border: none;
-}
-.btn-success {
-  background: linear-gradient(45deg, #27ae60, #2ecc71);
-  border: none;
-}
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+        }
+        .objective-tag {
+            background-color: #e9ecef;
+            border-radius: 20px;
+            padding: 8px 15px;
+            margin: 5px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .objective-input-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        .objective-input-container:focus-within {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        .tag-remove-btn {
+            color: #6c757d;
+            margin-left: 8px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .tag-remove-btn:hover {
+            color: #dc3545;
+        }
+
+

@@ -1,0 +1,60 @@
+      .project-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+        border-radius: 12px;
+      }
+      .project-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+      .filter-card {
+        background: #f8f9fa;
+        border-radius: 12px;
+      }
+      .status-badge {
+        padding: 0.35rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+      }
+      .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      .limited-text {
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: normal;
+            word-break: break-word;
+          }
+       .objective-tag {
+                background-color: #e9ecef;
+                border-radius: 20px;
+                padding: 8px 15px;
+                margin: 5px 5px 0 0;
+                display: inline-flex;
+                align-items: center;
+                font-size: 0.875rem;
+              }
+
+              :root {
+                --primary-color: #2c3e50;
+
+                --secondary-color: #34495e;
+
+                --accent-color: #18bc9c;
+
+                --success-color: #27ae60;
+
+                --light-bg: #f8f9fa;
+              }
+
+              .header {
+                background-color: var(--primary-color);
+                color: white;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              }
+
+      .logo {
+        height: 45px;
+        filter: brightness(0) invert(1);
+      }

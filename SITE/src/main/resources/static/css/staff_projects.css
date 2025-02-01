@@ -1,16 +1,13 @@
-/* Table */
 .table th,
 .table td {
   text-align: center;
   vertical-align: middle;
 }
 
-/* Button Styling */
 .btn {
   font-size: 14px;
 }
 
-/* Footer */
 footer {
   position: relative;
   width: 100%;
@@ -19,13 +16,13 @@ footer {
 
 :root {
   --primary-color: #2c3e50;
-  /* Navy blue */
+
   --secondary-color: #34495e;
-  /* Dark slate */
+
   --accent-color: #18bc9c;
-  /* Professional teal */
+
   --success-color: #27ae60;
-  /* Muted green */
+
   --light-bg: #f8f9fa;
 }
 
@@ -91,7 +88,7 @@ body {
 
 .status-closed {
   background-color: #ffebee;
-  /* Very light red */
+
   color: #c0392b;
   border: 1px solid #ffcdd2;
 }

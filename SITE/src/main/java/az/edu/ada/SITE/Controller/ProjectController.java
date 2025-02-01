@@ -35,10 +35,15 @@ public class ProjectController {
     public String viewProjects(@RequestParam(required = false) String category,
             @RequestParam(required = false) String keywords,
             @RequestParam(required = false) Long supervisorId,
-            Model model) {
+            Model model, Principal principal) {
 
         List<Project> projects = projectService.getProjectsByFilters(category, keywords, supervisorId);
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        String fullName = user.getName() + " " + user.getSurname();
+        model.addAttribute("studentName", fullName);
         model.addAttribute("projects", projects);
         return "student_projects";
     }
@@ -52,7 +57,6 @@ public class ProjectController {
 
             String fullName = user.getName() + " " + user.getSurname();
             model.addAttribute("staffName", fullName);
-
             Long staffId = null;
             if (user instanceof Staff) {
                 staffId = ((Staff) user).getId();
