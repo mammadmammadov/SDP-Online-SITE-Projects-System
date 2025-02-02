@@ -15,20 +15,29 @@
         <h4 class="mb-0 fw-normal">
           Applicants for Project: <span th:text="${project.title}"></span>
         </h4>
-        <a th:href="@{/staff/projects}" class="btn btn-light"
-          >Back to Projects</a
-        >
+        <a th:href="@{/staff/projects}" class="btn btn-light">
+          Back to Projects
+        </a>
       </header>
 
       <div class="mt-4">
-        <h5 class="mb-3">List of Applicants</h5>
-        <table class="table table-hover">
+        <h5 class="mb-3">Accepted Students</h5>
+        <div
+          th:if="${#lists.isEmpty(project.students)}"
+          class="alert alert-info"
+        >
+          No students have been accepted yet
+        </div>
+        <table
+          th:unless="${#lists.isEmpty(project.students)}"
+          class="table table-success table-striped"
+        >
           <thead>
             <tr>
               <th>Name</th>
               <th>Surname</th>
               <th>Email</th>
-              <th>Action</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -37,18 +46,53 @@
               <td th:text="${student.surname}"></td>
               <td th:text="${student.email}"></td>
               <td>
-                <a
-                  th:href="@{'/staff/projects/applicant/accept/' + ${student.id} + '/' + ${project.id}}"
-                  class="btn btn-success btn-sm"
-                >
-                  Accept
-                </a>
-                <a
-                  th:href="@{'/staff/projects/applicant/reject/' + ${student.id} + '/' + ${project.id}}"
-                  class="btn btn-danger btn-sm"
-                >
-                  Reject
-                </a>
+                <span class="badge bg-success">ACCEPTED</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-5">
+        <h5 class="mb-3">Pending Applicants</h5>
+        <div th:if="${#lists.isEmpty(applicants)}" class="alert alert-warning">
+          No pending applications
+        </div>
+        <table
+          th:unless="${#lists.isEmpty(applicants)}"
+          class="table table-hover"
+        >
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Surname</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="applicant : ${applicants}">
+              <td th:text="${applicant.name}"></td>
+              <td th:text="${applicant.surname}"></td>
+              <td th:text="${applicant.email}"></td>
+              <td>
+                <div th:if="${not applicant.accepted}">
+                  <a
+                    th:href="@{'/staff/projects/applicant/accept/' + ${applicant.id} + '/' + ${project.id}}"
+                    class="btn btn-success btn-sm"
+                  >
+                    Accept
+                  </a>
+                  <a
+                    th:href="@{'/staff/projects/applicant/reject/' + ${applicant.id} + '/' + ${project.id}}"
+                    class="btn btn-danger btn-sm ms-2"
+                  >
+                    Reject
+                  </a>
+                </div>
+                <div th:if="${applicant.accepted}" class="text-muted">
+                  Already accepted to another project
+                </div>
               </td>
             </tr>
           </tbody>

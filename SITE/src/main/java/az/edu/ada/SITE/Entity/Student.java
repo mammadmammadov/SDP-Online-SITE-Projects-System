@@ -29,6 +29,9 @@ public class Student extends User {
     @Column(nullable = false)
     private int studyYear;
 
+    @Column(nullable = false)
+    private boolean accepted = false;
+
     @ManyToMany
     @JoinTable(name = "student_projects", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<Project> projects = new ArrayList<>();

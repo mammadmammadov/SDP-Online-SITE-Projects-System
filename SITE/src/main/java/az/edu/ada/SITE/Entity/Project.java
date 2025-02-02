@@ -53,27 +53,63 @@ public class Project {
     @JoinColumn(name = "staff_id", nullable = false)
     private Staff supervisor;
 
-    @OneToMany
+    @ManyToMany
     @JoinTable(name = "project_students", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> students = new ArrayList<>();
 
-    @OneToMany
-    private List<Student> acceptedStudents;
+    @ManyToMany
+    @JoinTable(name = "project_requests", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
+    private List<Student> requestedStudents = new ArrayList<>();
 
-    public void addStudent(Student student) {
-        if (students == null) {
-            students = new ArrayList<>();
-        }
-        students.add(student);
+    public enum ApplicationStatus {
+        PENDING, ACCEPTED, REJECTED
     }
 
-    public void removeStudent(Student student) {
-        students.remove(student);
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus appStatus = ApplicationStatus.PENDING;
+
+    public ApplicationStatus getAppStatus() {
+        return appStatus;
+    }
+
+    public void setAppStatus(ApplicationStatus appStatus) {
+        this.appStatus = appStatus;
+    }
+
+    public List<Student> getStudentRequests() {
+        return requestedStudents;
+
+    }
+
+    public boolean hasStudentRequest(Student student) {
+        return requestedStudents.contains(student);
+    }
+
+    public void addStudent(Student student) {
+        if (this.requestedStudents == null) {
+            this.requestedStudents = new ArrayList<>();
+        }
+        this.requestedStudents.add(student);
+        this.appStatus = ApplicationStatus.PENDING;
     }
 
     public void addAcceptedStudent(Student student) {
-        if (!students.contains(student)) {
-            students.add(student);
+        if (this.students == null) {
+            this.students = new ArrayList<>();
+        }
+        this.students.add(student);
+        student.setAccepted(true);
+        this.requestedStudents.remove(student);
+        this.appStatus = ApplicationStatus.ACCEPTED;
+    }
+
+    public void removeStudent(Student student) {
+        if (this.students != null) {
+            this.students.remove(student);
+        }
+        if (this.requestedStudents != null) {
+            this.requestedStudents.remove(student);
         }
     }
 

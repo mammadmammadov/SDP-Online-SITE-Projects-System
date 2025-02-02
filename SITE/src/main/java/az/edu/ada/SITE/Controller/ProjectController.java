@@ -11,10 +11,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping
@@ -24,26 +26,29 @@ public class ProjectController {
     private final StudentService studentService;
 
     public ProjectController(ProjectService projectService, UserRepository userRepository,
-                             StudentService studentService) {
+            StudentService studentService) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.studentService = studentService;
     }
 
     @GetMapping("/student/projects")
-    public String viewProjects(@RequestParam(required = false) String category,
-                               @RequestParam(required = false) String keywords,
-                               @RequestParam(required = false) Long supervisorId,
-                               Model model, Principal principal) {
+    public String viewProjects(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String keywords,
+            @RequestParam(required = false) Long supervisorId,
+            Model model, Principal principal) {
+
+        String email = principal.getName();
+        Student student = studentService.getStudentByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
+
+        model.addAttribute("student", student);
+        model.addAttribute("studentName", student.getName() + " " + student.getSurname());
 
         List<Project> projects = projectService.getProjectsByFilters(category, keywords, supervisorId);
-        String email = principal.getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        String fullName = user.getName() + " " + user.getSurname();
-        model.addAttribute("studentName", fullName);
         model.addAttribute("projects", projects);
+
         return "student_projects";
     }
 
@@ -87,21 +92,46 @@ public class ProjectController {
             return "redirect:/staff/projects?error=You are not authorized to view applicants for this project";
         }
 
+        List<Student> pendingApplicants = project.getRequestedStudents().stream()
+                .filter(student -> !student.isAccepted())
+                .collect(Collectors.toList());
+
         model.addAttribute("project", project);
+        model.addAttribute("applicants", pendingApplicants);
         return "applicants";
     }
 
     @GetMapping("/staff/projects/applicant/accept/{studentId}/{projectId}")
-    public String acceptApplicant(@PathVariable Long studentId, @PathVariable Long projectId) {
+    public String acceptApplicant(@PathVariable Long studentId,
+            @PathVariable Long projectId,
+            RedirectAttributes redirectAttributes) {
         Project project = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+
         Student student = studentService.getStudentById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Student ID"));
 
-        project.addAcceptedStudent(student);
-        studentService.addStudentToProject(student, project);
+        project.getRequestedStudents().remove(student);
+        if (!project.getStudents().contains(student)) {
+            project.getStudents().add(student);
+        }
+
+        List<Project> allProjects = projectService.getAllProjects();
+        allProjects.forEach(p -> {
+            if (p.getRequestedStudents().contains(student)) {
+                p.getRequestedStudents().remove(student);
+                projectService.saveProject(p);
+            }
+        });
+
+        student.setAccepted(true);
+        studentService.saveStudent(student);
 
         projectService.saveProject(project);
+
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Successfully accepted " + student.getName());
+
         return "redirect:/staff/projects/applicants/" + projectId;
     }
 
@@ -119,28 +149,36 @@ public class ProjectController {
     }
 
     @GetMapping("/student/projects/join/{projectId}")
-    public String joinProject(@PathVariable Long projectId, Principal principal, Model model) {
+    public String joinProject(@PathVariable Long projectId, Principal principal,
+            RedirectAttributes redirectAttributes) {
         String email = principal.getName();
         Student student = studentService.getStudentByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found"));
 
+        if (student.isAccepted()) {
+            redirectAttributes.addFlashAttribute("message", "You are already accepted into a project!");
+            return "redirect:/student/projects";
+        }
+
         Project project = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
+        if (project.getStatus() != Project.Status.OPEN) {
+            redirectAttributes.addFlashAttribute("message", "Project is not open for applications");
+            return "redirect:/student/projects";
+        }
+
         if (project.getStudents().contains(student)) {
-            model.addAttribute("message", "You have already sent a request to join this project.");
-            return "student_projects";
-        }
-
-        if (project.getStatus().equals(Project.Status.OPEN)) {
-            project.addStudent(student);
-            projectService.saveProject(project);
-            model.addAttribute("message", "Your request has been sent to join the project.");
+            redirectAttributes.addFlashAttribute("message", "You are already part of this project");
+        } else if (project.getRequestedStudents().contains(student)) {
+            redirectAttributes.addFlashAttribute("message", "Request already pending");
         } else {
-            throw new IllegalArgumentException("Project is not open for applications");
+            project.getRequestedStudents().add(student);
+            projectService.saveProject(project);
+            redirectAttributes.addFlashAttribute("message", "Join request sent successfully");
         }
 
-        return "student_projects";
+        return "redirect:/student/projects";
     }
 
     @GetMapping("/staff/projects/new")
@@ -211,7 +249,6 @@ public class ProjectController {
 
         return "redirect:/staff/projects";
     }
-
 
     @GetMapping("/staff/projects/delete/{id}")
     public String deleteProject(@PathVariable Long id) {

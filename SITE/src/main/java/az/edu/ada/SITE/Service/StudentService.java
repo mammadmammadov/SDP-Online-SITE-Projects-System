@@ -22,6 +22,10 @@ public class StudentService {
     return studentRepository.findById(id);
   }
 
+  public Student saveStudent(Student student) {
+    return studentRepository.save(student);
+  }
+
   public Optional<Student> getStudentByEmail(String email) {
     return studentRepository.findByEmail(email);
   }
