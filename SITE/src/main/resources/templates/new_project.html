@@ -79,6 +79,22 @@
                     </select>
                 </div>
 
+                <div class="mb-4">
+                    <label for="fileUpload" class="form-label">
+                        <i class="bi bi-cloud-upload me-2 text-primary"></i>Upload Files
+                    </label>
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="fileUpload" name="files" multiple
+                               onchange="updateFileList()">
+                        <button class="btn btn-outline-secondary" type="button"
+                                onclick="document.getElementById('fileUpload').click();">
+                            <i class="bi bi-folder2-open"></i> Choose Files
+                        </button>
+                    </div>
+                    <small class="text-muted d-block mt-2">You can select multiple files.</small>
+                    <ul id="fileList" class="list-group mt-2"></ul>
+                </div>
+
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                     <button type="submit" class="btn btn-success btn-lg px-4">
                         <i class="bi bi-save-fill me-2"></i>Create Project
@@ -99,6 +115,9 @@
     const addButton = document.getElementById('addObjectiveBtn');
     const titleInput = document.getElementById('title');
     const descriptionInput = document.getElementById('description');
+    const fileInput = document.getElementById("fileUpload");
+    const fileList = document.getElementById("fileList");
+    const dataTransfer = new DataTransfer();
 
     function updateHiddenField() {
         hiddenObjectives.value = objectives.join('\n');
@@ -143,17 +162,57 @@
         }
     });
 
-    function validateWordLimit(inputElement, maxWords) {
-        inputElement.addEventListener('input', function () {
-            let words = this.value.split(/\s+/).filter(word => word.length > 0);
-            if (words.length > maxWords) {
-                alert(`Maximum word limit is ${maxWords}. Please shorten your text.`);
-                this.value = words.slice(0, maxWords).join(' ');
-            }
-        });
-    }
-    validateWordLimit(titleInput, 50);
-    validateWordLimit(descriptionInput, 500);
+    function validateInputLimits(inputElement, maxWords, maxChars) {
+    inputElement.addEventListener('input', function () {
+        let words = this.value.split(/\s+/).filter(word => word.length > 0);
+        let charCount = this.value.length;
+
+        if (charCount > maxChars) {
+            alert(`Maximum character limit is ${maxChars}. Please shorten your text.`);
+            this.value = this.value.substring(0, maxChars);
+        } else if (words.length > maxWords) {
+            alert(`Maximum word limit is ${maxWords}. Please shorten your text.`);
+            this.value = words.slice(0, maxWords).join(' ');
+        }
+    });
+}
+
+function updateFileList() {
+    Array.from(fileInput.files).forEach(file => {
+        if (!Array.from(dataTransfer.files).some(f => f.name === file.name)) {
+            dataTransfer.items.add(file);
+        }
+    });
+
+    fileInput.files = dataTransfer.files;
+
+    renderFileList();
+}
+
+function renderFileList() {
+    fileList.innerHTML = "";
+
+    Array.from(dataTransfer.files).forEach((file, index) => {
+        const listItem = document.createElement("li");
+        listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+        listItem.innerHTML = `
+            ${file.name}
+            <button type="button" class="btn btn-sm btn-danger" onclick="removeFile(${index})">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        `;
+        fileList.appendChild(listItem);
+    });
+}
+
+function removeFile(index) {
+    dataTransfer.items.remove(index);
+    fileInput.files = dataTransfer.files;
+    renderFileList();
+}
+
+validateInputLimits(titleInput, 50, 50);
+validateInputLimits(descriptionInput, 500, 500);
 
 </script>
 </body>
