@@ -7,7 +7,6 @@ import az.edu.ada.SITE.Entity.User;
 import az.edu.ada.SITE.Repository.UserRepository;
 import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
-
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +24,7 @@ public class ProjectController {
     private final StudentService studentService;
 
     public ProjectController(ProjectService projectService, UserRepository userRepository,
-            StudentService studentService) {
+                             StudentService studentService) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.studentService = studentService;
@@ -33,9 +32,9 @@ public class ProjectController {
 
     @GetMapping("/student/projects")
     public String viewProjects(@RequestParam(required = false) String category,
-            @RequestParam(required = false) String keywords,
-            @RequestParam(required = false) Long supervisorId,
-            Model model, Principal principal) {
+                               @RequestParam(required = false) String keywords,
+                               @RequestParam(required = false) Long supervisorId,
+                               Model model, Principal principal) {
 
         List<Project> projects = projectService.getProjectsByFilters(category, keywords, supervisorId);
         String email = principal.getName();
@@ -187,7 +186,6 @@ public class ProjectController {
     }
 
     @PostMapping("/staff/projects/update/{id}")
-
     public String updateProject(@PathVariable Long id, @ModelAttribute Project project, Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
@@ -203,13 +201,19 @@ public class ProjectController {
         if (user instanceof Staff staff) {
             project.setSupervisor(staff);
         }
+
+        if (project.getMaxStudents() == null) {
+            project.setMaxStudents(existingProject.getMaxStudents());
+        }
+
         project.setId(id);
         projectService.saveProject(project);
+
         return "redirect:/staff/projects";
     }
 
-    @GetMapping("/staff/projects/delete/{id}")
 
+    @GetMapping("/staff/projects/delete/{id}")
     public String deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
         return "redirect:/staff/projects";

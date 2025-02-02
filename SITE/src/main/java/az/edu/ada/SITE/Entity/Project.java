@@ -46,6 +46,9 @@ public class Project {
         OPEN, CLOSED
     }
 
+    @Column
+    private Integer maxStudents;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id", nullable = false)
     private Staff supervisor;

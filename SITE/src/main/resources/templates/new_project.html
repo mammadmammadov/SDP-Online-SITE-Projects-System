@@ -79,6 +79,17 @@
                     </select>
                 </div>
 
+                <div id="maxStudentsContainer" class="mb-4" style="display: none;">
+                    <label for="maxStudents" class="form-label">
+                        <i class="bi bi-person-lines-fill me-2 text-danger"></i>Maximum Number of Enrolled Students
+                    </label>
+                    <select class="form-select form-select-lg" id="maxStudents" name="maxStudents">
+                        <option value="2">2 Students</option>
+                        <option value="3">3 Students</option>
+                        <option value="4">4 Students</option>
+                    </select>
+                </div>
+
                 <div class="mb-4">
                     <label for="fileUpload" class="form-label">
                         <i class="bi bi-cloud-upload me-2 text-primary"></i>Upload Files
@@ -117,7 +128,17 @@
     const descriptionInput = document.getElementById('description');
     const fileInput = document.getElementById("fileUpload");
     const fileList = document.getElementById("fileList");
+    const maxStudentsContainer = document.getElementById("maxStudentsContainer");
+    const typeSelect = document.getElementById("type");
     const dataTransfer = new DataTransfer();
+
+    typeSelect.addEventListener('change', function() {
+        if (this.value === "GROUP") {
+            maxStudentsContainer.style.display = "block";
+        } else {
+            maxStudentsContainer.style.display = "none";
+        }
+    });
 
     function updateHiddenField() {
         hiddenObjectives.value = objectives.join('\n');
