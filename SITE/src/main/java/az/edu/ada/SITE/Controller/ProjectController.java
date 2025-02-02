@@ -71,21 +71,21 @@ public class ProjectController {
     }
 
     @GetMapping("/staff/projects/applicants/{projectId}")
-    public String viewApplicants(@PathVariable Long projectId, Model model, Principal principal)
-            throws AccessDeniedException {
+    public String viewApplicants(@PathVariable Long projectId, Model model, Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if (!(user instanceof Staff staff)) {
-            throw new AccessDeniedException("You are not authorized to view applicants");
+        if (!(user instanceof Staff)) {
+            return "redirect:/staff/projects?error=You are not authorized to view applicants";
         }
+        Staff staff = (Staff) user;
 
         Project project = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
         if (!project.getSupervisor().equals(staff)) {
-            throw new AccessDeniedException("You are not authorized to view applicants for this project");
+            return "redirect:/staff/projects?error=You are not authorized to view applicants for this project";
         }
 
         model.addAttribute("project", project);
@@ -165,9 +165,23 @@ public class ProjectController {
     }
 
     @GetMapping("/staff/projects/edit/{id}")
-    public String editProjectForm(@PathVariable Long id, Model model) {
+    public String editProjectForm(@PathVariable Long id, Model model, Principal principal) {
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!(user instanceof Staff)) {
+            return "redirect:/staff/projects?error=Only staff are allowed to edit projects";
+        }
+        Staff loggedInStaff = (Staff) user;
+
         Project project = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID: " + id));
+
+        if (!project.getSupervisor().equals(loggedInStaff)) {
+            return "redirect:/staff/projects?error=You are not authorized to edit this project";
+        }
+
         model.addAttribute("project", project);
         return "edit_project";
     }
