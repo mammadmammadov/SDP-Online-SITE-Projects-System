@@ -1,6 +1,7 @@
 package az.edu.ada.SITE.Controller;
 
 import az.edu.ada.SITE.Entity.Project;
+import az.edu.ada.SITE.Entity.Project.ProjectType;
 import az.edu.ada.SITE.Entity.Staff;
 import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Entity.User;
@@ -34,15 +35,17 @@ public class ProjectController {
 
     @GetMapping("/student/projects")
     public String viewProjects(
-        @RequestParam(required = false) String category,
-        @RequestParam(required = false) String keywords,
-        @RequestParam(required = false) String supervisorName,
-        @RequestParam(required = false) String supervisorSurname,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String keywords,
+            @RequestParam(required = false) String supervisorName,
+            @RequestParam(required = false) String supervisorSurname,
             Model model, Principal principal) {
 
-        List<Project> projects = projectService.getProjectsByFilters(category, keywords, supervisorName, supervisorSurname);
+        List<Project> projects = projectService.getProjectsByFilters(category, keywords, supervisorName,
+                supervisorSurname);
 
-        List<String> categories = List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity", "Data Science", "Networks", "Web Development", "Software Development");
+        List<String> categories = List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
+                "Data Science", "Networks", "Web Development", "Software Development");
 
         String email = principal.getName();
         Student student = studentService.getStudentByEmail(email)
@@ -229,28 +232,25 @@ public class ProjectController {
     }
 
     @PostMapping("/staff/projects/update/{id}")
-    public String updateProject(@PathVariable Long id, @ModelAttribute Project project, Principal principal) {
-        String email = principal.getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
+    public String updateProject(@PathVariable Long id, @ModelAttribute Project project,
+            RedirectAttributes redirectAttributes) {
         Project existingProject = projectService.getProjectById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
-        if (project.getType() == null) {
-            project.setType(existingProject.getType());
+        existingProject.setTitle(project.getTitle());
+        existingProject.setDescription(project.getDescription());
+        existingProject.setObjectives(project.getObjectives());
+        existingProject.setType(project.getType());
+        existingProject.setStatus(project.getStatus());
+
+        if (project.getType() == ProjectType.INDIVIDUAL) {
+            existingProject.setMaxStudents(1);
+        } else {
+            existingProject.setMaxStudents(project.getMaxStudents());
         }
 
-        if (user instanceof Staff staff) {
-            project.setSupervisor(staff);
-        }
-
-        if (project.getMaxStudents() == null) {
-            project.setMaxStudents(existingProject.getMaxStudents());
-        }
-
-        project.setId(id);
-        projectService.saveProject(project);
+        projectService.saveProject(existingProject);
+        redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
 
         return "redirect:/staff/projects";
     }
