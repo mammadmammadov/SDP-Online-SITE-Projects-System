@@ -41,10 +41,19 @@ public class DataInitializer implements CommandLineRunner {
                                         "Computer Science"));
                         userRepository.save(new Student("STD00001", "Walter", "White", "student@ada.edu.az",
                                         passwordEncoder.encode("student123"),
-                                        "Undergraduate", "Computer Science", 2025));
+                                        "Undergraduate", "Computer Science", "Sophomore"));
                         userRepository.save(new Student("STD00002", "Jesse", "Pinkman", "student2@ada.edu.az",
                                         passwordEncoder.encode("student123"),
-                                        "Undergraduate", "Computer Science", 2026));
+                                        "Undergraduate", "Computer Science", "Freshman"));
+                        userRepository.save(new Student("STD00003", "Gustavo", "Fring", "student3@ada.edu.az",
+                                        passwordEncoder.encode("student123"),
+                                        "Undergraduate", "Computer Science", "Sophomore"));
+                        userRepository.save(new Student("STD00004", "Mike", "Ehrmantraut", "student4@ada.edu.az",
+                                        passwordEncoder.encode("student123"),
+                                        "Undergraduate", "Information Technologies", "Freshman"));
+                        userRepository.save(new Student("STD00005", "Hank", "Schrader", "student5@ada.edu.az",
+                                        passwordEncoder.encode("student123"),
+                                        "Undergraduate", "Computer Science", "Freshman"));
                 }
                 if (projectRepository.count() == 0) {
                         Staff supervisor = (Staff) userRepository.findByEmail("staff@ada.edu.az")
@@ -59,6 +68,10 @@ public class DataInitializer implements CommandLineRunner {
                                         "1. Develop new AI algorithms\n2. Apply AI solutions to real-world problems\n3. Collaborate with industry partners.");
                         project1.setStatus(Project.Status.OPEN);
                         project1.setSupervisor(supervisor);
+                        project1.setCategory("Artificial Intelligence");
+                        project1.setDegreeRestriction("Undergraduate");
+                        project1.setMajorRestriction("Computer Science");
+                        project1.setStudyYearRestriction("Sophomore");
                         project1.setType(ProjectType.GROUP);
                         project1.setMaxStudents(3);
 
@@ -72,6 +85,10 @@ public class DataInitializer implements CommandLineRunner {
                         project2.setObjectives(
                                         "1. Develop new WD algorithms\n2. Apply WD solutions to real-world problems\n3. Collaborate with industry partners.");
                         project2.setStatus(Project.Status.OPEN);
+                        project2.setCategory("Web Development");
+                        project2.setDegreeRestriction("Undergraduate");
+                        project2.setMajorRestriction("Computer Science");
+                        project2.setStudyYearRestriction("Freshman");
                         project2.setSupervisor(supervisor);
                         project2.setType(ProjectType.INDIVIDUAL);
                         project2.setMaxStudents(1);

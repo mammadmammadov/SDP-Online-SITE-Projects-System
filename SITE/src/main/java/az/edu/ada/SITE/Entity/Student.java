@@ -27,7 +27,7 @@ public class Student extends User {
     private String major;
 
     @Column(nullable = false)
-    private int studyYear;
+    private String studyYear;
 
     @Column(nullable = false)
     private boolean accepted = false;
@@ -38,7 +38,7 @@ public class Student extends User {
 
     public Student(String studentId, String name, String surname, String email, String password,
             String degree,
-            String major, int studyYear) {
+            String major, String studyYear) {
         super(name, surname, email, password, Role.STUDENT);
         this.studentId = studentId;
         this.degree = degree;

@@ -34,6 +34,15 @@ public class Project {
 
     private String keywords;
 
+    @Column
+    private String studyYearRestriction;
+
+    @Column
+    private String degreeRestriction;
+
+    @Column
+    private String majorRestriction;
+
     public enum ProjectType {
         INDIVIDUAL, GROUP
     }

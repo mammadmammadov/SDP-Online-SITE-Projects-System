@@ -79,6 +79,92 @@
               ></textarea>
             </div>
 
+            <!-- Category Field -->
+            <div class="mb-4">
+              <label for="category" class="form-label">
+                <i class="bi bi-list me-2 text-primary"></i>Category
+              </label>
+              <select
+                id="category"
+                th:field="*{category}"
+                class="form-select form-select-lg"
+                required
+              >
+                <option value="">Select Category</option>
+                <option
+                  th:each="cat : ${categories}"
+                  th:value="${cat}"
+                  th:text="${cat}"
+                  th:selected="${project.category == cat}"
+                ></option>
+              </select>
+            </div>
+
+            <!-- Study Year Restriction -->
+            <div class="mb-4">
+              <label for="studyYearRestriction" class="form-label">
+                <i class="bi bi-calendar me-2 text-primary"></i>Study Year
+                Restriction
+              </label>
+              <select
+                id="studyYearRestriction"
+                th:field="*{studyYearRestriction}"
+                class="form-select form-select-lg"
+                required
+              >
+                <option value="">Select Study Year</option>
+                <option
+                  th:each="year : ${studyYears}"
+                  th:value="${year}"
+                  th:text="${year}"
+                  th:selected="${project.studyYearRestriction == year}"
+                ></option>
+              </select>
+            </div>
+
+            <!-- Degree Restriction -->
+            <div class="mb-4">
+              <label for="degreeRestriction" class="form-label">
+                <i class="bi bi-mortarboard me-2 text-primary"></i>Degree
+                Restriction
+              </label>
+              <select
+                id="degreeRestriction"
+                th:field="*{degreeRestriction}"
+                class="form-select form-select-lg"
+                required
+              >
+                <option value="">Select Degree</option>
+                <option
+                  th:each="deg : ${degrees}"
+                  th:value="${deg}"
+                  th:text="${deg}"
+                  th:selected="${project.degreeRestriction == deg}"
+                ></option>
+              </select>
+            </div>
+
+            <!-- Major Restriction -->
+            <div class="mb-4">
+              <label for="majorRestriction" class="form-label">
+                <i class="bi bi-book me-2 text-primary"></i>Major Restriction
+              </label>
+              <select
+                id="majorRestriction"
+                th:field="*{majorRestriction}"
+                class="form-select form-select-lg"
+                required
+              >
+                <option value="">Select Major</option>
+                <option
+                  th:each="maj : ${majors}"
+                  th:value="${maj}"
+                  th:text="${maj}"
+                  th:selected="${project.majorRestriction == maj}"
+                ></option>
+              </select>
+            </div>
+
             <div class="row g-3 mb-4">
               <div class="col-md-6">
                 <label for="type" class="form-label"

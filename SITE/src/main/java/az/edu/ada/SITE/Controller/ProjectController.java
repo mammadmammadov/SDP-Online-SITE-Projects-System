@@ -1,7 +1,6 @@
 package az.edu.ada.SITE.Controller;
 
 import az.edu.ada.SITE.Entity.Project;
-import az.edu.ada.SITE.Entity.Project.ProjectType;
 import az.edu.ada.SITE.Entity.Staff;
 import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Entity.User;
@@ -176,6 +175,25 @@ public class ProjectController {
             return "redirect:/student/projects";
         }
 
+        if (project.getDegreeRestriction() != null && !project.getDegreeRestriction().isEmpty() &&
+                !project.getDegreeRestriction().equalsIgnoreCase(student.getDegree())) {
+            redirectAttributes.addFlashAttribute("message", "Your degree does not match the project's requirement.");
+            return "redirect:/student/projects";
+        }
+
+        if (project.getMajorRestriction() != null && !project.getMajorRestriction().isEmpty() &&
+                !project.getMajorRestriction().equalsIgnoreCase(student.getMajor())) {
+            redirectAttributes.addFlashAttribute("message", "Your major does not match the project's requirement.");
+            return "redirect:/student/projects";
+        }
+
+        if (project.getStudyYearRestriction() != null && !project.getStudyYearRestriction().isEmpty() &&
+                !project.getStudyYearRestriction().equalsIgnoreCase(student.getStudyYear())) {
+            redirectAttributes.addFlashAttribute("message",
+                    "Your study year does not match the project's requirement.");
+            return "redirect:/student/projects";
+        }
+
         if (project.getStudents().contains(student)) {
             redirectAttributes.addFlashAttribute("message", "You are already part of this project");
         } else if (project.getRequestedStudents().contains(student)) {
@@ -227,6 +245,13 @@ public class ProjectController {
             return "redirect:/staff/projects?error=You are not authorized to edit this project";
         }
 
+        model.addAttribute("categories", List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
+                "Data Science", "Networks", "Web Development", "Software Development"));
+        model.addAttribute("studyYears", List.of("Freshman", "Sophomore", "Junior", "Senior"));
+        model.addAttribute("degrees", List.of("Undergraduate", "Graduate"));
+        model.addAttribute("majors", List.of("Information Technologies", "Computer Science", "Computer Engineering",
+                "Electrical Engineering"));
+
         model.addAttribute("project", project);
         return "edit_project";
     }
@@ -242,12 +267,15 @@ public class ProjectController {
         existingProject.setObjectives(project.getObjectives());
         existingProject.setType(project.getType());
         existingProject.setStatus(project.getStatus());
-
-        if (project.getType() == ProjectType.INDIVIDUAL) {
+        if (project.getType() == Project.ProjectType.INDIVIDUAL) {
             existingProject.setMaxStudents(1);
         } else {
             existingProject.setMaxStudents(project.getMaxStudents());
         }
+        existingProject.setCategory(project.getCategory());
+        existingProject.setStudyYearRestriction(project.getStudyYearRestriction());
+        existingProject.setDegreeRestriction(project.getDegreeRestriction());
+        existingProject.setMajorRestriction(project.getMajorRestriction());
 
         projectService.saveProject(existingProject);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");

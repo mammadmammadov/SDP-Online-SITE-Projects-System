@@ -1,123 +1,141 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Staff Projects - ADA University</title>
     <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     />
     <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link
-            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap"
-            rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap"
+      rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/staff_projects.css"/>
-</head>
-<body>
-<div class="container mt-4">
-    <div
-            th:if="${param.error != null}"
-            class="alert alert-danger"
-            role="alert"
-    >
+    <link rel="stylesheet" href="/css/staff_projects.css" />
+  </head>
+  <body>
+    <div class="container mt-4">
+      <div
+        th:if="${param.error != null}"
+        class="alert alert-danger"
+        role="alert"
+      >
         <span th:text="${param.error}"></span>
-    </div>
-    <header
-            class="d-flex justify-content-between align-items-center p-3 header"
-    >
+      </div>
+      <header
+        class="d-flex justify-content-between align-items-center p-3 header"
+      >
         <div class="d-flex align-items-center">
-            <img
-                    src="/images/ada_logo.png"
-                    alt="University Logo"
-                    class="logo me-3"
-            />
-            <h4 class="mb-0 fw-normal">
-                Staff Portal:
-                <span th:text="${staffName}" class="fw-semibold"></span>
-            </h4>
+          <img
+            src="/images/ada_logo.png"
+            alt="University Logo"
+            class="logo me-3"
+          />
+          <h4 class="mb-0 fw-normal">
+            Staff Portal:
+            <span th:text="${staffName}" class="fw-semibold"></span>
+          </h4>
         </div>
         <nav>
-            <a th:href="@{/staff/welcome}" class="btn btn-light btn-ada me-2">
-                <i class="fas fa-home me-2"></i>Home
-            </a>
-            <a th:href="@{/logout}" class="btn btn-danger ms-2">
-                <i class="fas fa-sign-out-alt me-2"></i>Logout
-            </a>
+          <a th:href="@{/staff/welcome}" class="btn btn-light btn-ada me-2">
+            <i class="fas fa-home me-2"></i>Home
+          </a>
+          <a th:href="@{/logout}" class="btn btn-danger ms-2">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+          </a>
         </nav>
-    </header>
+      </header>
 
-    <div class="mt-4 d-flex justify-content-between align-items-center">
+      <div class="mt-4 d-flex justify-content-between align-items-center">
         <h3 class="h4 fw-semibold text-dark mb-0">Managed Research Projects</h3>
         <button
-                onclick="location.href='/staff/projects/new'"
-                class="btn btn-ada"
+          onclick="location.href='/staff/projects/new'"
+          class="btn btn-ada"
         >
-            <i class="fas fa-plus me-2"></i>Create New Project
+          <i class="fas fa-plus me-2"></i>Create New Project
         </button>
-    </div>
+      </div>
 
-    <div class="project-table mt-4">
+      <div class="project-table mt-4">
         <table class="table table-hover align-middle">
-            <thead>
+          <thead>
             <tr>
-                <th class="py-3">Project Title</th>
-                <th class="py-3">Status</th>
-                <th class="py-3">Maximum Students</th>
-                <th class="py-3">Applicants</th>
-                <th class="py-3">Actions</th>
+              <th class="py-3">Project Title</th>
+              <th class="py-3">Category</th>
+              <th class="py-3">Restrictions</th>
+              <th class="py-3">Status</th>
+              <th class="py-3">Maximum Students</th>
+              <th class="py-3">Accepted Students</th>
+              <th class="py-3">Actions</th>
             </tr>
-            </thead>
-            <tbody>
+          </thead>
+          <tbody>
             <tr th:each="project : ${projects}">
-                <td class="fw-medium" th:text="${project.title}"></td>
-                <td>
+              <td class="fw-medium" th:text="${project.title}"></td>
+              <td th:text="${project.category}"></td>
+              <td>
+                <ul class="list-unstyled mb-0">
+                  <li>
+                    <strong>Year:</strong>
+                    <span th:text="${project.studyYearRestriction}"></span>
+                  </li>
+                  <li>
+                    <strong>Degree:</strong>
+                    <span th:text="${project.degreeRestriction}"></span>
+                  </li>
+                  <li>
+                    <strong>Major:</strong>
+                    <span th:text="${project.majorRestriction}"></span>
+                  </li>
+                </ul>
+              </td>
+              <td>
                 <span
-                        th:text="${project.status}"
-                        th:class="${#strings.equalsIgnoreCase(project.status, 'OPEN')} ? 'status-open' : 'status-closed'"
-                        class="status-badge"
-                >
-                </span>
-                </td>
-                <td><span th:text="${project.maxStudents}"></span></td>
-                <td>
-                <span
-                        class="applicant-count"
-                        th:text="${project.students.size()}"
+                  th:text="${project.status}"
+                  th:class="${#strings.equalsIgnoreCase(project.status, 'OPEN')} ? 'status-open' : 'status-closed'"
+                  class="status-badge"
                 ></span>
-                    <a
-                            class="btn btn-outline-secondary btn-sm ms-2"
-                            th:href="@{'/staff/projects/applicants/' + ${project.id}}"
-                    >
-                        <i class="fas fa-users me-2"></i>View Applicants
-                    </a>
-                </td>
-                <td>
-                    <a
-                            th:href="@{'/staff/projects/edit/' + ${project.id}}"
-                            class="btn btn-outline-primary action-btn"
-                    >
-                        <i class="fas fa-edit me-2"></i>Edit
-                    </a>
-                    <a
-                            th:href="@{'/staff/projects/delete/' + ${project.id}}"
-                            class="btn btn-outline-danger action-btn"
-                            onclick="return confirm('Confirm project deletion?')"
-                    >
-                        <i class="fas fa-trash-alt me-2"></i>Delete
-                    </a>
-                </td>
+              </td>
+              <td><span th:text="${project.maxStudents}"></span></td>
+              <td>
+                <span
+                  class="applicant-count"
+                  th:text="${project.students.size()}"
+                ></span>
+                <a
+                  class="btn btn-outline-secondary btn-sm ms-2"
+                  th:href="@{'/staff/projects/applicants/' + ${project.id}}"
+                >
+                  <i class="fas fa-users me-2"></i>View Applicants
+                </a>
+              </td>
+              <td>
+                <a
+                  th:href="@{'/staff/projects/edit/' + ${project.id}}"
+                  class="btn btn-outline-primary action-btn"
+                >
+                  <i class="fas fa-edit me-2"></i>Edit
+                </a>
+                <a
+                  th:href="@{'/staff/projects/delete/' + ${project.id}}"
+                  class="btn btn-outline-danger action-btn"
+                  onclick="return confirm('Confirm project deletion?')"
+                >
+                  <i class="fas fa-trash-alt me-2"></i>Delete
+                </a>
+              </td>
             </tr>
-            </tbody>
+          </tbody>
         </table>
-    </div>
+      </div>
 
-    <footer class="mt-5 text-center p-3 text-secondary">
+      <footer class="mt-5 text-center p-3 text-secondary">
         <p class="mb-0 small">&copy; 2025 ADA University</p>
-    </footer>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>
