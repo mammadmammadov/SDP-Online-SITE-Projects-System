@@ -46,18 +46,30 @@ public class DataInitializer implements CommandLineRunner {
                     "Undergraduate", "Computer Science", 2026));
         }
         if (projectRepository.count() == 0) {
-            Staff supervisor = (Staff) userRepository.findByEmail("staff@ada.edu.az")
-                    .orElseThrow(() -> new IllegalArgumentException("Supervisor not found"));
-
-            Project project = new Project();
-            project.setTitle("AI Research Project");
-            project.setDescription("A project focused on artificial intelligence research, exploring new algorithms.");
-            project.setObjectives(
-                    "1. Develop new AI algorithms\n2. Apply AI solutions to real-world problems\n3. Collaborate with industry partners.");
-            project.setStatus(Project.Status.OPEN);
-            project.setSupervisor(supervisor);
-
-            projectRepository.save(project);
+                Staff supervisor = (Staff) userRepository.findByEmail("staff@ada.edu.az")
+                        .orElseThrow(() -> new IllegalArgumentException("Supervisor not found"));
+    
+                Project project1 = new Project();
+                project1.setCategory("Artificial Intelligence");
+                project1.setTitle("AI Research Project");
+                project1.setDescription("A project focused on artificial intelligence research, exploring new algorithms.");
+                project1.setObjectives(
+                        "1. Develop new AI algorithms\n2. Apply AI solutions to real-world problems\n3. Collaborate with industry partners.");
+                project1.setStatus(Project.Status.OPEN);
+                project1.setSupervisor(supervisor);
+    
+                projectRepository.save(project1);
+    
+                Project project2 = new Project();
+                project2.setCategory("Web Development");
+                project2.setTitle("Web Development Research Project");
+                project2.setDescription("A project focused on Web Development research, exploring new algorithms.");
+                project2.setObjectives(
+                        "1. Develop new WD algorithms\n2. Apply WD solutions to real-world problems\n3. Collaborate with industry partners.");
+                project2.setStatus(Project.Status.OPEN);
+                project2.setSupervisor(supervisor);
+    
+                projectRepository.save(project2);
         }
     }
 }

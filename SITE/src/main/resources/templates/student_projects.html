@@ -67,17 +67,12 @@
             <div class="row g-3">
               <div class="col-md-4">
                 <div class="input-group">
-                  <span class="input-group-text"
-                    ><i class="fas fa-folder-open"></i
-                  ></span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="category"
-                    name="category"
-                    placeholder="Category"
-                    th:value="${category}"
-                  />
+                  <span class="input-group-text"><i class="fas fa-list"></i></span>
+                  <select class="form-control" id="category" name="category">
+                    <option value="">All Categories</option>
+                    <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"
+                            th:selected="${selectedCategory != null && selectedCategory == cat}"></option>
+                  </select>
                 </div>
               </div>
               <div class="col-md-4">
@@ -104,9 +99,9 @@
                     type="text"
                     class="form-control"
                     id="supervisor"
-                    name="supervisorId"
+                    name="supervisorName"
                     placeholder="Supervisor"
-                    th:value="${supervisorId}"
+                    th:value="${supervisorName}"
                   />
                 </div>
               </div>

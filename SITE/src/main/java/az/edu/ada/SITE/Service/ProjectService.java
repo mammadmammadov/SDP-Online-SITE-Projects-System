@@ -43,9 +43,9 @@ public class ProjectService {
         return projectRepository.findProjectsByStaffId(staffId);
     }
 
-    public List<Project> getProjectsByFilters(String category, String keywords, Long supervisorId) {
-        return projectRepository.findByFilters(category, keywords, supervisorId);
-    }
+    public List<Project> getProjectsByFilters(String category, String keywords, String supervisorName, String supervisorSurname) {
+        return projectRepository.findByFilters(category, keywords, supervisorName, supervisorSurname);
+    }    
 
     public void addStudentToProject(Student student, Project project) {
         project.getStudents().add(student);

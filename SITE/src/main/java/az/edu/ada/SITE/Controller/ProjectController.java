@@ -34,10 +34,15 @@ public class ProjectController {
 
     @GetMapping("/student/projects")
     public String viewProjects(
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String keywords,
-            @RequestParam(required = false) Long supervisorId,
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) String keywords,
+        @RequestParam(required = false) String supervisorName,
+        @RequestParam(required = false) String supervisorSurname,
             Model model, Principal principal) {
+
+        List<Project> projects = projectService.getProjectsByFilters(category, keywords, supervisorName, supervisorSurname);
+
+        List<String> categories = List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity", "Data Science", "Networks", "Web Development", "Software Development");
 
         String email = principal.getName();
         Student student = studentService.getStudentByEmail(email)
@@ -45,9 +50,9 @@ public class ProjectController {
 
         model.addAttribute("student", student);
         model.addAttribute("studentName", student.getName() + " " + student.getSurname());
-
-        List<Project> projects = projectService.getProjectsByFilters(category, keywords, supervisorId);
         model.addAttribute("projects", projects);
+        model.addAttribute("categories", categories);
+        model.addAttribute("selectedCategory", category);
 
         return "student_projects";
     }

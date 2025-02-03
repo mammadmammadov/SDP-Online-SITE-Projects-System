@@ -11,18 +11,23 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-    List<Project> findBySupervisor(Staff supervisor);
+        List<Project> findBySupervisor(Staff supervisor);
 
-    @Query("SELECT p FROM Project p WHERE p.supervisor.id = :staffId")
-    List<Project> findProjectsByStaffId(@Param("staffId") Long staffId);
+        @Query("SELECT p FROM Project p WHERE p.supervisor.id = :staffId")
+        List<Project> findProjectsByStaffId(@Param("staffId") Long staffId);
 
-    @Query("SELECT p FROM Project p WHERE " +
-            "(:category IS NULL OR p.category = :category) AND " +
-            "(:keywords IS NULL OR p.keywords LIKE %:keywords%) AND " +
-            "(:supervisorId IS NULL OR p.supervisor.id = :supervisorId) AND " +
-            "p.status = 'OPEN'")
-    List<Project> findByFilters(@Param("category") String category,
-            @Param("keywords") String keywords,
-            @Param("supervisorId") Long supervisorId);
+        @Query("SELECT p FROM Project p WHERE " +
+                        "(:category IS NULL OR :category = '' OR p.category = :category) AND "
+                        + "(:keywords IS NULL OR LOWER(p.objectives) LIKE LOWER(CONCAT('%', :keywords, '%'))) AND " +
+                        "(:supervisorName IS NULL OR LOWER(p.supervisor.name) LIKE LOWER(CONCAT('%', :supervisorName, '%'))) AND "
+                        +
+                        "(:supervisorSurname IS NULL OR LOWER(p.supervisor.surname) LIKE LOWER(CONCAT('%', :supervisorSurname, '%'))) AND "
+                        +
+                        "p.status = 'OPEN'")
+        List<Project> findByFilters(
+                        @Param("category") String category,
+                        @Param("keywords") String keywords,
+                        @Param("supervisorName") String supervisorName,
+                        @Param("supervisorSurname") String supervisorSurname);
 
 }
