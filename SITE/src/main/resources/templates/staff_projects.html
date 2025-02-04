@@ -75,23 +75,23 @@
           <tbody>
             <tr th:each="project : ${projects}">
               <td class="fw-medium" th:text="${project.title}"></td>
-              <td th:text="${project.category}"></td>
+              <td th:text="${#strings.listJoin(project.category, ', ')}"></td>
               <td>
                 <ul class="list-unstyled mb-0">
                   <li>
                     <strong>Year:</strong>
-                    <span th:text="${project.studyYearRestriction}"></span>
+                    <span th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"></span>
                   </li>
                   <li>
                     <strong>Degree:</strong>
-                    <span th:text="${project.degreeRestriction}"></span>
+                    <span th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"></span>
                   </li>
                   <li>
                     <strong>Major:</strong>
-                    <span th:text="${project.majorRestriction}"></span>
+                    <span th:text="${#strings.listJoin(project.majorRestriction, ', ')}"></span>
                   </li>
                 </ul>
-              </td>
+              </td>              
               <td>
                 <span
                   th:text="${project.status}"

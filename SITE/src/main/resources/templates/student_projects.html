@@ -138,7 +138,7 @@
               <p>
                 <strong>Category:</strong>
                 <span
-                  th:text="${project.category}"
+                  th:text="${#strings.listJoin(project.category, ', ')}"
                   class="badge bg-secondary"
                 ></span>
               </p>
@@ -157,17 +157,17 @@
                   <div class="restriction-item">
                     <i class="fas fa-calendar-alt"></i>
                     <span>Study Year: </span>
-                    <span th:text="${project.studyYearRestriction}"></span>
+                    <span th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"></span>
                   </div>
                   <div class="restriction-item">
                     <i class="fas fa-mortar-board"></i>
                     <span>Degree: </span>
-                    <span th:text="${project.degreeRestriction}"></span>
+                    <span th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"></span>
                   </div>
                   <div class="restriction-item">
                     <i class="fas fa-book"></i>
                     <span>Major: </span>
-                    <span th:text="${project.majorRestriction}"></span>
+                    <span th:text="${#strings.listJoin(project.majorRestriction, ', ')}"></span>
                   </div>
                 </div>
               </div>

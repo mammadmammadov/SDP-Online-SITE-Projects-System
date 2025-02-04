@@ -1,6 +1,7 @@
 package az.edu.ada.SITE.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,15 +34,19 @@ public class Project {
     private String keywords;
 
     @ElementCollection
+    @NotEmpty(message = "At least one category must be selected")
     private List<String> category = new ArrayList<>();
 
     @ElementCollection
+    @NotEmpty(message = "At least one study year restriction must be selected")
     private List<String> studyYearRestriction = new ArrayList<>();
 
     @ElementCollection
+    @NotEmpty(message = "At least one degree restriction must be selected")
     private List<String> degreeRestriction = new ArrayList<>();
 
     @ElementCollection
+    @NotEmpty(message = "At least one major restriction must be selected")
     private List<String> majorRestriction = new ArrayList<>();
 
     public enum ProjectType {

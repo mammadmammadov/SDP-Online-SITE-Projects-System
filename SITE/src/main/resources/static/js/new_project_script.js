@@ -9,6 +9,9 @@ const objectives = [];
     const fileList = document.getElementById("fileList");
     const maxStudentsContainer = document.getElementById("maxStudentsContainer");
     const typeSelect = document.getElementById("type");
+    const submitButton = document.getElementById("submitButton");
+    const errorMessageContainer = document.getElementById("errorMessage");
+
     const dataTransfer = new DataTransfer();
 
     typeSelect.addEventListener('change', function() {
@@ -113,3 +116,49 @@ function removeFile(index) {
 
 validateInputLimits(titleInput, 50, 50);
 validateInputLimits(descriptionInput, 500, 500);
+
+document.getElementById("projectForm").addEventListener("submit", function (event) {
+    let errors = [];
+
+    function showError(containerId, message) {
+        let container = document.getElementById(containerId);
+        if (container) {
+            container.innerHTML = `<p class="text-danger">${message}</p>`;
+            container.style.display = "block";
+        }
+    }
+
+    function clearErrors() {
+        document.querySelectorAll(".error-message").forEach(el => {
+            el.innerHTML = "";
+            el.style.display = "none";
+        });
+    }
+
+    function isCheckboxGroupValid(groupName) {
+        return document.querySelectorAll(`input[name='${groupName}']:checked`).length > 0;
+    }
+
+    clearErrors();
+
+    if (!isCheckboxGroupValid("category")) {
+        errors.push({ id: "categoryError", message: "At least one category must be selected." });
+    }
+
+    if (!isCheckboxGroupValid("studyYearRestriction")) {
+        errors.push({ id: "studyYearError", message: "At least one study year restriction must be selected." });
+    }
+
+    if (!isCheckboxGroupValid("degreeRestriction")) {
+        errors.push({ id: "degreeError", message: "At least one degree restriction must be selected." });
+    }
+
+    if (!isCheckboxGroupValid("majorRestriction")) {
+        errors.push({ id: "majorError", message: "At least one major restriction must be selected." });
+    }
+
+    if (errors.length > 0) {
+        event.preventDefault();
+        errors.forEach(error => showError(error.id, error.message));
+    }
+});
