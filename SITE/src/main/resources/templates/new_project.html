@@ -94,9 +94,9 @@
                     <i class="bi bi-plus-lg"></i> Add Objective
                   </button>
                 </div>
-                <small class="text-muted mt-2 d-block"
-                  >Press Enter or click Add to include objectives</small
-                >
+                <small class="text-muted mt-2 d-block">
+                  Press Enter or click Add to include objectives
+                </small>
               </div>
               <input
                 type="hidden"
@@ -106,90 +106,190 @@
             </div>
 
             <div class="mb-4">
-              <label for="category" class="form-label">
-                <i class="bi bi-list me-2 text-secondary"></i>Category
+              <label class="form-label">
+                <i class="bi bi-list me-2 text-secondary"></i>Categories
               </label>
-              <select
-                class="form-select form-select-lg"
-                id="category"
-                th:field="*{category}"
-                required
-              >
-                <option value="">Select Category</option>
-                <option value="Artificial Intelligence">
-                  Artificial Intelligence
-                </option>
-                <option value="Software Engineering">
-                  Software Engineering
-                </option>
-                <option value="Cybersecurity">Cybersecurity</option>
-                <option value="Data Science">Data Science</option>
-                <option value="Networks">Networks</option>
-                <option value="Web Development">Web Development</option>
-                <option value="Software Development">
-                  Software Development
-                </option>
-              </select>
+              <div class="checkbox-group">
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{category}"
+                    value="Artificial Intelligence"
+                  />
+                  <span class="form-check-label">Artificial Intelligence</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{category}"
+                    value="Software Engineering"
+                  />
+                  <span class="form-check-label">Software Engineering</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{category}"
+                    value="Cybersecurity"
+                  />
+                  <span class="form-check-label">Cybersecurity</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{category}"
+                    value="Data Science"
+                  />
+                  <span class="form-check-label">Data Science</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{category}"
+                    value="Networks"
+                  />
+                  <span class="form-check-label">Networks</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{category}"
+                    value="Web Development"
+                  />
+                  <span class="form-check-label">Web Development</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{category}"
+                    value="Software Development"
+                  />
+                  <span class="form-check-label">Software Development</span>
+                </label>
+              </div>
             </div>
 
             <div class="mb-4">
-              <label for="studyYearRestriction" class="form-label">
+              <label class="form-label">
                 <i class="bi bi-calendar me-2 text-secondary"></i>Study Year
-                Restriction
+                Restrictions
               </label>
-              <select
-                class="form-select form-select-lg"
-                id="studyYearRestriction"
-                th:field="*{studyYearRestriction}"
-                required
-              >
-                <option value="">Select Study Year</option>
-                <option value="Freshman">Freshman</option>
-                <option value="Sophomore">Sophomore</option>
-                <option value="Junior">Junior</option>
-                <option value="Senior">Senior</option>
-              </select>
+              <div class="checkbox-group">
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{studyYearRestriction}"
+                    value="Freshman"
+                  />
+                  <span class="form-check-label">Freshman</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{studyYearRestriction}"
+                    value="Sophomore"
+                  />
+                  <span class="form-check-label">Sophomore</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{studyYearRestriction}"
+                    value="Junior"
+                  />
+                  <span class="form-check-label">Junior</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{studyYearRestriction}"
+                    value="Senior"
+                  />
+                  <span class="form-check-label">Senior</span>
+                </label>
+              </div>
             </div>
 
             <div class="mb-4">
-              <label for="degreeRestriction" class="form-label">
+              <label class="form-label">
                 <i class="bi bi-mortarboard me-2 text-secondary"></i>Degree
-                Restriction
+                Restrictions
               </label>
-              <select
-                class="form-select form-select-lg"
-                id="degreeRestriction"
-                th:field="*{degreeRestriction}"
-                required
-              >
-                <option value="">Select Degree</option>
-                <option value="Undergraduate">Undergraduate</option>
-                <option value="Graduate">Graduate</option>
-              </select>
+              <div class="checkbox-group">
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{degreeRestriction}"
+                    value="Undergraduate"
+                  />
+                  <span class="form-check-label">Undergraduate</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{degreeRestriction}"
+                    value="Graduate"
+                  />
+                  <span class="form-check-label">Graduate</span>
+                </label>
+              </div>
             </div>
 
             <div class="mb-4">
-              <label for="majorRestriction" class="form-label">
-                <i class="bi bi-book me-2 text-secondary"></i>Major Restriction
+              <label class="form-label">
+                <i class="bi bi-book me-2 text-secondary"></i>Major Restrictions
               </label>
-              <select
-                class="form-select form-select-lg"
-                id="majorRestriction"
-                th:field="*{majorRestriction}"
-                required
-              >
-                <option value="">Select Major</option>
-                <option value="Information Technologies">
-                  Information Technologies
-                </option>
-                <option value="Computer Science">Computer Science</option>
-                <option value="Computer Engineering">
-                  Computer Engineering
-                </option>
-                <option value="Electrical Engineering">
-                  Electrical Engineering
-                </option>
-              </select>
+              <div class="checkbox-group">
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{majorRestriction}"
+                    value="Information Technologies"
+                  />
+                  <span class="form-check-label">Information Technologies</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{majorRestriction}"
+                    value="Computer Science"
+                  />
+                  <span class="form-check-label">Computer Science</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{majorRestriction}"
+                    value="Computer Engineering"
+                  />
+                  <span class="form-check-label">Computer Engineering</span>
+                </label>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    th:field="*{majorRestriction}"
+                    value="Electrical Engineering"
+                  />
+                  <span class="form-check-label">Electrical Engineering</span>
+                </label>
+              </div>
             </div>
 
             <div class="mb-4">
@@ -244,9 +344,9 @@
                   <i class="bi bi-folder2-open"></i> Choose Files
                 </button>
               </div>
-              <small class="text-muted d-block mt-2"
-                >You can select multiple files.</small
-              >
+              <small class="text-muted d-block mt-2">
+                You can select multiple files.
+              </small>
               <ul id="fileList" class="list-group mt-2"></ul>
             </div>
 

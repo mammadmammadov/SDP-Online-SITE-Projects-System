@@ -17,8 +17,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         List<Project> findProjectsByStaffId(@Param("staffId") Long staffId);
 
         @Query("SELECT p FROM Project p WHERE " +
-                        "(:category IS NULL OR :category = '' OR p.category = :category) AND "
-                        + "(:keywords IS NULL OR LOWER(p.objectives) LIKE LOWER(CONCAT('%', :keywords, '%'))) AND " +
+                        "(:category IS NULL OR :category = '' OR :category MEMBER OF p.category) AND " +
+                        "(:keywords IS NULL OR LOWER(p.objectives) LIKE LOWER(CONCAT('%', :keywords, '%'))) AND " +
                         "(:supervisorName IS NULL OR LOWER(p.supervisor.name) LIKE LOWER(CONCAT('%', :supervisorName, '%'))) AND "
                         +
                         "(:supervisorSurname IS NULL OR LOWER(p.supervisor.surname) LIKE LOWER(CONCAT('%', :supervisorSurname, '%'))) AND "
@@ -29,5 +29,4 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
                         @Param("keywords") String keywords,
                         @Param("supervisorName") String supervisorName,
                         @Param("supervisorSurname") String supervisorSurname);
-
 }

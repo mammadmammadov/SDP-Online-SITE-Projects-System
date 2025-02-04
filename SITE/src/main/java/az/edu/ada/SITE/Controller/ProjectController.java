@@ -33,28 +33,30 @@ public class ProjectController {
     }
 
     @GetMapping("/student/projects")
-    public String viewProjects(
-            @RequestParam(required = false) String category,
+    public String viewProjects(@RequestParam(required = false) String category,
             @RequestParam(required = false) String keywords,
             @RequestParam(required = false) String supervisorName,
             @RequestParam(required = false) String supervisorSurname,
             Model model, Principal principal) {
 
-        List<Project> projects = projectService.getProjectsByFilters(category, keywords, supervisorName,
-                supervisorSurname);
-
-        List<String> categories = List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
-                "Data Science", "Networks", "Web Development", "Software Development");
-
         String email = principal.getName();
         Student student = studentService.getStudentByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
 
+        List<Project> projects = projectService.getEligibleProjectsForStudent(student, category, keywords,
+                supervisorName, supervisorSurname);
+
+        List<String> categories = List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
+                "Data Science", "Networks", "Web Development", "Software Development");
+
         model.addAttribute("student", student);
         model.addAttribute("studentName", student.getName() + " " + student.getSurname());
         model.addAttribute("projects", projects);
-        model.addAttribute("categories", categories);
+        model.addAttribute("category", categories);
         model.addAttribute("selectedCategory", category);
+        model.addAttribute("keywords", keywords);
+        model.addAttribute("supervisorName", supervisorName);
+        model.addAttribute("supervisorSurname", supervisorSurname);
 
         return "student_projects";
     }
@@ -114,31 +116,33 @@ public class ProjectController {
             RedirectAttributes redirectAttributes) {
         Project project = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
-
         Student student = studentService.getStudentById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Student ID"));
 
         project.getRequestedStudents().remove(student);
-        if (!project.getStudents().contains(student)) {
-            project.getStudents().add(student);
+
+        if (project.getType() == Project.ProjectType.INDIVIDUAL) {
+            if (!project.getStudents().isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Individual project already has an accepted student.");
+                return "redirect:/staff/projects/applicants/" + projectId;
+            }
+        } else {
+            if (project.getStudents().size() >= project.getMaxStudents()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Group project has reached its maximum number of accepted students.");
+                return "redirect:/staff/projects/applicants/" + projectId;
+            }
         }
 
-        List<Project> allProjects = projectService.getAllProjects();
-        allProjects.forEach(p -> {
-            if (p.getRequestedStudents().contains(student)) {
-                p.getRequestedStudents().remove(student);
-                projectService.saveProject(p);
-            }
-        });
-
-        student.setAccepted(true);
-        studentService.saveStudent(student);
+        if (!project.getStudents().contains(student)) {
+            project.getStudents().add(student);
+            student.setAccepted(true);
+            studentService.saveStudent(student);
+        }
 
         projectService.saveProject(project);
-
-        redirectAttributes.addFlashAttribute("successMessage",
-                "Successfully accepted " + student.getName());
-
+        redirectAttributes.addFlashAttribute("successMessage", "Student accepted successfully.");
         return "redirect:/staff/projects/applicants/" + projectId;
     }
 
@@ -155,6 +159,27 @@ public class ProjectController {
         return "redirect:/staff/projects/applicants/" + projectId;
     }
 
+    @GetMapping("/staff/projects/remove/{studentId}/{projectId}")
+    public String removeAcceptedStudent(@PathVariable Long studentId,
+            @PathVariable Long projectId,
+            RedirectAttributes redirectAttributes) {
+        Project project = projectService.getProjectById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+        Student student = studentService.getStudentById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Student ID"));
+
+        if (project.getStudents().contains(student)) {
+            project.getStudents().remove(student);
+            student.setAccepted(false);
+            studentService.saveStudent(student);
+            projectService.saveProject(project);
+            redirectAttributes.addFlashAttribute("successMessage", "Student removed from accepted list successfully.");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Student is not in the accepted list.");
+        }
+        return "redirect:/staff/projects/applicants/" + projectId;
+    }
+
     @GetMapping("/student/projects/join/{projectId}")
     public String joinProject(@PathVariable Long projectId, Principal principal,
             RedirectAttributes redirectAttributes) {
@@ -167,30 +192,20 @@ public class ProjectController {
             return "redirect:/student/projects";
         }
 
+        long pendingCount = projectService.getAllProjects().stream()
+                .filter(p -> p.getRequestedStudents().contains(student))
+                .count();
+        if (pendingCount >= 5) {
+            redirectAttributes.addFlashAttribute("message",
+                    "You have already applied for 5 projects. Please wait until one is resolved before applying to another.");
+            return "redirect:/student/projects";
+        }
+
         Project project = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
         if (project.getStatus() != Project.Status.OPEN) {
             redirectAttributes.addFlashAttribute("message", "Project is not open for applications");
-            return "redirect:/student/projects";
-        }
-
-        if (project.getDegreeRestriction() != null && !project.getDegreeRestriction().isEmpty() &&
-                !project.getDegreeRestriction().equalsIgnoreCase(student.getDegree())) {
-            redirectAttributes.addFlashAttribute("message", "Your degree does not match the project's requirement.");
-            return "redirect:/student/projects";
-        }
-
-        if (project.getMajorRestriction() != null && !project.getMajorRestriction().isEmpty() &&
-                !project.getMajorRestriction().equalsIgnoreCase(student.getMajor())) {
-            redirectAttributes.addFlashAttribute("message", "Your major does not match the project's requirement.");
-            return "redirect:/student/projects";
-        }
-
-        if (project.getStudyYearRestriction() != null && !project.getStudyYearRestriction().isEmpty() &&
-                !project.getStudyYearRestriction().equalsIgnoreCase(student.getStudyYear())) {
-            redirectAttributes.addFlashAttribute("message",
-                    "Your study year does not match the project's requirement.");
             return "redirect:/student/projects";
         }
 
@@ -245,7 +260,7 @@ public class ProjectController {
             return "redirect:/staff/projects?error=You are not authorized to edit this project";
         }
 
-        model.addAttribute("categories", List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
+        model.addAttribute("category", List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
                 "Data Science", "Networks", "Web Development", "Software Development"));
         model.addAttribute("studyYears", List.of("Freshman", "Sophomore", "Junior", "Senior"));
         model.addAttribute("degrees", List.of("Undergraduate", "Graduate"));

@@ -30,18 +30,19 @@ public class Project {
     @Enumerated(EnumType.STRING)
     private ProjectType type;
 
-    private String category;
-
     private String keywords;
 
-    @Column
-    private String studyYearRestriction;
+    @ElementCollection
+    private List<String> category = new ArrayList<>();
 
-    @Column
-    private String degreeRestriction;
+    @ElementCollection
+    private List<String> studyYearRestriction = new ArrayList<>();
 
-    @Column
-    private String majorRestriction;
+    @ElementCollection
+    private List<String> degreeRestriction = new ArrayList<>();
+
+    @ElementCollection
+    private List<String> majorRestriction = new ArrayList<>();
 
     public enum ProjectType {
         INDIVIDUAL, GROUP

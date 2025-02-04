@@ -8,6 +8,35 @@
     />
   </head>
   <body>
+    <div
+      th:if="${errorMessage != null}"
+      class="alert alert-danger alert-dismissible fade show"
+      role="alert"
+    >
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      <span th:text="${errorMessage}"></span>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div
+      th:if="${successMessage != null}"
+      class="alert alert-success alert-dismissible fade show"
+      role="alert"
+    >
+      <i class="fas fa-check-circle me-2"></i>
+      <span th:text="${successMessage}"></span>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+
     <div class="container mt-4">
       <header
         class="d-flex justify-content-between align-items-center p-3 bg-dark text-white"
@@ -26,7 +55,7 @@
           th:if="${#lists.isEmpty(project.students)}"
           class="alert alert-info"
         >
-          No students have been accepted yet
+          No students have been accepted yet.
         </div>
         <table
           th:unless="${#lists.isEmpty(project.students)}"
@@ -37,7 +66,7 @@
               <th>Name</th>
               <th>Surname</th>
               <th>Email</th>
-              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -46,7 +75,13 @@
               <td th:text="${student.surname}"></td>
               <td th:text="${student.email}"></td>
               <td>
-                <span class="badge bg-success">ACCEPTED</span>
+                <a
+                  th:href="@{'/staff/projects/remove/' + ${student.id} + '/' + ${project.id}}"
+                  class="btn btn-danger btn-sm"
+                  onclick="return confirm('Are you sure you want to remove this student?')"
+                >
+                  <i class="fas fa-user-minus me-1"></i>Remove
+                </a>
               </td>
             </tr>
           </tbody>

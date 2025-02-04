@@ -2,34 +2,36 @@
   height: 50px;
 }
 
-
 .gradient-header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-        }
-        .objective-tag {
-            background-color: #e9ecef;
-            border-radius: 20px;
-            padding: 8px 15px;
-            margin: 5px;
-            display: inline-flex;
-            align-items: center;
-        }
-        .objective-input-container {
-            border: 2px dashed #dee2e6;
-            border-radius: 10px;
-            padding: 15px;
-            transition: all 0.3s ease;
-        }
-        .objective-input-container:focus-within {
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-        .tag-remove-btn {
-            color: #6c757d;
-            margin-left: 8px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .tag-remove-btn:hover {
-            color: #dc3545;
-        }
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+}
+.objective-tag {
+  background-color: #e9ecef;
+  border-radius: 20px;
+  padding: 8px 15px;
+  margin: 5px;
+  display: inline-flex;
+  align-items: center;
+}
+.objective-input-container {
+  border: 2px dashed #dee2e6;
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+.objective-input-container:focus-within {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+.tag-remove-btn {
+  color: #6c757d;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.tag-remove-btn:hover {
+  color: #dc3545;
+}
+.checkbox-group label {
+  margin-right: 15px;
+}

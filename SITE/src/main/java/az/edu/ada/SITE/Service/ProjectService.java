@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -43,12 +44,34 @@ public class ProjectService {
         return projectRepository.findProjectsByStaffId(staffId);
     }
 
-    public List<Project> getProjectsByFilters(String category, String keywords, String supervisorName, String supervisorSurname) {
+    public List<Project> getProjectsByFilters(String category, String keywords, String supervisorName,
+            String supervisorSurname) {
         return projectRepository.findByFilters(category, keywords, supervisorName, supervisorSurname);
-    }    
+    }
 
     public void addStudentToProject(Student student, Project project) {
         project.getStudents().add(student);
         saveProject(project);
     }
+
+    public List<Project> getEligibleProjectsForStudent(Student student, String category, String keywords,
+            String supervisorName, String supervisorSurname) {
+        List<Project> projects = projectRepository.findByFilters(category, keywords, supervisorName, supervisorSurname);
+
+        return projects.stream().filter(project -> {
+            boolean eligible = true;
+            if (project.getStudyYearRestriction() != null && !project.getStudyYearRestriction().isEmpty()) {
+                eligible = eligible && project.getStudyYearRestriction().contains(student.getStudyYear());
+            }
+            if (project.getDegreeRestriction() != null && !project.getDegreeRestriction().isEmpty()) {
+                eligible = eligible && project.getDegreeRestriction().contains(student.getDegree());
+            }
+            if (project.getMajorRestriction() != null && !project.getMajorRestriction().isEmpty()) {
+                eligible = eligible && project.getMajorRestriction().contains(student.getMajor());
+            }
+
+            return eligible;
+        }).collect(Collectors.toList());
+    }
+
 }

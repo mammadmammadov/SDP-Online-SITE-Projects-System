@@ -7,6 +7,9 @@ import az.edu.ada.SITE.Entity.Staff;
 import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Repository.ProjectRepository;
 import az.edu.ada.SITE.Repository.UserRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,7 +63,7 @@ public class DataInitializer implements CommandLineRunner {
                                         .orElseThrow(() -> new IllegalArgumentException("Supervisor not found"));
 
                         Project project1 = new Project();
-                        project1.setCategory("Artificial Intelligence");
+                        project1.setCategory(List.of("Artificial Intelligence"));
                         project1.setTitle("AI Research Project");
                         project1.setDescription(
                                         "A project focused on artificial intelligence research, exploring new algorithms.");
@@ -68,27 +71,27 @@ public class DataInitializer implements CommandLineRunner {
                                         "1. Develop new AI algorithms\n2. Apply AI solutions to real-world problems\n3. Collaborate with industry partners.");
                         project1.setStatus(Project.Status.OPEN);
                         project1.setSupervisor(supervisor);
-                        project1.setCategory("Artificial Intelligence");
-                        project1.setDegreeRestriction("Undergraduate");
-                        project1.setMajorRestriction("Computer Science");
-                        project1.setStudyYearRestriction("Sophomore");
+                        project1.setCategory(List.of("Artificial Intelligence"));
+                        project1.setDegreeRestriction(List.of("Undergraduate"));
+                        project1.setMajorRestriction(List.of("Computer Science"));
+                        project1.setStudyYearRestriction(List.of("Sophomore"));
                         project1.setType(ProjectType.GROUP);
                         project1.setMaxStudents(3);
 
                         projectRepository.save(project1);
 
                         Project project2 = new Project();
-                        project2.setCategory("Web Development");
+                        project2.setCategory(List.of("Web Development"));
                         project2.setTitle("Web Development Research Project");
                         project2.setDescription(
                                         "A project focused on Web Development research, exploring new algorithms.");
                         project2.setObjectives(
                                         "1. Develop new WD algorithms\n2. Apply WD solutions to real-world problems\n3. Collaborate with industry partners.");
                         project2.setStatus(Project.Status.OPEN);
-                        project2.setCategory("Web Development");
-                        project2.setDegreeRestriction("Undergraduate");
-                        project2.setMajorRestriction("Computer Science");
-                        project2.setStudyYearRestriction("Freshman");
+                        project2.setCategory(List.of("Web Development"));
+                        project2.setDegreeRestriction(List.of("Undergraduate"));
+                        project2.setMajorRestriction(List.of("Computer Science"));
+                        project2.setStudyYearRestriction(List.of("Freshman"));
                         project2.setSupervisor(supervisor);
                         project2.setType(ProjectType.INDIVIDUAL);
                         project2.setMaxStudents(1);
