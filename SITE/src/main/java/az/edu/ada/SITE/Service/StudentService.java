@@ -4,6 +4,7 @@ import az.edu.ada.SITE.Entity.Project;
 import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Repository.StudentRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -33,5 +34,9 @@ public class StudentService {
   public void addStudentToProject(Student student, Project project) {
     project.addStudent(student);
     projectService.saveProject(project);
+  }
+
+  public List<Student> getAllStudents() {
+    return studentRepository.findAll();
   }
 }

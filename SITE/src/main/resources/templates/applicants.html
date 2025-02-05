@@ -133,6 +133,52 @@
           </tbody>
         </table>
       </div>
+      <div class="mt-5">
+        <h5 class="mb-3">List of Eligible Students to Add</h5>
+        <form th:action="@{'/staff/projects/applicants/' + ${project.id}}" method="get" class="d-flex mb-3">
+          <input type="text" name="searchEmail" class="form-control me-2" placeholder="Enter email..." 
+                 th:value="${searchEmail}" />
+          <input type="hidden" name="projectId" th:value="${project.id}" />
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <div th:if="${#lists.isEmpty(eligibleStudents)}" class="alert alert-secondary">
+          No students found.
+        </div>
+        <table
+          th:unless="${#lists.isEmpty(eligibleStudents)}"
+          class="table table-bordered"
+        >
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Surname</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="student : ${eligibleStudents}">
+              <td th:text="${student.name}"></td>
+              <td th:text="${student.surname}"></td>
+              <td th:text="${student.email}"></td>
+              <td>
+                <div th:if="${not project.students.contains(student)}">
+                  <a
+                    th:href="@{'/staff/projects/applicant/accept/' + ${student.id} + '/' + ${project.id}}"
+                    class="btn btn-primary btn-sm"
+                    onclick="return confirm('Are you sure you want to add this student to the project?')"
+                  >
+                    Add
+                  </a>
+                </div>
+                <div th:if="${project.students.contains(student)}" class="text-muted">
+                  Already in project
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

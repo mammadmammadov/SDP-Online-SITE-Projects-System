@@ -84,7 +84,8 @@ public class ProjectController {
     }
 
     @GetMapping("/staff/projects/applicants/{projectId}")
-    public String viewApplicants(@PathVariable Long projectId, Model model, Principal principal) {
+    public String viewApplicants(@PathVariable Long projectId, @RequestParam(required = false) String searchEmail, 
+                                 Model model, Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -105,6 +106,22 @@ public class ProjectController {
                 .filter(student -> !student.isAccepted())
                 .collect(Collectors.toList());
 
+        List<Student> eligibleStudents = studentService.getAllStudents().stream()
+                .filter(student -> !project.getStudents().contains(student))
+                .filter(student -> project.getStudyYearRestriction().contains(student.getStudyYear()))
+                .filter(student -> project.getDegreeRestriction().contains(student.getDegree()))
+                .filter(student -> project.getMajorRestriction().contains(student.getMajor()))
+                .collect(Collectors.toList());
+
+        if (searchEmail != null && !searchEmail.isBlank()) {
+            String searchLower = searchEmail.toLowerCase();
+            eligibleStudents = eligibleStudents.stream()
+                .filter(student -> student.getEmail().toLowerCase().contains(searchLower))
+                .collect(Collectors.toList());
+        }               
+
+        model.addAttribute("project", project);
+        model.addAttribute("eligibleStudents", eligibleStudents);        
         model.addAttribute("project", project);
         model.addAttribute("applicants", pendingApplicants);
         return "applicants";
