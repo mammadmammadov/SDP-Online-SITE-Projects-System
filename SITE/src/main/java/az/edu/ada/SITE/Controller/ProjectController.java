@@ -107,7 +107,7 @@ public class ProjectController {
                 .collect(Collectors.toList());
 
         List<Student> eligibleStudents = studentService.getAllStudents().stream()
-                .filter(student -> !project.getStudents().contains(student))
+                .filter(student -> !student.isAccepted())
                 .filter(student -> project.getStudyYearRestriction().contains(student.getStudyYear()))
                 .filter(student -> project.getDegreeRestriction().contains(student.getDegree()))
                 .filter(student -> project.getMajorRestriction().contains(student.getMajor()))
