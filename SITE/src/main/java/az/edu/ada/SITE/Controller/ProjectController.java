@@ -235,6 +235,15 @@ public class ProjectController {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         if (user instanceof Staff staff) {
             project.setSupervisor(staff);
+
+            if (project.getType() == Project.ProjectType.INDIVIDUAL) {
+                project.setMaxStudents(1);
+            } else {
+                if (project.getMaxStudents() == null) {
+                    project.setMaxStudents(2);
+                }
+            }
+
             projectService.saveProject(project);
             return "redirect:/staff/projects";
         } else {
