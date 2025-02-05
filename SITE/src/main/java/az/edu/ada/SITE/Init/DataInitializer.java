@@ -97,6 +97,58 @@ public class DataInitializer implements CommandLineRunner {
                         project2.setMaxStudents(1);
 
                         projectRepository.save(project2);
+
+                        Project project3 = new Project();
+                        project3.setCategory(List.of("Data Science"));
+                        project3.setTitle("Big Data Analytics Project");
+                        project3.setDescription(
+                                "A project aimed at analyzing large datasets to extract meaningful insights and patterns.");
+                        project3.setObjectives(
+                                "1. Collect and preprocess large datasets\n2. Apply data mining techniques\n3. Visualize data insights.");
+                        project3.setStatus(Project.Status.OPEN);
+                        project3.setSupervisor(supervisor);
+                        project3.setDegreeRestriction(List.of("Undergraduate", "Graduate"));
+                        project3.setMajorRestriction(List.of("Information Technology", "Computer Science"));
+                        project3.setStudyYearRestriction(List.of("Sophomore", "Senior"));
+                        project3.setType(ProjectType.GROUP);
+                        project3.setMaxStudents(4);
+
+                        projectRepository.save(project3);
+
+                        Project project4 = new Project();
+                        project4.setCategory(List.of("Cybersecurity"));
+                        project4.setTitle("Network Security Assessment");
+                        project4.setDescription(
+                                "A project focused on evaluating and improving the security of network infrastructures.");
+                        project4.setObjectives(
+                                "1. Conduct vulnerability assessments\n2. Implement security protocols\n3. Develop incident response strategies.");
+                        project4.setStatus(Project.Status.OPEN);
+                        project4.setSupervisor(supervisor);
+                        project4.setDegreeRestriction(List.of("Graduate"));
+                        project4.setMajorRestriction(List.of("Computer Science", "Information Technology"));
+                        project4.setStudyYearRestriction(List.of("Sophomore"));
+                        project4.setType(ProjectType.INDIVIDUAL);
+                        project4.setMaxStudents(1);
+
+                        projectRepository.save(project4);
+
+                        Project project5 = new Project();
+                        project5.setCategory(List.of("Software Engineering"));
+                        project5.setTitle("Agile Development of Web Application");
+                        project5.setDescription(
+                                "A project to develop a web application using agile methodologies and best practices.");
+                        project5.setObjectives(
+                                "1. Gather user requirements\n2. Design and implement application features\n3. Conduct user testing and feedback.");
+                        project5.setStatus(Project.Status.OPEN);
+                        project5.setSupervisor(supervisor);
+                        project5.setDegreeRestriction(List.of("Undergraduate"));
+                        project5.setMajorRestriction(List.of("Computer Science"));
+                        project5.setStudyYearRestriction(List.of("Sophomore"));
+                        project5.setType(ProjectType.GROUP);
+                        project5.setMaxStudents(5);
+
+                        projectRepository.save(project5);
+
                 }
         }
 }
