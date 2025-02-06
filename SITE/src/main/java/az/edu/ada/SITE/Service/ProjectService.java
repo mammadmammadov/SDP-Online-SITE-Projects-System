@@ -4,10 +4,11 @@ import az.edu.ada.SITE.Entity.Project;
 import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Repository.ProjectRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -44,9 +45,18 @@ public class ProjectService {
         return projectRepository.findProjectsByStaffId(staffId);
     }
 
+    public Page<Project> getProjectsByStaffId(Long staffId, Pageable pageable) {
+        return projectRepository.findProjectsByStaffId(staffId, pageable);
+    }
+
     public List<Project> getProjectsByFilters(String category, String keywords, String supervisorName,
             String supervisorSurname) {
         return projectRepository.findByFilters(category, keywords, supervisorName, supervisorSurname);
+    }
+
+    public Page<Project> getProjectsByFilters(String category, String keywords, String supervisorName,
+            String supervisorSurname, Pageable pageable) {
+        return projectRepository.findByFilters(category, keywords, supervisorName, supervisorSurname, pageable);
     }
 
     public void addStudentToProject(Student student, Project project) {
@@ -54,24 +64,16 @@ public class ProjectService {
         saveProject(project);
     }
 
-    public List<Project> getEligibleProjectsForStudent(Student student, String category, String keywords,
-            String supervisorName, String supervisorSurname) {
-        List<Project> projects = projectRepository.findByFilters(category, keywords, supervisorName, supervisorSurname);
-
-        return projects.stream().filter(project -> {
-            boolean eligible = true;
-            if (project.getStudyYearRestriction() != null && !project.getStudyYearRestriction().isEmpty()) {
-                eligible = eligible && project.getStudyYearRestriction().contains(student.getStudyYear());
-            }
-            if (project.getDegreeRestriction() != null && !project.getDegreeRestriction().isEmpty()) {
-                eligible = eligible && project.getDegreeRestriction().contains(student.getDegree());
-            }
-            if (project.getMajorRestriction() != null && !project.getMajorRestriction().isEmpty()) {
-                eligible = eligible && project.getMajorRestriction().contains(student.getMajor());
-            }
-
-            return eligible;
-        }).collect(Collectors.toList());
+    public Page<Project> getEligibleProjectsForStudent(Student student, String category, String keywords,
+            String supervisorName, String supervisorSurname, Pageable pageable) {
+        return projectRepository.findEligibleProjectsForStudent(
+                category,
+                keywords,
+                supervisorName,
+                supervisorSurname,
+                student.getStudyYear(),
+                student.getDegree(),
+                student.getMajor(),
+                pageable);
     }
-
 }

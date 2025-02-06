@@ -37,21 +37,27 @@ public class ProjectController {
             @RequestParam(required = false) String keywords,
             @RequestParam(required = false) String supervisorName,
             @RequestParam(required = false) String supervisorSurname,
+            @RequestParam(defaultValue = "0") int page,
             Model model, Principal principal) {
 
         String email = principal.getName();
         Student student = studentService.getStudentByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
 
-        List<Project> projects = projectService.getEligibleProjectsForStudent(student, category, keywords,
-                supervisorName, supervisorSurname);
+        if (page < 0)
+            page = 0;
+        var pageable = org.springframework.data.domain.PageRequest.of(page, 4);
+        var projectPage = projectService.getEligibleProjectsForStudent(student, category, keywords, supervisorName,
+                supervisorSurname, pageable);
 
         List<String> categories = List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
                 "Data Science", "Networks", "Web Development", "Software Development");
 
         model.addAttribute("student", student);
         model.addAttribute("studentName", student.getName() + " " + student.getSurname());
-        model.addAttribute("projects", projects);
+        model.addAttribute("projects", projectPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", projectPage.getTotalPages());
         model.addAttribute("category", categories);
         model.addAttribute("selectedCategory", category);
         model.addAttribute("keywords", keywords);
@@ -62,7 +68,8 @@ public class ProjectController {
     }
 
     @GetMapping("/staff/projects")
-    public String viewProjects(Model model, Principal principal) {
+    public String viewProjects(Model model, Principal principal,
+            @RequestParam(defaultValue = "0") int page) {
         try {
             String email = principal.getName();
             User user = userRepository.findByEmail(email)
@@ -74,8 +81,14 @@ public class ProjectController {
             if (user instanceof Staff) {
                 staffId = ((Staff) user).getId();
             }
-            List<Project> projects = projectService.getProjectsByStaffId(staffId);
-            model.addAttribute("projects", projects);
+
+            if (page < 0)
+                page = 0;
+            var pageable = org.springframework.data.domain.PageRequest.of(page, 4);
+            var projectPage = projectService.getProjectsByStaffId(staffId, pageable);
+            model.addAttribute("projects", projectPage.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", projectPage.getTotalPages());
 
             return "staff_projects";
         } catch (UsernameNotFoundException e) {
