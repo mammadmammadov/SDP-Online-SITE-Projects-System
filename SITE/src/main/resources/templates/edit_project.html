@@ -78,6 +78,16 @@
               ></textarea>
             </div>
 
+            <div class="col-md-6">
+              <label for="type" class="form-label">
+                <i class="bi bi-people-fill me-2"></i>Research Focus
+              </label>
+              <select id="researchFocus" th:field="*{researchFocus}" class="form-select">
+                <option value="Senior Design Project">Senior Design Project</option>
+                <option value="Research Project">Research Project</option>
+              </select>
+            </div>   
+
             <div class="mb-4">
               <label class="form-label">
                 <i class="bi bi-list me-2 text-primary"></i>Categories

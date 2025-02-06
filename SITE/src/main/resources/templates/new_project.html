@@ -105,6 +105,21 @@
               />
             </div>
 
+            <div class="mb-4">
+              <label for="researchFocus" class="form-label">
+                <i class="bi bi-diagram-3 me-2 text-warning"></i>Research Focus
+              </label>
+              <select
+                class="form-select form-select-lg"
+                id="researchFocus"
+                th:field="*{researchFocus}"
+                required
+              >
+                <option value="Senior Design Project">Senior Design Project</option>
+                <option value="Research Project">Research Project</option>
+              </select>
+            </div>          
+
             <div id="categoryError" class="error-message"></div>
             <div class="mb-4">
               <label class="form-label">

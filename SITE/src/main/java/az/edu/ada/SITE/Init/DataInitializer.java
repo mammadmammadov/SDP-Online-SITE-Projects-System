@@ -71,6 +71,7 @@ public class DataInitializer implements CommandLineRunner {
                                         "1. Develop new AI algorithms\n2. Apply AI solutions to real-world problems\n3. Collaborate with industry partners.");
                         project1.setStatus(Project.Status.OPEN);
                         project1.setSupervisor(supervisor);
+                        project1.setResearchFocus(List.of("Research Project"));
                         project1.setCategory(List.of("Artificial Intelligence"));
                         project1.setDegreeRestriction(List.of("Undergraduate"));
                         project1.setMajorRestriction(List.of("Computer Science"));
@@ -88,6 +89,7 @@ public class DataInitializer implements CommandLineRunner {
                         project2.setObjectives(
                                         "1. Develop new WD algorithms\n2. Apply WD solutions to real-world problems\n3. Collaborate with industry partners.");
                         project2.setStatus(Project.Status.OPEN);
+                        project2.setResearchFocus(List.of("Senior Design Project"));
                         project2.setCategory(List.of("Web Development"));
                         project2.setDegreeRestriction(List.of("Undergraduate"));
                         project2.setMajorRestriction(List.of("Computer Science"));
@@ -107,6 +109,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "1. Collect and preprocess large datasets\n2. Apply data mining techniques\n3. Visualize data insights.");
                         project3.setStatus(Project.Status.OPEN);
                         project3.setSupervisor(supervisor);
+                        project3.setResearchFocus(List.of("Senior Design Project"));
                         project3.setDegreeRestriction(List.of("Undergraduate", "Graduate"));
                         project3.setMajorRestriction(List.of("Information Technology", "Computer Science"));
                         project3.setStudyYearRestriction(List.of("Sophomore", "Senior"));
@@ -124,6 +127,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "1. Conduct vulnerability assessments\n2. Implement security protocols\n3. Develop incident response strategies.");
                         project4.setStatus(Project.Status.OPEN);
                         project4.setSupervisor(supervisor);
+                        project4.setResearchFocus(List.of("Senior Design Project"));
                         project4.setDegreeRestriction(List.of("Graduate"));
                         project4.setMajorRestriction(List.of("Computer Science", "Information Technology"));
                         project4.setStudyYearRestriction(List.of("Sophomore"));
@@ -141,6 +145,7 @@ public class DataInitializer implements CommandLineRunner {
                                 "1. Gather user requirements\n2. Design and implement application features\n3. Conduct user testing and feedback.");
                         project5.setStatus(Project.Status.OPEN);
                         project5.setSupervisor(supervisor);
+                        project5.setResearchFocus(List.of("Senior Design Project"));
                         project5.setDegreeRestriction(List.of("Undergraduate"));
                         project5.setMajorRestriction(List.of("Computer Science"));
                         project5.setStudyYearRestriction(List.of("Sophomore"));

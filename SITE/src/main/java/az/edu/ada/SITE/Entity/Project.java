@@ -34,6 +34,10 @@ public class Project {
     private String keywords;
 
     @ElementCollection
+    @NotEmpty(message = "At least one research focus must be selected")
+    private List<String> researchFocus = new ArrayList<>();
+
+    @ElementCollection
     @NotEmpty(message = "At least one category must be selected")
     private List<String> category = new ArrayList<>();
 

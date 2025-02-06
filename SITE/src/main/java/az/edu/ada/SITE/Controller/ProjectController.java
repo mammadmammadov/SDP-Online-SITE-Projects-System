@@ -317,6 +317,7 @@ public class ProjectController {
         existingProject.setStudyYearRestriction(project.getStudyYearRestriction());
         existingProject.setDegreeRestriction(project.getDegreeRestriction());
         existingProject.setMajorRestriction(project.getMajorRestriction());
+        existingProject.setResearchFocus(project.getResearchFocus());
 
         projectService.saveProject(existingProject);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
