@@ -76,24 +76,32 @@
           <tbody>
             <tr th:each="project : ${projects}">
               <td class="fw-medium" th:text="${project.title}"></td>
-              <td th:text="${#strings.listJoin(project.researchFocus, ', ')}"></td>
+              <td
+                th:text="${#strings.listJoin(project.researchFocus, ', ')}"
+              ></td>
               <td th:text="${#strings.listJoin(project.category, ', ')}"></td>
               <td>
                 <ul class="list-unstyled mb-0">
                   <li>
                     <strong>Year:</strong>
-                    <span th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"></span>
+                    <span
+                      th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"
+                    ></span>
                   </li>
                   <li>
                     <strong>Degree:</strong>
-                    <span th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"></span>
+                    <span
+                      th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"
+                    ></span>
                   </li>
                   <li>
                     <strong>Major:</strong>
-                    <span th:text="${#strings.listJoin(project.majorRestriction, ', ')}"></span>
+                    <span
+                      th:text="${#strings.listJoin(project.majorRestriction, ', ')}"
+                    ></span>
                   </li>
                 </ul>
-              </td>              
+              </td>
               <td>
                 <span
                   th:text="${project.status}"
@@ -116,6 +124,7 @@
               </td>
               <td>
                 <a
+                  th:if="${project.status == T(az.edu.ada.SITE.Entity.Project.Status).OPEN}"
                   th:href="@{'/staff/projects/edit/' + ${project.id}}"
                   class="btn btn-outline-primary action-btn"
                 >

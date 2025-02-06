@@ -17,6 +17,20 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleMaxStudentsField();
   typeSelect.addEventListener("change", toggleMaxStudentsField);
 
+  const statusSelect = document.getElementById("status");
+  const editableFields = document.getElementById("editableFields");
+
+  const toggleEditableFields = () => {
+    if (statusSelect.value === "CLOSED") {
+      editableFields.style.display = "none";
+    } else {
+      editableFields.style.display = "block";
+    }
+  };
+
+  toggleEditableFields();
+  statusSelect.addEventListener("change", toggleEditableFields);
+
   function showError(groupName, message) {
     const input = document.querySelector(`input[name='${groupName}']`);
     if (input) {
@@ -85,7 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   titleInput.addEventListener("input", () => {
     if (titleInput.value.length >= titleMax) {
-      showErrorForField("title", "Maximum title length reached. You cannot type more.");
+      showErrorForField(
+        "title",
+        "Maximum title length reached. You cannot type more."
+      );
     } else {
       clearErrorForField("title");
     }
@@ -93,7 +110,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   descriptionInput.addEventListener("input", () => {
     if (descriptionInput.value.length >= descriptionMax) {
-      showErrorForField("description", "Maximum description length reached. You cannot type more.");
+      showErrorForField(
+        "description",
+        "Maximum description length reached. You cannot type more."
+      );
     } else {
       clearErrorForField("description");
     }
@@ -111,14 +131,24 @@ document.addEventListener("DOMContentLoaded", () => {
       hasError = true;
     }
     if (descriptionInput.value.length > descriptionMax) {
-      showErrorForField("description", "Description cannot be greater than 500 characters.");
+      showErrorForField(
+        "description",
+        "Description cannot be greater than 500 characters."
+      );
       hasError = true;
     }
 
-    const groups = ["category", "studyYearRestriction", "degreeRestriction", "majorRestriction"];
+    const groups = [
+      "category",
+      "studyYearRestriction",
+      "degreeRestriction",
+      "majorRestriction",
+    ];
     groups.forEach((group) => {
       clearError(group);
-      if (document.querySelectorAll(`input[name='${group}']:checked`).length === 0) {
+      if (
+        document.querySelectorAll(`input[name='${group}']:checked`).length === 0
+      ) {
         let errorMsg = "";
         switch (group) {
           case "category":

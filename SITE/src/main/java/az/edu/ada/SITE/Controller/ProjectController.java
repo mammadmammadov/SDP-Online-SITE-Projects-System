@@ -84,8 +84,8 @@ public class ProjectController {
     }
 
     @GetMapping("/staff/projects/applicants/{projectId}")
-    public String viewApplicants(@PathVariable Long projectId, @RequestParam(required = false) String searchEmail, 
-                                 Model model, Principal principal) {
+    public String viewApplicants(@PathVariable Long projectId, @RequestParam(required = false) String searchEmail,
+            Model model, Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -116,12 +116,12 @@ public class ProjectController {
         if (searchEmail != null && !searchEmail.isBlank()) {
             String searchLower = searchEmail.toLowerCase();
             eligibleStudents = eligibleStudents.stream()
-                .filter(student -> student.getEmail().toLowerCase().contains(searchLower))
-                .collect(Collectors.toList());
-        }               
+                    .filter(student -> student.getEmail().toLowerCase().contains(searchLower))
+                    .collect(Collectors.toList());
+        }
 
         model.addAttribute("project", project);
-        model.addAttribute("eligibleStudents", eligibleStudents);        
+        model.addAttribute("eligibleStudents", eligibleStudents);
         model.addAttribute("project", project);
         model.addAttribute("applicants", pendingApplicants);
         return "applicants";
@@ -159,6 +159,15 @@ public class ProjectController {
         }
 
         projectService.saveProject(project);
+
+        List<Project> allProjects = projectService.getAllProjects();
+        for (Project p : allProjects) {
+            if (!p.getId().equals(project.getId()) && p.getRequestedStudents().contains(student)) {
+                p.getRequestedStudents().remove(student);
+                projectService.saveProject(p);
+            }
+        }
+
         redirectAttributes.addFlashAttribute("successMessage", "Student accepted successfully.");
         return "redirect:/staff/projects/applicants/" + projectId;
     }
@@ -202,12 +211,7 @@ public class ProjectController {
             RedirectAttributes redirectAttributes) {
         String email = principal.getName();
         Student student = studentService.getStudentByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Student not found"));
-
-        if (student.isAccepted()) {
-            redirectAttributes.addFlashAttribute("message", "You are already accepted into a project!");
-            return "redirect:/student/projects";
-        }
+                .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
 
         long pendingCount = projectService.getAllProjects().stream()
                 .filter(p -> p.getRequestedStudents().contains(student))
@@ -284,6 +288,10 @@ public class ProjectController {
 
         if (!project.getSupervisor().equals(loggedInStaff)) {
             return "redirect:/staff/projects?error=You are not authorized to edit this project";
+        }
+
+        if (project.getStatus() != Project.Status.OPEN) {
+            return "redirect:/staff/projects?error=Closed projects cannot be edited";
         }
 
         model.addAttribute("category", List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
