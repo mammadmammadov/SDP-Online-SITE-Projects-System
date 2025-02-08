@@ -16,43 +16,13 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         List<Project> findBySupervisor(Staff supervisor);
 
         @Query("SELECT p FROM Project p WHERE p.supervisor.id = :staffId")
-        List<Project> findProjectsByStaffId(@Param("staffId") Long staffId);
-
-        @Query("SELECT p FROM Project p WHERE p.supervisor.id = :staffId")
         Page<Project> findProjectsByStaffId(@Param("staffId") Long staffId, Pageable pageable);
 
         @Query("SELECT p FROM Project p WHERE " +
                         "(:category IS NULL OR :category = '' OR :category MEMBER OF p.category) AND " +
-                        "(:keywords IS NULL OR LOWER(p.objectives) LIKE LOWER(CONCAT('%', :keywords, '%'))) AND " +
-                        "(:supervisorName IS NULL OR LOWER(p.supervisor.name) LIKE LOWER(CONCAT('%', :supervisorName, '%'))) AND "
-                        +
-                        "(:supervisorSurname IS NULL OR LOWER(p.supervisor.surname) LIKE LOWER(CONCAT('%', :supervisorSurname, '%'))) AND "
-                        +
-                        "p.status = 'OPEN'")
-        List<Project> findByFilters(
-                        @Param("category") String category,
-                        @Param("keywords") String keywords,
-                        @Param("supervisorName") String supervisorName,
-                        @Param("supervisorSurname") String supervisorSurname);
-
-        @Query("SELECT p FROM Project p WHERE " +
-                        "(:category IS NULL OR :category = '' OR :category MEMBER OF p.category) AND " +
-                        "(:keywords IS NULL OR LOWER(p.objectives) LIKE LOWER(CONCAT('%', :keywords, '%'))) AND " +
-                        "(:supervisorName IS NULL OR LOWER(p.supervisor.name) LIKE LOWER(CONCAT('%', :supervisorName, '%'))) AND "
-                        +
-                        "(:supervisorSurname IS NULL OR LOWER(p.supervisor.surname) LIKE LOWER(CONCAT('%', :supervisorSurname, '%'))) AND "
-                        +
-                        "p.status = 'OPEN'")
-        Page<Project> findByFilters(
-                        @Param("category") String category,
-                        @Param("keywords") String keywords,
-                        @Param("supervisorName") String supervisorName,
-                        @Param("supervisorSurname") String supervisorSurname,
-                        Pageable pageable);
-
-        @Query("SELECT p FROM Project p WHERE " +
-                        "(:category IS NULL OR :category = '' OR :category MEMBER OF p.category) AND " +
-                        "(:keywords IS NULL OR LOWER(p.objectives) LIKE LOWER(CONCAT('%', :keywords, '%'))) AND " +
+                        "(:keywords IS NULL OR LOWER(p.objectives) LIKE LOWER(CONCAT('%', :keywords, '%')) " +
+                        " OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keywords, '%')) " +
+                        " OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keywords, '%'))) AND " +
                         "(:supervisorName IS NULL OR LOWER(p.supervisor.name) LIKE LOWER(CONCAT('%', :supervisorName, '%'))) AND "
                         +
                         "(:supervisorSurname IS NULL OR LOWER(p.supervisor.surname) LIKE LOWER(CONCAT('%', :supervisorSurname, '%'))) AND "

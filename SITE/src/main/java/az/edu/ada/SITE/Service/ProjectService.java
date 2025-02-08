@@ -41,22 +41,8 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public List<Project> getProjectsByStaffId(Long staffId) {
-        return projectRepository.findProjectsByStaffId(staffId);
-    }
-
     public Page<Project> getProjectsByStaffId(Long staffId, Pageable pageable) {
         return projectRepository.findProjectsByStaffId(staffId, pageable);
-    }
-
-    public List<Project> getProjectsByFilters(String category, String keywords, String supervisorName,
-            String supervisorSurname) {
-        return projectRepository.findByFilters(category, keywords, supervisorName, supervisorSurname);
-    }
-
-    public Page<Project> getProjectsByFilters(String category, String keywords, String supervisorName,
-            String supervisorSurname, Pageable pageable) {
-        return projectRepository.findByFilters(category, keywords, supervisorName, supervisorSurname, pageable);
     }
 
     public void addStudentToProject(Student student, Project project) {
