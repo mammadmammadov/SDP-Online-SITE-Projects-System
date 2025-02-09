@@ -174,3 +174,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/data/subcategories.json')
+        .then(response => response.json())
+        .then(subcategoriesData => {
+            document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const category = this.dataset.category;
+                    const subcategoriesContainer = this.closest('.category-group').querySelector('.subcategories-container');
+
+                    if (this.checked) {
+                        const subcategories = subcategoriesData[category] || [];
+                        subcategoriesContainer.innerHTML = subcategories.map(sub => `
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="subcategories"
+                                       id="sub-${sub.replace(/\s+/g, '-')}"
+                                       value="${sub}">
+                                <label class="form-check-label" for="sub-${sub.replace(/\s+/g, '-')}">
+                                    ${sub}
+                                </label>
+                            </div>
+                        `).join('');
+                        subcategoriesContainer.style.display = 'block';
+                    } else {
+                        subcategoriesContainer.innerHTML = '';
+                        subcategoriesContainer.style.display = 'none';
+                    }
+                });
+            });
+        })
+        .catch(error => console.error('Error loading subcategories:', error));
+});
+

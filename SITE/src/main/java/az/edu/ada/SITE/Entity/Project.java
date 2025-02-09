@@ -80,6 +80,11 @@ public class Project {
     @JoinTable(name = "project_requests", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> requestedStudents = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "project_subcategories", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "subcategory")
+    private List<String> subcategories;
+
     public enum ApplicationStatus {
         PENDING, ACCEPTED, REJECTED
     }

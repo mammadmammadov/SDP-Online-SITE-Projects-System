@@ -162,3 +162,106 @@ document.getElementById("projectForm").addEventListener("submit", function (even
         errors.forEach(error => showError(error.id, error.message));
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/data/subcategories.json')
+        .then(response => response.json())
+        .then(subcategoriesData => {
+            document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const category = this.dataset.category;
+                    const subcategoriesContainer = this.closest('.category-group').querySelector('.subcategories-container');
+
+                    if (this.checked) {
+
+                        const subcategories = subcategoriesData[category] || [];
+                        subcategoriesContainer.innerHTML = subcategories.map(sub => `
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="subcategories"
+                                       id="sub-${sub.replace(/\s+/g, '-')}"
+                                       value="${sub}">
+                                <label class="form-check-label" for="sub-${sub.replace(/\s+/g, '-')}">
+                                    ${sub}
+                                </label>
+                            </div>
+                        `).join('');
+                        subcategoriesContainer.style.display = 'block';
+                    } else {
+
+                        subcategoriesContainer.innerHTML = '';
+                        subcategoriesContainer.style.display = 'none';
+                    }
+                });
+            });
+        })
+        .catch(error => console.error('Error loading subcategories:', error));
+});
+
+fetch('/data/subcategories.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      const container = document.getElementById("categoriesContainer");
+
+
+      for (const category in data) {
+        if (data.hasOwnProperty(category)) {
+          const categoryGroup = document.createElement('div');
+          categoryGroup.className = "category-group mb-2";
+
+          const label = document.createElement('label');
+          label.className = "form-check form-check-inline";
+
+          const input = document.createElement('input');
+          input.type = "checkbox";
+          input.className = "form-check-input category-checkbox";
+          input.name = "category";
+          input.value = category;
+          input.setAttribute('data-category', category);
+          label.appendChild(input);
+
+          const span = document.createElement('span');
+          span.className = "form-check-label";
+          span.textContent = category;
+          label.appendChild(span);
+
+          categoryGroup.appendChild(label);
+
+          const subContainer = document.createElement('div');
+          subContainer.className = "subcategories-container ms-4";
+          subContainer.style.display = "none";
+
+          data[category].forEach(sub => {
+            const subLabel = document.createElement('label');
+            subLabel.className = "form-check form-check-inline me-2";
+
+            const subInput = document.createElement('input');
+            subInput.type = "checkbox";
+            subInput.className = "form-check-input subcategory-checkbox";
+            subInput.name = "subcategory";
+            subInput.value = sub;
+            subLabel.appendChild(subInput);
+
+            const subSpan = document.createElement('span');
+            subSpan.className = "form-check-label";
+            subSpan.textContent = sub;
+            subLabel.appendChild(subSpan);
+
+            subContainer.appendChild(subLabel);
+          });
+          categoryGroup.appendChild(subContainer);
+          container.appendChild(categoryGroup);
+
+          input.addEventListener('change', function() {
+            subContainer.style.display = this.checked ? "block" : "none";
+          });
+        }
+      }
+    })
+    .catch(err => console.error('Error loading categories:', err));
