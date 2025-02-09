@@ -135,13 +135,25 @@
       </div>
       <div class="mt-5">
         <h5 class="mb-3">List of Eligible Students to Add</h5>
-        <form th:action="@{'/staff/projects/applicants/' + ${project.id}}" method="get" class="d-flex mb-3">
-          <input type="text" name="searchEmail" class="form-control me-2" placeholder="Enter email..." 
-                 th:value="${searchEmail}" />
+        <form
+          th:action="@{'/staff/projects/applicants/' + ${project.id}}"
+          method="get"
+          class="d-flex mb-3"
+        >
+          <input
+            type="text"
+            name="searchEmail"
+            class="form-control me-2"
+            placeholder="Enter email..."
+            th:value="${searchEmail}"
+          />
           <input type="hidden" name="projectId" th:value="${project.id}" />
           <button type="submit" class="btn btn-primary">Search</button>
         </form>
-        <div th:if="${#lists.isEmpty(eligibleStudents)}" class="alert alert-secondary">
+        <div
+          th:if="${#lists.isEmpty(eligibleStudents)}"
+          class="alert alert-secondary"
+        >
           No students found.
         </div>
         <table
@@ -171,7 +183,10 @@
                     Add
                   </a>
                 </div>
-                <div th:if="${project.students.contains(student)}" class="text-muted">
+                <div
+                  th:if="${project.students.contains(student)}"
+                  class="text-muted"
+                >
                   Already in project
                 </div>
               </td>

@@ -79,14 +79,12 @@ body {
   color: #ffc107;
 }
 
-
 .card-text.description {
   display: -webkit-box;
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 
 .join-btn {
   transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -97,11 +95,9 @@ body {
   color: #fff;
 }
 
-
 footer {
   font-size: 0.9rem;
 }
-
 
 :root {
   --primary-color: #2c3e50;
@@ -112,9 +108,9 @@ footer {
 }
 
 .card-text.description {
-        font-size: 0.85rem;
-        display: -webkit-box;
-        line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
+  font-size: 0.85rem;
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
