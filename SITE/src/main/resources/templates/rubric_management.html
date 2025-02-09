@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Rubric Management</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/rubric_management.css">
+</head>
+<body>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Rubric Management: <span th:text="${project.title}"></span></h2>
+    <a th:href="@{'/staff/projects'}" class="btn btn-secondary">
+      <i class="fas fa-arrow-left me-2"></i>Back to Projects
+    </a>
+  </div>
+
+  <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+    <span th:text="${successMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Current Rubrics</h5>
+    </div>
+    <div class="card-body">
+      <div class="progress mb-3 weightage-progress"
+           data-total-weightage="${totalWeightage}">
+        <div class="progress-bar" role="progressbar"
+             th:style="'width: ' + ${totalWeightage} + '%;'"
+             th:classappend="${totalWeightage == 100} ? 'bg-success' : 'bg-warning'">
+          <span th:text="${#numbers.formatDecimal(totalWeightage, 1, 1)} + '%'"></span>
+        </div>
+      </div>
+
+
+      <table class="table table-hover criteria-table">
+        <thead>
+        <tr>
+          <th>Criteria</th>
+          <th>Weightage</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="rubric : ${rubrics}">
+          <td th:text="${rubric.criteria}"></td>
+          <td th:text="${#numbers.formatDecimal(rubric.weightage, 1, 1)} + '%'"></td>
+          <td>
+            <a th:href="@{'/staff/projects/rubrics/delete/' + ${rubric.id}}"
+               class="btn btn-danger btn-sm"
+               onclick="return confirm('Are you sure you want to delete this rubric item?')">
+              <i class="fas fa-trash"></i>
+            </a>
+          </td>
+        </tr>
+        <tr th:if="${rubrics.isEmpty()}">
+          <td colspan="3" class="text-center text-muted">No rubrics defined yet</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-info text-white">
+      <h5 class="mb-0">Add New Rubric Item</h5>
+    </div>
+    <div class="card-body">
+      <form th:action="@{'/staff/projects/rubrics/save/' + ${project.id}}" method="post">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="criteria" class="form-label">Criteria</label>
+            <input type="text" class="form-control" id="criteria"
+                   name="criteria" required th:field="*{newRubric.criteria}">
+          </div>
+          <div class="col-md-4">
+            <label for="weightage" class="form-label">Weightage (%)</label>
+            <input type="number" class="form-control" id="weightage"
+                   name="weightage" step="0.1" min="0" max="100" required
+                   th:field="*{newRubric.weightage}">
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-success w-100">
+              <i class="fas fa-plus me-2"></i>Add
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+   document.querySelector('form').addEventListener('submit', function(e) {
+        const currentTotal = parseFloat([[${totalWeightage}]]);
+        const newWeightage = parseFloat(document.getElementById('weightage').value);
+
+        if (currentTotal + newWeightage > 100) {
+            alert('Total weightage cannot exceed 100%. Current total: ' + currentTotal + '%');
+            e.preventDefault();
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -62,4 +62,8 @@ public class ProjectService {
                 student.getMajor(),
                 pageable);
     }
+
+    public Optional<Project> getProjectByIdWithRubrics(Long id) {
+        return projectRepository.findByIdWithRubrics(id);
+    }
 }

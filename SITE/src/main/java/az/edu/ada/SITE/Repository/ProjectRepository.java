@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
@@ -17,6 +18,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
         @Query("SELECT p FROM Project p WHERE p.supervisor.id = :staffId")
         Page<Project> findProjectsByStaffId(@Param("staffId") Long staffId, Pageable pageable);
+
+        @Query("SELECT p FROM Project p LEFT JOIN FETCH p.rubrics WHERE p.id = :id")
+        Optional<Project> findByIdWithRubrics(Long id);
 
         @Query("SELECT p FROM Project p WHERE " +
                         "(:category IS NULL OR :category = '' OR :category MEMBER OF p.category) AND " +

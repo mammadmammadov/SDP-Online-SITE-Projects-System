@@ -85,6 +85,9 @@ public class Project {
     @Column(name = "subcategory")
     private List<String> subcategories;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Rubric> rubrics = new ArrayList<>();
+
     public enum ApplicationStatus {
         PENDING, ACCEPTED, REJECTED
     }

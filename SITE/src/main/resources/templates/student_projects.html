@@ -1,331 +1,356 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
+<head>
     <title>Available Projects - ADA University</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     />
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap"
-      rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap"
+            rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/student_projects.css" />
-  </head>
-  <body>
-    <div class="container my-4">
-      <header
-        class="d-flex justify-content-between align-items-center mb-4 header"
-      >
+    <link rel="stylesheet" href="/css/student_projects.css"/>
+</head>
+<body>
+<div class="container my-4">
+    <header
+            class="d-flex justify-content-between align-items-center mb-4 header"
+    >
         <div class="d-flex align-items-center">
-          <img
-            src="/images/ada_logo.png"
-            alt="University Logo"
-            class="logo me-3"
-          />
-          <h4 class="mb-0 fw-normal">
-            Student Portal:
-            <span
-              th:text="${studentName}"
-              class="fw-semibold text-primary"
-            ></span>
-          </h4>
+            <img
+                    src="/images/ada_logo.png"
+                    alt="University Logo"
+                    class="logo me-3"
+            />
+            <h4 class="mb-0 fw-normal">
+                Student Portal:
+                <span
+                        th:text="${studentName}"
+                        class="fw-semibold text-primary"
+                ></span>
+            </h4>
         </div>
         <nav>
-          <a th:href="@{/student/welcome}" class="btn btn-outline-primary">
-            <i class="fas fa-arrow-left me-2"></i>Home
-          </a>
+            <a th:href="@{/student/welcome}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>Home
+            </a>
         </nav>
-      </header>
+    </header>
 
-      <div
-        th:if="${message != null}"
-        class="alert alert-success alert-dismissible fade show"
-        role="alert"
-      >
+    <div
+            th:if="${message != null}"
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+    >
         <i class="fas fa-check-circle me-2"></i>
         <span th:text="${message}"></span>
         <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-        ></button>
-      </div>
-
-      <div class="card mb-4 shadow-sm filter-card">
-        <div class="card-body">
-          <h5 class="card-title mb-3">
-            <i class="fas fa-filter me-2 text-primary"></i>Search Filters
-          </h5>
-          <form th:action="@{/student/projects}" method="get">
-            <div class="row g-3">
-              <div class="col-md-3">
-                <select class="form-select" id="category" name="category">
-                  <option value="">All Categories</option>
-                  <option
-                    th:each="cat : ${category}"
-                    th:value="${cat}"
-                    th:text="${cat}"
-                    th:selected="${selectedCategory != null and selectedCategory == cat}"
-                  ></option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="keywords"
-                  name="keywords"
-                  placeholder="Keywords"
-                  th:value="${keywords}"
-                />
-              </div>
-              <div class="col-md-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="supervisorName"
-                  name="supervisorName"
-                  placeholder="Supervisor First Name"
-                  th:value="${supervisorName}"
-                />
-              </div>
-              <div class="col-md-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="supervisorSurname"
-                  name="supervisorSurname"
-                  placeholder="Supervisor Last Name"
-                  th:value="${supervisorSurname}"
-                />
-              </div>
-              <div class="col-md-12 text-end">
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-search me-2"></i>Search Projects
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        <div class="col" th:each="project : ${projects}">
-          <div class="card h-100 project-card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="fas fa-project-diagram me-2 text-secondary"></i>
-                <span th:text="${project.title}"></span>
-              </h5>
-              <p
-                class="card-text description text-muted"
-                th:text="${project.description}"
-              ></p>
-              <p>
-                <strong>Supervisor:</strong>
-                <span
-                  th:text="${project.supervisor.name} + ' ' + ${project.supervisor.surname}"
-                ></span>
-              </p>
-            </div>
-            <div class="card-footer text-end bg-transparent border-top-0">
-              <a
-                th:if="${#lists.contains(project.students, student)}"
-                class="btn btn-success btn-sm disabled"
-              >
-                <i class="fas fa-check-circle me-2"></i>Accepted
-              </a>
-              <a
-                th:if="${!#lists.contains(project.students, student) and #lists.contains(project.requestedStudents, student)}"
-                class="btn btn-secondary btn-sm disabled"
-              >
-                <i class="fas fa-clock me-2"></i>Pending
-              </a>
-              <a
-                th:if="${(project.type.name() == 'INDIVIDUAL' and project.students.size() >= 1) or (project.type.name() == 'GROUP' and project.students.size() >= project.maxStudents)}"
-                class="btn btn-danger btn-sm disabled"
-              >
-                <i class="fas fa-ban me-2"></i>FULL
-              </a>
-              <a
-                th:if="${!( (project.type.name() == 'INDIVIDUAL' and project.students.size() >= 1) or (project.type.name() == 'GROUP' and project.students.size() >= project.maxStudents) ) and !#lists.contains(project.students, student) and !#lists.contains(project.requestedStudents, student)}"
-                th:href="@{${student.accepted} ? '#' : '/student/projects/join/' + ${project.id}}"
-                class="btn btn-outline-primary btn-sm join-btn"
-                th:classappend="${student.accepted} ? ' disabled' : ''"
-                th:disabled="${student.accepted}"
-              >
-                <i class="fas fa-user-plus me-2"></i>
-                <span
-                  th:text="${student.accepted} ? 'Already Accepted' : 'Join'"
-                ></span>
-              </a>
-            </div>
-            <div class="card-footer text-end bg-transparent border-top-0">
-              <button
                 type="button"
-                class="btn btn-outline-primary btn-sm"
-                data-bs-toggle="modal"
-                th:attr="data-bs-target='#projectModal-' + ${project.id}"
-              >
-                <i class="fas fa-info-circle me-2"></i>View Details
-              </button>
-            </div>
-          </div>
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+        ></button>
+    </div>
 
-          <div
-            class="modal fade"
-            th:id="'projectModal-' + ${project.id}"
-            tabindex="-1"
-            th:attr="aria-labelledby='projectModalLabel-' + ${project.id}"
-            aria-hidden="true"
-          >
-            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5
-                    class="modal-title"
-                    th:id="'projectModalLabel-' + ${project.id}"
-                  >
-                    <i class="fas fa-project-diagram me-2"></i>
-                    <span th:text="${project.title}"></span>
-                  </h5>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
+    <div class="card mb-4 shadow-sm filter-card">
+        <div class="card-body">
+            <h5 class="card-title mb-3">
+                <i class="fas fa-filter me-2 text-primary"></i>Search Filters
+            </h5>
+            <form th:action="@{/student/projects}" method="get">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <select class="form-select" id="category" name="category">
+                            <option value="">All Categories</option>
+                            <option
+                                    th:each="cat : ${category}"
+                                    th:value="${cat}"
+                                    th:text="${cat}"
+                                    th:selected="${selectedCategory != null and selectedCategory == cat}"
+                            ></option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="keywords"
+                                name="keywords"
+                                placeholder="Keywords"
+                                th:value="${keywords}"
+                        />
+                    </div>
+                    <div class="col-md-3">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="supervisorName"
+                                name="supervisorName"
+                                placeholder="Supervisor First Name"
+                                th:value="${supervisorName}"
+                        />
+                    </div>
+                    <div class="col-md-3">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="supervisorSurname"
+                                name="supervisorSurname"
+                                placeholder="Supervisor Last Name"
+                                th:value="${supervisorSurname}"
+                        />
+                    </div>
+                    <div class="col-md-12 text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Search Projects
+                        </button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                  <p>
-                    <strong>Description:</strong>
-                    <span th:text="${project.description}"></span>
-                  </p>
+            </form>
+        </div>
+    </div>
 
-                  <div class="mb-3">
-                    <strong>Objectives:</strong>
-                    <div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" th:each="project : ${projects}">
+            <div class="card h-100 project-card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-project-diagram me-2 text-secondary"></i>
+                        <span th:text="${project.title}"></span>
+                    </h5>
+                    <p
+                            class="card-text description text-muted"
+                            th:text="${project.description}"
+                    ></p>
+                    <p>
+                        <strong>Supervisor:</strong>
+                        <span
+                                th:text="${project.supervisor.name} + ' ' + ${project.supervisor.surname}"
+                        ></span>
+                    </p>
+                </div>
+                <div class="card-footer text-end bg-transparent border-top-0">
+                    <a
+                            th:if="${#lists.contains(project.students, student)}"
+                            class="btn btn-success btn-sm disabled"
+                    >
+                        <i class="fas fa-check-circle me-2"></i>Accepted
+                    </a>
+                    <a
+                            th:if="${!#lists.contains(project.students, student) and #lists.contains(project.requestedStudents, student)}"
+                            class="btn btn-secondary btn-sm disabled"
+                    >
+                        <i class="fas fa-clock me-2"></i>Pending
+                    </a>
+                    <a
+                            th:if="${(project.type.name() == 'INDIVIDUAL' and project.students.size() >= 1) or (project.type.name() == 'GROUP' and project.students.size() >= project.maxStudents)}"
+                            class="btn btn-danger btn-sm disabled"
+                    >
+                        <i class="fas fa-ban me-2"></i>FULL
+                    </a>
+                    <a
+                            th:if="${!( (project.type.name() == 'INDIVIDUAL' and project.students.size() >= 1) or (project.type.name() == 'GROUP' and project.students.size() >= project.maxStudents) ) and !#lists.contains(project.students, student) and !#lists.contains(project.requestedStudents, student)}"
+                            th:href="@{${student.accepted} ? '#' : '/student/projects/join/' + ${project.id}}"
+                            class="btn btn-outline-primary btn-sm join-btn"
+                            th:classappend="${student.accepted} ? ' disabled' : ''"
+                            th:disabled="${student.accepted}"
+                    >
+                        <i class="fas fa-user-plus me-2"></i>
+                        <span
+                                th:text="${student.accepted} ? 'Already Accepted' : 'Join'"
+                        ></span>
+                    </a>
+                </div>
+                <div class="card-footer text-end bg-transparent border-top-0">
+                    <button
+                            type="button"
+                            class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal"
+                            th:attr="data-bs-target='#projectModal-' + ${project.id}"
+                    >
+                        <i class="fas fa-info-circle me-2"></i>View Details
+                    </button>
+                </div>
+            </div>
+
+            <div
+                    class="modal fade"
+                    th:id="'projectModal-' + ${project.id}"
+                    tabindex="-1"
+                    th:attr="aria-labelledby='projectModalLabel-' + ${project.id}"
+                    aria-hidden="true"
+            >
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5
+                                    class="modal-title"
+                                    th:id="'projectModalLabel-' + ${project.id}"
+                            >
+                                <i class="fas fa-project-diagram me-2"></i>
+                                <span th:text="${project.title}"></span>
+                            </h5>
+                            <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                <strong>Description:</strong>
+                                <span th:text="${project.description}"></span>
+                            </p>
+
+                            <div class="mb-3">
+                                <strong>Objectives:</strong>
+                                <div>
                       <span
-                        th:each="obj : ${#strings.arraySplit(project.objectives, ',')}"
-                        class="objective-badge"
+                              th:each="obj : ${#strings.arraySplit(project.objectives, ',')}"
+                              class="objective-badge"
                       >
                         <i class="fas fa-hashtag me-1"></i>
                         <span th:text="${obj.trim()}"></span>
                       </span>
-                    </div>
-                  </div>
+                                </div>
+                            </div>
 
-                  <div class="mb-3">
-                    <strong>Research Focus:</strong>
-                    <div class="category-list">
+                            <div class="mb-3">
+                                <strong>Research Focus:</strong>
+                                <div class="category-list">
                       <span
-                        th:each="cat: ${project.researchFocus}"
-                        class="category-badge"
-                        th:text="${cat}"
+                              th:each="cat: ${project.researchFocus}"
+                              class="category-badge"
+                              th:text="${cat}"
                       ></span>
-                    </div>
-                  </div>
+                                </div>
+                            </div>
 
-                  <div class="mb-3">
-                    <strong>Category:</strong>
-                    <div class="category-list">
+                            <div class="mb-3">
+                                <strong>Category:</strong>
+                                <div class="category-list">
                       <span
-                        th:each="cat: ${project.category}"
-                        class="category-badge"
-                        th:text="${cat}"
+                              th:each="cat: ${project.category}"
+                              class="category-badge"
+                              th:text="${cat}"
                       ></span>
-                    </div>
-                  </div>
+                                </div>
+                            </div>
 
-                  <div class="mb-3">
-                    <strong>Supervisor:</strong>
-                    <span
-                      th:text="${project.supervisor.name} + ' ' + ${project.supervisor.surname}"
-                    ></span>
-                  </div>
+                            <div class="mb-3">
+                                <strong>Supervisor:</strong>
+                                <span
+                                        th:text="${project.supervisor.name} + ' ' + ${project.supervisor.surname}"
+                                ></span>
+                            </div>
 
-                  <div class="mb-3">
-                    <strong>Restrictions:</strong>
-                    <div class="mt-2">
-                      <div class="restriction-item">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Study Year: </span>
-                        <span
-                          th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"
-                        ></span>
-                      </div>
-                      <div class="restriction-item">
-                        <i class="fas fa-mortar-board"></i>
-                        <span>Degree: </span>
-                        <span
-                          th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"
-                        ></span>
-                      </div>
-                      <div class="restriction-item">
-                        <i class="fas fa-book"></i>
-                        <span>Major: </span>
-                        <span
-                          th:text="${#strings.listJoin(project.majorRestriction, ', ')}"
-                        ></span>
-                      </div>
+                            <div class="mb-3">
+                                <strong>Restrictions:</strong>
+                                <div class="mt-2">
+                                    <div class="restriction-item">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>Study Year: </span>
+                                        <span
+                                                th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"
+                                        ></span>
+                                    </div>
+                                    <div class="restriction-item">
+                                        <i class="fas fa-mortar-board"></i>
+                                        <span>Degree: </span>
+                                        <span
+                                                th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"
+                                        ></span>
+                                    </div>
+                                    <div class="restriction-item">
+                                        <i class="fas fa-book"></i>
+                                        <span>Major: </span>
+                                        <span
+                                                th:text="${#strings.listJoin(project.majorRestriction, ', ')}"
+                                        ></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <strong>Grading Rubric:</strong>
+                                <div th:if="${not #lists.isEmpty(project.rubrics)}" class="mt-2">
+                                    <div class="progress mb-3" style="height: 25px;">
+                                        <div class="progress-bar" role="progressbar"
+                                             th:style="'width: ' + ${#aggregates.sum(project.rubrics.![weightage])} + '%;'"
+                                             th:classappend="${#aggregates.sum(project.rubrics.![weightage]) == 100} ? 'bg-success' : 'bg-warning'">
+                                            <span th:text="${#aggregates.sum(project.rubrics.![weightage])} + '% Total Weightage'"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="rubric-criteria">
+                                        <div th:each="rubric : ${project.rubrics}"
+                                             class="mb-2 d-flex justify-content-between">
+                                            <span th:text="${rubric.criteria}" class="fw-medium"></span>
+                                            <span th:text="${#numbers.formatDecimal(rubric.weightage, 1, 1)} + '%'"
+                                                  class="badge bg-primary rounded-pill"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:if="${#lists.isEmpty(project.rubrics)}" class="text-muted">
+                                    No grading rubric available yet
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-      <div class="d-flex justify-content-center mt-4">
-        <nav>
-          <ul class="pagination">
-            <li
-              class="page-item"
-              th:classappend="${currentPage == 0} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{/student/projects(page=${currentPage - 1})}"
-                >Previous</a
-              >
-            </li>
-            <li
-              class="page-item"
-              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-              th:classappend="${i == currentPage} ? 'active'"
-            >
-              <a
-                class="page-link"
-                th:href="@{/student/projects(page=${i})}"
-                th:text="${i + 1}"
-                >1</a
-              >
-            </li>
-            <li
-              class="page-item"
-              th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{/student/projects(page=${currentPage + 1})}"
-                >Next</a
-              >
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <footer class="mt-5 text-center text-secondary">
-        <small>&copy; 2025 ADA University</small>
-      </footer>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+    <div class="d-flex justify-content-center mt-4">
+        <nav>
+            <ul class="pagination">
+                <li
+                        class="page-item"
+                        th:classappend="${currentPage == 0} ? 'disabled'"
+                >
+                    <a
+                            class="page-link"
+                            th:href="@{/student/projects(page=${currentPage - 1})}"
+                    >Previous</a
+                    >
+                </li>
+                <li
+                        class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'"
+                >
+                    <a
+                            class="page-link"
+                            th:href="@{/student/projects(page=${i})}"
+                            th:text="${i + 1}"
+                    >1</a
+                    >
+                </li>
+                <li
+                        class="page-item"
+                        th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+                >
+                    <a
+                            class="page-link"
+                            th:href="@{/student/projects(page=${currentPage + 1})}"
+                    >Next</a
+                    >
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <footer class="mt-5 text-center text-secondary">
+        <small>&copy; 2025 ADA University</small>
+    </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
