@@ -9,7 +9,6 @@ import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
 import az.edu.ada.SITE.Entity.Rubric;
 import az.edu.ada.SITE.Service.RubricService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
