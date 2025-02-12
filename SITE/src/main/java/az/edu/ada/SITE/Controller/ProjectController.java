@@ -30,7 +30,7 @@ public class ProjectController {
     private final RubricService rubricService;
 
     public ProjectController(ProjectService projectService, UserRepository userRepository,
-                             StudentService studentService, RubricService rubricService) {
+            StudentService studentService, RubricService rubricService) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.studentService = studentService;
@@ -39,11 +39,11 @@ public class ProjectController {
 
     @GetMapping("/student/projects")
     public String viewProjects(@RequestParam(required = false) String category,
-                               @RequestParam(required = false) String keywords,
-                               @RequestParam(required = false) String supervisorName,
-                               @RequestParam(required = false) String supervisorSurname,
-                               @RequestParam(defaultValue = "0") int page,
-                               Model model, Principal principal) {
+            @RequestParam(required = false) String keywords,
+            @RequestParam(required = false) String supervisorName,
+            @RequestParam(required = false) String supervisorSurname,
+            @RequestParam(defaultValue = "0") int page,
+            Model model, Principal principal) {
 
         String email = principal.getName();
         Student student = studentService.getStudentByEmail(email)
@@ -74,7 +74,7 @@ public class ProjectController {
 
     @GetMapping("/staff/projects")
     public String viewProjects(Model model, Principal principal,
-                               @RequestParam(defaultValue = "0") int page) {
+            @RequestParam(defaultValue = "0") int page) {
         try {
             String email = principal.getName();
             User user = userRepository.findByEmail(email)
@@ -103,7 +103,7 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/applicants/{projectId}")
     public String viewApplicants(@PathVariable Long projectId, @RequestParam(required = false) String searchEmail,
-                                 Model model, Principal principal) {
+            Model model, Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -147,8 +147,8 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/applicant/accept/{studentId}/{projectId}")
     public String acceptApplicant(@PathVariable Long studentId,
-                                  @PathVariable Long projectId,
-                                  RedirectAttributes redirectAttributes) {
+            @PathVariable Long projectId,
+            RedirectAttributes redirectAttributes) {
         Project project = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
         Student student = studentService.getStudentById(studentId)
@@ -205,8 +205,8 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/remove/{studentId}/{projectId}")
     public String removeAcceptedStudent(@PathVariable Long studentId,
-                                        @PathVariable Long projectId,
-                                        RedirectAttributes redirectAttributes) {
+            @PathVariable Long projectId,
+            RedirectAttributes redirectAttributes) {
         Project project = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
         Student student = studentService.getStudentById(studentId)
@@ -226,7 +226,7 @@ public class ProjectController {
 
     @GetMapping("/student/projects/join/{projectId}")
     public String joinProject(@PathVariable Long projectId, Principal principal,
-                              RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         String email = principal.getName();
         Student student = studentService.getStudentByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
@@ -325,7 +325,7 @@ public class ProjectController {
 
     @PostMapping("/staff/projects/update/{id}")
     public String updateProject(@PathVariable Long id, @ModelAttribute Project project,
-                                RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         Project existingProject = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
@@ -344,6 +344,8 @@ public class ProjectController {
         existingProject.setDegreeRestriction(project.getDegreeRestriction());
         existingProject.setMajorRestriction(project.getMajorRestriction());
         existingProject.setResearchFocus(project.getResearchFocus());
+
+        existingProject.setSubcategories(project.getSubcategories());
 
         projectService.saveProject(existingProject);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
@@ -388,8 +390,8 @@ public class ProjectController {
 
     @PostMapping("/staff/projects/rubrics/save/{projectId}")
     public String saveRubric(@PathVariable Long projectId,
-                             @ModelAttribute("newRubric") Rubric rubric,
-                             RedirectAttributes redirectAttributes) {
+            @ModelAttribute("newRubric") Rubric rubric,
+            RedirectAttributes redirectAttributes) {
         Project project = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
