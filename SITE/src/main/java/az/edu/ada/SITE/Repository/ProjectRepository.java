@@ -1,7 +1,7 @@
 package az.edu.ada.SITE.Repository;
 
+import az.edu.ada.SITE.DTO.StaffDTO;
 import az.edu.ada.SITE.Entity.Project;
-import az.edu.ada.SITE.Entity.Staff;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-        List<Project> findBySupervisor(Staff supervisor);
+        List<Project> findBySupervisor(StaffDTO supervisor);
 
         @Query("SELECT p FROM Project p WHERE p.supervisor.id = :staffId")
         Page<Project> findProjectsByStaffId(@Param("staffId") Long staffId, Pageable pageable);

@@ -83,13 +83,13 @@ public class Project {
     @ElementCollection
     @CollectionTable(name = "project_subcategories", joinColumns = @JoinColumn(name = "project_id"))
     @Column(name = "subcategory")
-    private List<String> subcategories;
+    private List<String> subcategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rubric> rubrics = new ArrayList<>();
 
     public enum ApplicationStatus {
-        PENDING, ACCEPTED, REJECTED
+        PENDING, ACCEPTED
     }
 
     @Column
@@ -122,13 +122,11 @@ public class Project {
     }
 
     public void addAcceptedStudent(Student student) {
-        if (this.students == null) {
+        if (this.students == null)
             this.students = new ArrayList<>();
-        }
         this.students.add(student);
         student.setAccepted(true);
         this.requestedStudents.remove(student);
-        this.appStatus = ApplicationStatus.ACCEPTED;
     }
 
     public void removeStudent(Student student) {

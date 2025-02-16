@@ -1,8 +1,7 @@
 package az.edu.ada.SITE.Service;
 
-import az.edu.ada.SITE.Entity.Project;
-import az.edu.ada.SITE.Entity.Student;
-import az.edu.ada.SITE.Repository.StudentRepository;
+import az.edu.ada.SITE.DTO.ProjectDTO;
+import az.edu.ada.SITE.DTO.StudentDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,33 +9,14 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StudentService {
-  private final StudentRepository studentRepository;
-  private final ProjectService projectService;
+public interface StudentService {
+  Optional<StudentDTO> getStudentById(Long id);
 
-  public StudentService(StudentRepository studentRepository, ProjectService projectService) {
-    this.studentRepository = studentRepository;
-    this.projectService = projectService;
-  }
+  StudentDTO saveStudent(StudentDTO studentDTO);
 
-  public Optional<Student> getStudentById(Long id) {
-    return studentRepository.findById(id);
-  }
+  Optional<StudentDTO> getStudentByEmail(String email);
 
-  public Student saveStudent(Student student) {
-    return studentRepository.save(student);
-  }
+  void addStudentToProject(StudentDTO studentDTO, ProjectDTO project);
 
-  public Optional<Student> getStudentByEmail(String email) {
-    return studentRepository.findByEmail(email);
-  }
-
-  public void addStudentToProject(Student student, Project project) {
-    project.addStudent(student);
-    projectService.saveProject(project);
-  }
-
-  public List<Student> getAllStudents() {
-    return studentRepository.findAll();
-  }
+  List<StudentDTO> getAllStudents();
 }

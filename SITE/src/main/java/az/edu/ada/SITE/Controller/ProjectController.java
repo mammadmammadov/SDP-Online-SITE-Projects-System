@@ -1,9 +1,13 @@
 package az.edu.ada.SITE.Controller;
 
+import az.edu.ada.SITE.DTO.ProjectDTO;
+import az.edu.ada.SITE.DTO.StudentDTO;
 import az.edu.ada.SITE.Entity.Project;
 import az.edu.ada.SITE.Entity.Staff;
 import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Entity.User;
+import az.edu.ada.SITE.Mapper.ProjectMapper;
+import az.edu.ada.SITE.Mapper.StudentMapper;
 import az.edu.ada.SITE.Repository.UserRepository;
 import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
@@ -46,20 +50,20 @@ public class ProjectController {
             Model model, Principal principal) {
 
         String email = principal.getName();
-        Student student = studentService.getStudentByEmail(email)
+        StudentDTO studentDTO = studentService.getStudentByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
 
         if (page < 0)
             page = 0;
         var pageable = org.springframework.data.domain.PageRequest.of(page, 4);
-        var projectPage = projectService.getEligibleProjectsForStudent(student, category, keywords, supervisorName,
+        var projectPage = projectService.getEligibleProjectsForStudent(studentDTO, category, keywords, supervisorName,
                 supervisorSurname, pageable);
 
         List<String> categories = List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
                 "Data Science", "Networks", "Web Development", "Software Development");
 
-        model.addAttribute("student", student);
-        model.addAttribute("studentName", student.getName() + " " + student.getSurname());
+        model.addAttribute("student", studentDTO);
+        model.addAttribute("studentName", studentDTO.getName() + " " + studentDTO.getSurname());
         model.addAttribute("projects", projectPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", projectPage.getTotalPages());
@@ -113,34 +117,35 @@ public class ProjectController {
         }
         Staff staff = (Staff) user;
 
-        Project project = projectService.getProjectById(projectId)
+        ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
-        if (!project.getSupervisor().equals(staff)) {
+        if (!projectDTO.getSupervisor().equals(staff)) {
             return "redirect:/staff/projects?error=You are not authorized to view applicants for this project";
         }
 
-        List<Student> pendingApplicants = project.getRequestedStudents().stream()
-                .filter(student -> !student.isAccepted())
+        List<Student> pendingApplicants = projectDTO.getRequestedStudents().stream()
+                .filter(studentDTO -> !studentDTO.isAccepted())
+                .map(StudentMapper.INSTANCE::studentDTOtoStudent)
                 .collect(Collectors.toList());
 
-        List<Student> eligibleStudents = studentService.getAllStudents().stream()
-                .filter(student -> !student.isAccepted())
-                .filter(student -> project.getStudyYearRestriction().contains(student.getStudyYear()))
-                .filter(student -> project.getDegreeRestriction().contains(student.getDegree()))
-                .filter(student -> project.getMajorRestriction().contains(student.getMajor()))
+        List<StudentDTO> eligibleStudents = studentService.getAllStudents().stream()
+                .filter(studentDTO -> !studentDTO.isAccepted())
+                .filter(studentDTO -> projectDTO.getStudyYearRestriction().contains(studentDTO.getStudyYear()))
+                .filter(studentDTO -> projectDTO.getDegreeRestriction().contains(studentDTO.getDegree()))
+                .filter(studentDTO -> projectDTO.getMajorRestriction().contains(studentDTO.getMajor()))
                 .collect(Collectors.toList());
 
         if (searchEmail != null && !searchEmail.isBlank()) {
             String searchLower = searchEmail.toLowerCase();
             eligibleStudents = eligibleStudents.stream()
-                    .filter(student -> student.getEmail().toLowerCase().contains(searchLower))
+                    .filter(studentDTO -> studentDTO.getEmail().toLowerCase().contains(searchLower))
                     .collect(Collectors.toList());
         }
 
-        model.addAttribute("project", project);
+        model.addAttribute("project", projectDTO);
         model.addAttribute("eligibleStudents", eligibleStudents);
-        model.addAttribute("project", project);
+        model.addAttribute("project", projectDTO);
         model.addAttribute("applicants", pendingApplicants);
         return "applicants";
     }
@@ -149,39 +154,38 @@ public class ProjectController {
     public String acceptApplicant(@PathVariable Long studentId,
             @PathVariable Long projectId,
             RedirectAttributes redirectAttributes) {
-        Project project = projectService.getProjectById(projectId)
+        ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
-        Student student = studentService.getStudentById(studentId)
+        StudentDTO studentDTO = studentService.getStudentById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Student ID"));
 
-        project.getRequestedStudents().remove(student);
+        projectDTO.getRequestedStudents().remove(studentDTO);
 
-        if (project.getType() == Project.ProjectType.INDIVIDUAL) {
-            if (!project.getStudents().isEmpty()) {
+        if (projectDTO.getType() == Project.ProjectType.INDIVIDUAL) {
+            if (!projectDTO.getStudents().isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage",
                         "Individual project already has an accepted student.");
                 return "redirect:/staff/projects/applicants/" + projectId;
             }
         } else {
-            if (project.getStudents().size() >= project.getMaxStudents()) {
+            if (projectDTO.getStudents().size() >= projectDTO.getMaxStudents()) {
                 redirectAttributes.addFlashAttribute("errorMessage",
                         "Group project has reached its maximum number of accepted students.");
                 return "redirect:/staff/projects/applicants/" + projectId;
             }
         }
 
-        if (!project.getStudents().contains(student)) {
-            project.getStudents().add(student);
-            student.setAccepted(true);
-            studentService.saveStudent(student);
+        if (!projectDTO.getStudents().contains(studentDTO)) {
+            projectDTO.getStudents().add(studentDTO);
+            studentDTO.setAccepted(true);
+            studentService.saveStudent(studentDTO);
         }
+        projectService.saveProject(projectDTO);
 
-        projectService.saveProject(project);
-
-        List<Project> allProjects = projectService.getAllProjects();
-        for (Project p : allProjects) {
-            if (!p.getId().equals(project.getId()) && p.getRequestedStudents().contains(student)) {
-                p.getRequestedStudents().remove(student);
+        List<ProjectDTO> allProjects = projectService.getAllProjects();
+        for (ProjectDTO p : allProjects) {
+            if (!p.getId().equals(projectDTO.getId()) && p.getRequestedStudents().contains(studentDTO)) {
+                p.getRequestedStudents().remove(studentDTO);
                 projectService.saveProject(p);
             }
         }
@@ -192,13 +196,13 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/applicant/reject/{studentId}/{projectId}")
     public String rejectApplicant(@PathVariable Long studentId, @PathVariable Long projectId) {
-        Project project = projectService.getProjectById(projectId)
+        ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
-        Student student = studentService.getStudentById(studentId)
+        StudentDTO studentDTO = studentService.getStudentById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Student ID"));
 
-        project.removeStudent(student);
-        projectService.saveProject(project);
+        projectDTO.getRequestedStudents().remove(studentDTO);
+        projectService.saveProject(projectDTO);
 
         return "redirect:/staff/projects/applicants/" + projectId;
     }
@@ -207,16 +211,16 @@ public class ProjectController {
     public String removeAcceptedStudent(@PathVariable Long studentId,
             @PathVariable Long projectId,
             RedirectAttributes redirectAttributes) {
-        Project project = projectService.getProjectById(projectId)
+        ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
-        Student student = studentService.getStudentById(studentId)
+        StudentDTO studentDTO = studentService.getStudentById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Student ID"));
 
-        if (project.getStudents().contains(student)) {
-            project.getStudents().remove(student);
-            student.setAccepted(false);
-            studentService.saveStudent(student);
-            projectService.saveProject(project);
+        if (projectDTO.getStudents().contains(studentDTO)) {
+            projectDTO.getStudents().remove(studentDTO);
+            studentDTO.setAccepted(false);
+            studentService.saveStudent(studentDTO);
+            projectService.saveProject(projectDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Student removed from accepted list successfully.");
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Student is not in the accepted list.");
@@ -228,11 +232,17 @@ public class ProjectController {
     public String joinProject(@PathVariable Long projectId, Principal principal,
             RedirectAttributes redirectAttributes) {
         String email = principal.getName();
-        Student student = studentService.getStudentByEmail(email)
+        StudentDTO studentDTO = studentService.getStudentByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
 
+        if (studentDTO.isAccepted()) {
+            redirectAttributes.addFlashAttribute("message",
+                    "You are already part of a project and cannot apply to others.");
+            return "redirect:/student/projects";
+        }
+
         long pendingCount = projectService.getAllProjects().stream()
-                .filter(p -> p.getRequestedStudents().contains(student))
+                .filter(p -> p.getRequestedStudents().contains(studentDTO))
                 .count();
         if (pendingCount >= 5) {
             redirectAttributes.addFlashAttribute("message",
@@ -240,21 +250,21 @@ public class ProjectController {
             return "redirect:/student/projects";
         }
 
-        Project project = projectService.getProjectById(projectId)
+        ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
-        if (project.getStatus() != Project.Status.OPEN) {
+        if (projectDTO.getStatus() != Project.Status.OPEN) {
             redirectAttributes.addFlashAttribute("message", "Project is not open for applications");
             return "redirect:/student/projects";
         }
 
-        if (project.getStudents().contains(student)) {
+        if (projectDTO.getStudents().contains(studentDTO)) {
             redirectAttributes.addFlashAttribute("message", "You are already part of this project");
-        } else if (project.getRequestedStudents().contains(student)) {
+        } else if (projectDTO.getRequestedStudents().contains(studentDTO)) {
             redirectAttributes.addFlashAttribute("message", "Request already pending");
         } else {
-            project.getRequestedStudents().add(student);
-            projectService.saveProject(project);
+            projectDTO.getRequestedStudents().add(studentDTO);
+            projectService.saveProject(projectDTO);
             redirectAttributes.addFlashAttribute("message", "Join request sent successfully");
         }
 
@@ -268,22 +278,29 @@ public class ProjectController {
     }
 
     @PostMapping("/staff/projects/save")
-    public String saveProject(@ModelAttribute Project project, Principal principal) throws AccessDeniedException {
+    public String saveProject(@ModelAttribute ProjectDTO projectDTO, Principal principal) throws AccessDeniedException {
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         if (user instanceof Staff staff) {
-            project.setSupervisor(staff);
+            projectDTO.setSupervisor(staff);
 
-            if (project.getType() == Project.ProjectType.INDIVIDUAL) {
-                project.setMaxStudents(1);
+            if (projectDTO.getType() == Project.ProjectType.INDIVIDUAL) {
+                projectDTO.setMaxStudents(1);
             } else {
-                if (project.getMaxStudents() == null) {
-                    project.setMaxStudents(2);
+                if (projectDTO.getMaxStudents() == null) {
+                    projectDTO.setMaxStudents(2);
                 }
             }
 
-            projectService.saveProject(project);
+            if (projectDTO.getStatus() == null) {
+                projectDTO.setStatus(Project.Status.OPEN);
+            }
+            if (projectDTO.getAppStatus() == null) {
+                projectDTO.setAppStatus(Project.ApplicationStatus.PENDING);
+            }
+
+            projectService.saveProject(projectDTO);
             return "redirect:/staff/projects";
         } else {
             throw new AccessDeniedException("You are not authorized to create projects");
@@ -301,14 +318,14 @@ public class ProjectController {
         }
         Staff loggedInStaff = (Staff) user;
 
-        Project project = projectService.getProjectById(id)
+        ProjectDTO projectDTO = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID: " + id));
 
-        if (!project.getSupervisor().equals(loggedInStaff)) {
+        if (!projectDTO.getSupervisor().equals(loggedInStaff)) {
             return "redirect:/staff/projects?error=You are not authorized to edit this project";
         }
 
-        if (project.getStatus() != Project.Status.OPEN) {
+        if (projectDTO.getStatus() != Project.Status.OPEN) {
             return "redirect:/staff/projects?error=Closed projects cannot be edited";
         }
 
@@ -319,33 +336,33 @@ public class ProjectController {
         model.addAttribute("majors", List.of("Information Technologies", "Computer Science", "Computer Engineering",
                 "Electrical Engineering"));
 
-        model.addAttribute("project", project);
+        model.addAttribute("project", projectDTO);
         return "edit_project";
     }
 
     @PostMapping("/staff/projects/update/{id}")
-    public String updateProject(@PathVariable Long id, @ModelAttribute Project project,
+    public String updateProject(@PathVariable Long id, @ModelAttribute ProjectDTO projectDTO,
             RedirectAttributes redirectAttributes) {
-        Project existingProject = projectService.getProjectById(id)
+        ProjectDTO existingProject = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
-        existingProject.setTitle(project.getTitle());
-        existingProject.setDescription(project.getDescription());
-        existingProject.setObjectives(project.getObjectives());
-        existingProject.setType(project.getType());
-        existingProject.setStatus(project.getStatus());
-        if (project.getType() == Project.ProjectType.INDIVIDUAL) {
+        existingProject.setTitle(projectDTO.getTitle());
+        existingProject.setDescription(projectDTO.getDescription());
+        existingProject.setObjectives(projectDTO.getObjectives());
+        existingProject.setType(projectDTO.getType());
+        existingProject.setStatus(projectDTO.getStatus());
+        if (projectDTO.getType() == Project.ProjectType.INDIVIDUAL) {
             existingProject.setMaxStudents(1);
         } else {
-            existingProject.setMaxStudents(project.getMaxStudents());
+            existingProject.setMaxStudents(projectDTO.getMaxStudents());
         }
-        existingProject.setCategory(project.getCategory());
-        existingProject.setStudyYearRestriction(project.getStudyYearRestriction());
-        existingProject.setDegreeRestriction(project.getDegreeRestriction());
-        existingProject.setMajorRestriction(project.getMajorRestriction());
-        existingProject.setResearchFocus(project.getResearchFocus());
+        existingProject.setCategory(projectDTO.getCategory());
+        existingProject.setStudyYearRestriction(projectDTO.getStudyYearRestriction());
+        existingProject.setDegreeRestriction(projectDTO.getDegreeRestriction());
+        existingProject.setMajorRestriction(projectDTO.getMajorRestriction());
+        existingProject.setResearchFocus(projectDTO.getResearchFocus());
 
-        existingProject.setSubcategories(project.getSubcategories());
+        existingProject.setSubcategories(projectDTO.getSubcategories());
 
         projectService.saveProject(existingProject);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
@@ -360,8 +377,8 @@ public class ProjectController {
     }
 
     @GetMapping("/toggle-status/{id}")
-    public String toggleProjectStatus(@PathVariable Long id) {
-        projectService.toggleProjectStatus(id);
+    public String toggleProjectStatus(@PathVariable ProjectDTO projectDTO) {
+        projectService.toggleProjectStatus(projectDTO);
         return "redirect:/staff/projects";
     }
 
@@ -371,17 +388,17 @@ public class ProjectController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        Project project = projectService.getProjectById(projectId)
+        ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
-        if (!(user instanceof Staff) || !project.getSupervisor().equals(user)) {
+        if (!(user instanceof Staff) || !projectDTO.getSupervisor().equals(user)) {
             return "redirect:/staff/projects?error=Unauthorized access";
         }
 
         List<Rubric> rubrics = rubricService.getRubricsByProjectId(projectId);
         double totalWeightage = rubrics.stream().mapToDouble(Rubric::getWeightage).sum();
 
-        model.addAttribute("project", project);
+        model.addAttribute("project", projectDTO);
         model.addAttribute("rubrics", rubrics);
         model.addAttribute("newRubric", new Rubric());
         model.addAttribute("totalWeightage", totalWeightage);
@@ -392,8 +409,10 @@ public class ProjectController {
     public String saveRubric(@PathVariable Long projectId,
             @ModelAttribute("newRubric") Rubric rubric,
             RedirectAttributes redirectAttributes) {
-        Project project = projectService.getProjectById(projectId)
+        ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+
+        Project project = ProjectMapper.INSTANCE.projectDTOtoProject(projectDTO);
 
         rubric.setProject(project);
         rubricService.saveRubric(rubric);

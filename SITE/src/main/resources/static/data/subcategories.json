@@ -11,9 +11,24 @@
     "Software Architecture",
     "Other"
   ],
-  "Cybersecurity": ["Network Security", "Cryptography", "Ethical Hacking"],
-  "Data Science": ["Big Data", "Data Visualization", "Statistical Analysis"],
-  "Networks": ["Network Design", "Cloud Networking", "Wireless Communication"],
+  "Cybersecurity": [
+    "Network Security",
+    "Cryptography",
+    "Ethical Hacking",
+    "Other"
+  ],
+  "Data Science": [
+    "Big Data",
+    "Data Visualization",
+    "Statistical Analysis",
+    "Other"
+  ],
+  "Networks": [
+    "Network Design",
+    "Cloud Networking",
+    "Wireless Communication",
+    "Other"
+  ],
   "Web Development": [
     "Frontend Development",
     "Backend Development",
