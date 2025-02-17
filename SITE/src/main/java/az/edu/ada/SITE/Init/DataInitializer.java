@@ -64,6 +64,7 @@ public class DataInitializer implements CommandLineRunner {
 
                         Project project1 = new Project();
                         project1.setCategory(List.of("Artificial Intelligence"));
+                        project1.setSubcategories(List.of("Machine Learning", "Natural Language Processing"));
                         project1.setTitle("AI Research Project");
                         project1.setDescription(
                                         "A project focused on artificial intelligence research, exploring new algorithms.");
@@ -83,6 +84,7 @@ public class DataInitializer implements CommandLineRunner {
 
                         Project project2 = new Project();
                         project2.setCategory(List.of("Web Development"));
+                        project2.setSubcategories(List.of("Frontend Development", "Full Stack"));
                         project2.setTitle("Web Development Research Project");
                         project2.setDescription(
                                         "A project focused on Web Development research, exploring new algorithms.");
@@ -102,6 +104,7 @@ public class DataInitializer implements CommandLineRunner {
 
                         Project project3 = new Project();
                         project3.setCategory(List.of("Data Science"));
+                        project3.setSubcategories(List.of("Big Data"));
                         project3.setTitle("Big Data Analytics Project");
                         project3.setDescription(
                                         "A project aimed at analyzing large datasets to extract meaningful insights and patterns.");
@@ -120,6 +123,7 @@ public class DataInitializer implements CommandLineRunner {
 
                         Project project4 = new Project();
                         project4.setCategory(List.of("Cybersecurity"));
+                        project4.setSubcategories(List.of("Network Security"));
                         project4.setTitle("Network Security Assessment");
                         project4.setDescription(
                                         "A project focused on evaluating and improving the security of network infrastructures.");
@@ -138,6 +142,7 @@ public class DataInitializer implements CommandLineRunner {
 
                         Project project5 = new Project();
                         project5.setCategory(List.of("Software Engineering"));
+                        project5.setSubcategories(List.of("DevOps"));
                         project5.setTitle("Agile Development of Web Application");
                         project5.setDescription(
                                         "A project to develop a web application using agile methodologies and best practices.");
