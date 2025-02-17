@@ -41,6 +41,88 @@ public class ProjectController {
         this.rubricService = rubricService;
     }
 
+    @GetMapping("/admin/students")
+    public String showStudents(Model model) {
+        List<Student> students = userRepository.findAll().stream()
+                .filter(user -> user instanceof Student)
+                .map(user -> (Student) user)
+                .collect(Collectors.toList());
+
+        model.addAttribute("students", students);
+        return "admin_students";
+    }
+
+    @GetMapping("/admin/staff")
+    public String showStaff(Model model) {
+        List<Staff> staff_members = userRepository.findAll().stream()
+                .filter(user -> user instanceof Staff)
+                .map(user -> (Staff) user)
+                .collect(Collectors.toList());
+
+        model.addAttribute("staff", staff_members);
+        return "admin_staff";
+    }
+
+    @GetMapping("/admin/projects")
+    public String showProjects(Model model) {
+        List<ProjectDTO> projects = projectService.getAllProjects();
+        model.addAttribute("projects", projects);
+        return "admin_projects";
+    }
+
+    @GetMapping("/admin/projects/delete/{id}")
+    public String deleteProjectAdmin(@PathVariable Long id) {
+        projectService.deleteProject(id);
+        return "redirect:/admin/projects";
+    }
+
+    @GetMapping("/admin/projects/edit/{id}")
+    public String editProjectFormAdmin(@PathVariable Long id, Model model, Principal principal) {
+
+        ProjectDTO projectDTO = projectService.getProjectById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID: " + id));
+
+        model.addAttribute("category", List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
+                "Data Science", "Networks", "Web Development", "Software Development"));
+        model.addAttribute("studyYears", List.of("Freshman", "Sophomore", "Junior", "Senior"));
+        model.addAttribute("degrees", List.of("Undergraduate", "Graduate"));
+        model.addAttribute("majors", List.of("Information Technologies", "Computer Science", "Computer Engineering",
+                "Electrical Engineering"));
+
+        model.addAttribute("project", projectDTO);
+        return "edit_project_admin";
+    }
+
+    @PostMapping("/admin/projects/update/{id}")
+    public String updateProjectAdmin(@PathVariable Long id, @ModelAttribute ProjectDTO projectDTO,
+            RedirectAttributes redirectAttributes) {
+        ProjectDTO existingProject = projectService.getProjectById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+
+        existingProject.setTitle(projectDTO.getTitle());
+        existingProject.setDescription(projectDTO.getDescription());
+        existingProject.setObjectives(projectDTO.getObjectives());
+        existingProject.setType(projectDTO.getType());
+        existingProject.setStatus(projectDTO.getStatus());
+        if (projectDTO.getType() == Project.ProjectType.INDIVIDUAL) {
+            existingProject.setMaxStudents(1);
+        } else {
+            existingProject.setMaxStudents(projectDTO.getMaxStudents());
+        }
+        existingProject.setCategory(projectDTO.getCategory());
+        existingProject.setStudyYearRestriction(projectDTO.getStudyYearRestriction());
+        existingProject.setDegreeRestriction(projectDTO.getDegreeRestriction());
+        existingProject.setMajorRestriction(projectDTO.getMajorRestriction());
+        existingProject.setResearchFocus(projectDTO.getResearchFocus());
+
+        existingProject.setSubcategories(projectDTO.getSubcategories());
+
+        projectService.saveProject(existingProject);
+        redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
+
+        return "redirect:/admin/projects";
+    }
+
     @GetMapping("/student/projects")
     public String viewProjects(@RequestParam(required = false) String category,
             @RequestParam(required = false) String keywords,
@@ -432,5 +514,4 @@ public class ProjectController {
         redirectAttributes.addFlashAttribute("successMessage", "Rubric deleted successfully");
         return "redirect:/staff/projects/rubrics/" + projectId;
     }
-
 }
