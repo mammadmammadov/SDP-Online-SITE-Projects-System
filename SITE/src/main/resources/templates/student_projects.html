@@ -291,6 +291,24 @@
                   </div>
 
                   <div class="mb-3">
+                    <strong>Project Files:</strong>
+                    <div class="category-list">
+                      <ul class="list-unstyled">
+                        <li th:each="deliverable : ${project.deliverables}">
+                          <a
+                            th:href="@{'/download/' + ${deliverable.filePath}}"
+                            th:text="${deliverable.name}"
+                            target="_blank"
+                            class="btn btn-outline-primary btn-sm"
+                          >
+                            <i class="fas fa-download me-2"></i>Download
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
                     <strong>Grading Rubric:</strong>
                     <div
                       th:if="${not #lists.isEmpty(project.rubrics)}"

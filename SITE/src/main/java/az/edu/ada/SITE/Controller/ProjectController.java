@@ -2,26 +2,41 @@ package az.edu.ada.SITE.Controller;
 
 import az.edu.ada.SITE.DTO.ProjectDTO;
 import az.edu.ada.SITE.DTO.StudentDTO;
+import az.edu.ada.SITE.Entity.Deliverable;
 import az.edu.ada.SITE.Entity.Project;
 import az.edu.ada.SITE.Entity.Staff;
 import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Entity.User;
 import az.edu.ada.SITE.Mapper.ProjectMapper;
 import az.edu.ada.SITE.Mapper.StudentMapper;
+import az.edu.ada.SITE.Repository.ProjectRepository;
 import az.edu.ada.SITE.Repository.UserRepository;
 import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
 import az.edu.ada.SITE.Entity.Rubric;
 import az.edu.ada.SITE.Service.RubricService;
+
+import org.hibernate.Hibernate;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,15 +45,19 @@ public class ProjectController {
     private final ProjectService projectService;
     private final UserRepository userRepository;
     private final StudentService studentService;
-
+    private final ProjectMapper projectMapper;
     private final RubricService rubricService;
+    private final ProjectRepository projectRepository;
 
     public ProjectController(ProjectService projectService, UserRepository userRepository,
-            StudentService studentService, RubricService rubricService) {
+            StudentService studentService, RubricService rubricService, ProjectMapper projectMapper,
+            ProjectRepository projectRepository) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.studentService = studentService;
         this.rubricService = rubricService;
+        this.projectMapper = projectMapper;
+        this.projectRepository = projectRepository;
     }
 
     @GetMapping("/admin/students")
@@ -140,6 +159,10 @@ public class ProjectController {
         var pageable = org.springframework.data.domain.PageRequest.of(page, 4);
         var projectPage = projectService.getEligibleProjectsForStudent(studentDTO, category, keywords, supervisorName,
                 supervisorSurname, pageable);
+
+        projectPage.getContent().forEach(project -> {
+            Hibernate.initialize(project.getDeliverables());
+        });
 
         List<String> categories = List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
                 "Data Science", "Networks", "Web Development", "Software Development");
@@ -360,32 +383,87 @@ public class ProjectController {
     }
 
     @PostMapping("/staff/projects/save")
-    public String saveProject(@ModelAttribute ProjectDTO projectDTO, Principal principal) throws AccessDeniedException {
+    public String saveProject(@ModelAttribute ProjectDTO projectDTO,
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
+            Principal principal,
+            RedirectAttributes redirectAttributes) throws Exception {
+        Path uploadDir = Paths.get("uploads");
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (user instanceof Staff staff) {
-            projectDTO.setSupervisor(staff);
+        if (!(user instanceof Staff)) {
+            throw new AccessDeniedException("You are not authorized to create projects");
+        }
+        Staff staff = (Staff) user;
+        projectDTO.setSupervisor(staff);
 
-            if (projectDTO.getType() == Project.ProjectType.INDIVIDUAL) {
-                projectDTO.setMaxStudents(1);
-            } else {
-                if (projectDTO.getMaxStudents() == null) {
-                    projectDTO.setMaxStudents(2);
+        if (projectDTO.getType() == Project.ProjectType.INDIVIDUAL) {
+            projectDTO.setMaxStudents(1);
+        } else {
+            if (projectDTO.getMaxStudents() == null) {
+                projectDTO.setMaxStudents(2);
+            }
+        }
+        if (projectDTO.getStatus() == null) {
+            projectDTO.setStatus(Project.Status.OPEN);
+        }
+        if (projectDTO.getAppStatus() == null) {
+            projectDTO.setAppStatus(Project.ApplicationStatus.PENDING);
+        }
+
+        if (files != null && files.length > 0) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty() && !file.getOriginalFilename().toLowerCase().endsWith(".pdf")) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Only PDF files are allowed.");
+                    return "redirect:/staff/projects/new";
                 }
             }
+        }
 
-            if (projectDTO.getStatus() == null) {
-                projectDTO.setStatus(Project.Status.OPEN);
-            }
-            if (projectDTO.getAppStatus() == null) {
-                projectDTO.setAppStatus(Project.ApplicationStatus.PENDING);
-            }
+        ProjectDTO savedProjectDTO = projectService.saveProject(projectDTO);
+        Project savedProject = projectMapper.projectDTOtoProject(savedProjectDTO);
 
-            projectService.saveProject(projectDTO);
-            return "redirect:/staff/projects";
-        } else {
-            throw new AccessDeniedException("You are not authorized to create projects");
+        if (files != null && files.length > 0) {
+            List<Deliverable> deliverables = new ArrayList<>();
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                    Path filePath = uploadDir.resolve(uniqueFileName);
+                    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                    Deliverable deliverable = new Deliverable();
+                    deliverable.setName(file.getOriginalFilename());
+                    deliverable.setFilePath(uniqueFileName);
+                    deliverable.setProject(savedProject);
+                    deliverables.add(deliverable);
+                }
+            }
+            savedProject.getDeliverables().addAll(deliverables);
+            projectRepository.save(savedProject);
+        }
+
+        return "redirect:/staff/projects";
+    }
+
+    @GetMapping("/download/{filename:.+}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get("uploads").resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION,
+                                "attachment; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

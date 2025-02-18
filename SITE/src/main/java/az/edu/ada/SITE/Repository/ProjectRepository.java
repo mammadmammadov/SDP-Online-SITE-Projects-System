@@ -4,6 +4,7 @@ import az.edu.ada.SITE.DTO.StaffDTO;
 import az.edu.ada.SITE.Entity.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,7 +23,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         @Query("SELECT p FROM Project p LEFT JOIN FETCH p.rubrics WHERE p.id = :id")
         Optional<Project> findByIdWithRubrics(Long id);
 
-        @Query("SELECT p FROM Project p WHERE " +
+        @EntityGraph(attributePaths = { "deliverables" })
+        @Query("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.deliverables WHERE " +
                         "(:category IS NULL OR :category = '' OR :category MEMBER OF p.category) AND " +
                         "(:keywords IS NULL OR LOWER(p.objectives) LIKE LOWER(CONCAT('%', :keywords, '%')) " +
                         " OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keywords, '%')) " +
@@ -44,4 +46,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
                         @Param("degree") String degree,
                         @Param("major") String major,
                         Pageable pageable);
+
 }

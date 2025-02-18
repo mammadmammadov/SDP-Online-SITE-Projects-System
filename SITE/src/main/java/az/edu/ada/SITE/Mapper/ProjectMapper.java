@@ -10,15 +10,15 @@ import org.mapstruct.factory.Mappers;
 import az.edu.ada.SITE.DTO.ProjectDTO;
 import az.edu.ada.SITE.Entity.Project;
 
-@Mapper(componentModel = "spring", uses = { StudentMapper.class })
+@Mapper(componentModel = "spring", uses = { StudentMapper.class, DeliverableMapper.class })
 public interface ProjectMapper {
   ProjectMapper INSTANCE = Mappers.getMapper(ProjectMapper.class);
 
-  @Mapping(source = "id", target = "id")
+  @Mapping(target = "deliverables", source = "deliverables")
   ProjectDTO projectToProjectDTO(Project project);
 
-  @Mapping(source = "id", target = "id")
-  Project projectDTOtoProject(ProjectDTO projctDTO);
+  @Mapping(target = "deliverables", source = "deliverables")
+  Project projectDTOtoProject(ProjectDTO projectDTO);
 
   default List<ProjectDTO> projectListToProjectDTOList(List<Project> projectList) {
     return projectList.stream()

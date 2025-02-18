@@ -146,6 +146,10 @@ public class ProjectServiceImpl implements ProjectService {
         category, keywords, supervisorName, supervisorSurname,
         student.getStudyYear(), student.getDegree(), student.getMajor(), pageable);
 
+    projectsPage.getContent().forEach(project -> {
+      project.getDeliverables().size();
+    });
+
     List<ProjectDTO> projectDTOs = projectMapper.projectListToProjectDTOList(projectsPage.getContent());
 
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());

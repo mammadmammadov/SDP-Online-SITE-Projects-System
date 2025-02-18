@@ -36,7 +36,7 @@ public class ProjectDTO {
   private List<String> subcategories = new ArrayList<>();
   private List<Rubric> rubrics = new ArrayList<>();
   private ApplicationStatus appStatus;
-  private List<Deliverable> deliverables = new ArrayList<>();
+  private List<DeliverableDTO> deliverables = new ArrayList<>();
 
   public ProjectDTO() {
   }
@@ -47,7 +47,7 @@ public class ProjectDTO {
       Status status, Integer maxStudents, Staff supervisor, List<StudentDTO> students,
       List<StudentDTO> requestedStudents,
       List<String> subcategories, List<Rubric> rubrics, ApplicationStatus appStatus,
-      List<Deliverable> deliverables) {
+      List<DeliverableDTO> deliverables) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -78,8 +78,12 @@ public class ProjectDTO {
         .map(StudentMapper.INSTANCE::studentDTOtoStudent)
         .collect(Collectors.toList());
 
+    List<Deliverable> deliverableEntities = this.deliverables.stream()
+        .map(DeliverableDTO::toDeliverable)
+        .collect(Collectors.toList());
+
     return new Project(id, title, description, objectives, type, keywords, researchFocus,
         category, studyYearRestriction, degreeRestriction, majorRestriction, status, maxStudents, supervisor,
-        acceptedStudents, pendingStudents, subcategories, rubrics, appStatus, deliverables);
+        acceptedStudents, pendingStudents, subcategories, rubrics, appStatus, deliverableEntities);
   }
 }
