@@ -174,6 +174,100 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  const deleteBtns = document.querySelectorAll(".delete-existing");
+
+  deleteBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const deliverableId = btn.getAttribute("data-file-id");
+      const deliverableName = btn.getAttribute("data-file-name");
+
+      if (!deliverableName) {
+        alert("File name not found!");
+        return;
+      }
+
+      if (confirm(`Are you sure you want to delete the file: ${deliverableName}?`)) {
+        fetch(`/staff/projects/delete-file/${deliverableId}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+        })
+          .then(response => {
+            if (!response.ok) {
+              return response.text().then(text => { throw new Error(text); });
+            }
+            return response.text();
+          })
+          .then(message => {
+            console.log("Success:", message);
+            btn.closest("li").remove(); 
+          })
+          .catch(error => {
+            console.error("Error:", error);
+            alert(`An error occurred: ${error.message}`);
+          });
+      }
+    });
+  });
+
+  function getProjectIdFromURL() {
+    const urlParts = window.location.pathname.split("/"); 
+    const editIndex = urlParts.indexOf("edit"); 
+    if (editIndex !== -1 && urlParts.length > editIndex + 1) {
+      return urlParts[editIndex + 1];
+    }
+    return null; 
+  }
+
+  document.getElementById("fileInput").addEventListener("change", function () {
+    const files = this.files;
+    const newFileList = document.getElementById("newFileList");
+
+    Array.from(files).forEach((file) => {
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex justify-content-between align-items-center";
+      li.innerHTML = `${file.name} 
+          <button type="button" class="btn btn-sm btn-success upload-file" data-file-name="${file.name}">
+              <i class="bi bi-upload"></i>
+          </button>`;
+
+      newFileList.appendChild(li);
+
+      li.querySelector(".upload-file").addEventListener("click", function () {
+        uploadFile(file, li);
+      });
+    });
+  });
+
+  function uploadFile(file, listItem) {
+    const projectId = getProjectIdFromURL();
+    if (!projectId) {
+      console.error("Project ID not found in URL!");
+      alert("Project ID not found. Cannot upload file.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch(`/staff/projects/upload/${projectId}`, {
+      method: "POST",
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          listItem.innerHTML = `${file.name} <span class="text-success">Uploaded</span>`;
+        } else {
+          alert("File upload failed: " + data.message);
+        }
+      })
+      .catch(error => {
+        console.error("Upload error:", error);
+        alert("An error occurred while uploading the file.");
+      });
+  }
+
   fetch("/data/subcategories.json")
     .then((response) => {
       if (!response.ok) {

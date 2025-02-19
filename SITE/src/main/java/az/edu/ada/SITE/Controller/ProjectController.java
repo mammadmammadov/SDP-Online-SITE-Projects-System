@@ -1,5 +1,6 @@
 package az.edu.ada.SITE.Controller;
 
+import az.edu.ada.SITE.DTO.DeliverableDTO;
 import az.edu.ada.SITE.DTO.ProjectDTO;
 import az.edu.ada.SITE.DTO.StudentDTO;
 import az.edu.ada.SITE.Entity.Deliverable;
@@ -7,19 +8,23 @@ import az.edu.ada.SITE.Entity.Project;
 import az.edu.ada.SITE.Entity.Staff;
 import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Entity.User;
+import az.edu.ada.SITE.Mapper.DeliverableMapper;
 import az.edu.ada.SITE.Mapper.ProjectMapper;
 import az.edu.ada.SITE.Mapper.StudentMapper;
 import az.edu.ada.SITE.Repository.ProjectRepository;
 import az.edu.ada.SITE.Repository.UserRepository;
+import az.edu.ada.SITE.Repository.DeliverableRepository;
 import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
 import az.edu.ada.SITE.Entity.Rubric;
 import az.edu.ada.SITE.Service.RubricService;
 
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -28,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +42,8 @@ import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -48,16 +55,21 @@ public class ProjectController {
     private final ProjectMapper projectMapper;
     private final RubricService rubricService;
     private final ProjectRepository projectRepository;
+    private final DeliverableRepository deliverableRepository;
+
+    @Autowired
+    private DeliverableMapper deliverableMapper;
 
     public ProjectController(ProjectService projectService, UserRepository userRepository,
             StudentService studentService, RubricService rubricService, ProjectMapper projectMapper,
-            ProjectRepository projectRepository) {
+            ProjectRepository projectRepository, DeliverableRepository deliverableRepository) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.studentService = studentService;
         this.rubricService = rubricService;
         this.projectMapper = projectMapper;
         this.projectRepository = projectRepository;
+        this.deliverableRepository = deliverableRepository;
     }
 
     @GetMapping("/admin/students")
@@ -431,7 +443,7 @@ public class ProjectController {
             List<Deliverable> deliverables = new ArrayList<>();
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
-                    String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                    String uniqueFileName = file.getOriginalFilename();
                     Path filePath = uploadDir.resolve(uniqueFileName);
                     Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
@@ -502,7 +514,8 @@ public class ProjectController {
 
     @PostMapping("/staff/projects/update/{id}")
     public String updateProject(@PathVariable Long id, @ModelAttribute ProjectDTO projectDTO,
-            RedirectAttributes redirectAttributes) {
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
+            RedirectAttributes redirectAttributes) throws IOException {
         ProjectDTO existingProject = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
@@ -511,24 +524,118 @@ public class ProjectController {
         existingProject.setObjectives(projectDTO.getObjectives());
         existingProject.setType(projectDTO.getType());
         existingProject.setStatus(projectDTO.getStatus());
+
         if (projectDTO.getType() == Project.ProjectType.INDIVIDUAL) {
             existingProject.setMaxStudents(1);
         } else {
             existingProject.setMaxStudents(projectDTO.getMaxStudents());
         }
+
         existingProject.setCategory(projectDTO.getCategory());
         existingProject.setStudyYearRestriction(projectDTO.getStudyYearRestriction());
         existingProject.setDegreeRestriction(projectDTO.getDegreeRestriction());
         existingProject.setMajorRestriction(projectDTO.getMajorRestriction());
         existingProject.setResearchFocus(projectDTO.getResearchFocus());
-
         existingProject.setSubcategories(projectDTO.getSubcategories());
+
+        if (files != null && files.length > 0) {
+            Path uploadDir = Paths.get("uploads");
+
+            List<Deliverable> deliverables = new ArrayList<>();
+
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    String uniqueFileName = file.getOriginalFilename();
+                    Path filePath = uploadDir.resolve(uniqueFileName);
+
+                    if (Files.exists(filePath)) {
+                        redirectAttributes.addFlashAttribute("errorMessage", "A file with this name already exists.");
+                        return "redirect:/staff/projects/edit/" + id;
+                    }
+
+                    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                    Deliverable deliverable = new Deliverable();
+                    deliverable.setName(file.getOriginalFilename());
+                    deliverable.setFilePath(uniqueFileName);
+                    deliverable.setProject(projectMapper.projectDTOtoProject(existingProject)); 
+
+                    deliverables.add(deliverable);
+                }
+            }
+
+            deliverableRepository.saveAll(deliverables);
+
+            List<DeliverableDTO> deliverableDTOs = deliverables.stream()
+                    .map(deliverable -> deliverableMapper.deliverableToDeliverableDTO(deliverable))
+                    .collect(Collectors.toList());
+
+            existingProject.getDeliverables().addAll(deliverableDTOs);
+        }
 
         projectService.saveProject(existingProject);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
 
         return "redirect:/staff/projects";
     }
+
+    @DeleteMapping("/staff/projects/delete-file/{deliverableId}")
+    public ResponseEntity<?> deleteFile(@PathVariable Long deliverableId) {
+        Optional<Deliverable> deliverableOpt = deliverableRepository.findById(deliverableId);
+
+        if (deliverableOpt.isPresent()) {
+            Deliverable deliverable = deliverableOpt.get();
+            Project project = deliverable.getProject();
+
+            Path filePath = Paths.get("uploads").resolve(deliverable.getFilePath());
+            try {
+                Files.deleteIfExists(filePath); 
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Error deleting the file from the server.");
+            }
+
+            project.getDeliverables().remove(deliverable);
+
+            deliverableRepository.delete(deliverable);
+
+            projectRepository.save(project);
+
+            return ResponseEntity.ok().body("File deleted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found.");
+        }
+    }
+
+    @PostMapping("/staff/projects/upload/{id}")
+    public ResponseEntity<?> uploadFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        Optional<Project> projectOpt = projectRepository.findById(id);
+        
+        if (projectOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", "Project not found."));
+        }
+    
+        Project project = projectOpt.get();
+        Path uploadDir = Paths.get("uploads");
+    
+        try {
+            String uniqueFileName = file.getOriginalFilename();
+            Path filePath = uploadDir.resolve(uniqueFileName);
+            
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+    
+            Deliverable deliverable = new Deliverable();
+            deliverable.setName(file.getOriginalFilename());
+            deliverable.setFilePath(uniqueFileName);
+            deliverable.setProject(project);
+            
+            deliverableRepository.save(deliverable);
+    
+            return ResponseEntity.ok(Map.of("success", true, "message", "File uploaded successfully."));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "File upload error."));
+        }
+    }    
 
     @GetMapping("/staff/projects/delete/{id}")
     public String deleteProject(@PathVariable Long id) {
