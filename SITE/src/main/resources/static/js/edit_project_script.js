@@ -224,6 +224,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const newFileList = document.getElementById("newFileList");
 
     Array.from(files).forEach((file) => {
+      if (!file.name.endsWith(".pdf")) {
+        alert("Only PDF files are allowed.");
+        return;
+      }
+
       const li = document.createElement("li");
       li.className = "list-group-item d-flex justify-content-between align-items-center";
       li.innerHTML = `${file.name} 

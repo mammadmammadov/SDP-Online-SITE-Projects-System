@@ -443,7 +443,7 @@ public class ProjectController {
             List<Deliverable> deliverables = new ArrayList<>();
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
-                    String uniqueFileName = file.getOriginalFilename();
+                    String uniqueFileName = "PRJ" + savedProject.getId() + "_" + file.getOriginalFilename();
                     Path filePath = uploadDir.resolve(uniqueFileName);
                     Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
@@ -545,7 +545,7 @@ public class ProjectController {
 
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
-                    String uniqueFileName = file.getOriginalFilename();
+                    String uniqueFileName = "PRJ" + existingProject.getId() + "_" + file.getOriginalFilename();
                     Path filePath = uploadDir.resolve(uniqueFileName);
 
                     if (Files.exists(filePath)) {
@@ -619,7 +619,7 @@ public class ProjectController {
         Path uploadDir = Paths.get("uploads");
     
         try {
-            String uniqueFileName = file.getOriginalFilename();
+            String uniqueFileName = "PRJ" + project.getId() + "_" + file.getOriginalFilename();
             Path filePath = uploadDir.resolve(uniqueFileName);
             
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
