@@ -186,23 +186,27 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      if (confirm(`Are you sure you want to delete the file: ${deliverableName}?`)) {
+      if (
+        confirm(`Are you sure you want to delete the file: ${deliverableName}?`)
+      ) {
         fetch(`/staff/projects/delete-file/${deliverableId}`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           credentials: "same-origin",
         })
-          .then(response => {
+          .then((response) => {
             if (!response.ok) {
-              return response.text().then(text => { throw new Error(text); });
+              return response.text().then((text) => {
+                throw new Error(text);
+              });
             }
             return response.text();
           })
-          .then(message => {
+          .then((message) => {
             console.log("Success:", message);
-            btn.closest("li").remove(); 
+            btn.closest("li").remove();
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("Error:", error);
             alert(`An error occurred: ${error.message}`);
           });
@@ -211,12 +215,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function getProjectIdFromURL() {
-    const urlParts = window.location.pathname.split("/"); 
-    const editIndex = urlParts.indexOf("edit"); 
+    const urlParts = window.location.pathname.split("/");
+    const editIndex = urlParts.indexOf("edit");
     if (editIndex !== -1 && urlParts.length > editIndex + 1) {
       return urlParts[editIndex + 1];
     }
-    return null; 
+    return null;
   }
 
   document.getElementById("fileInput").addEventListener("change", function () {
@@ -230,7 +234,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const li = document.createElement("li");
-      li.className = "list-group-item d-flex justify-content-between align-items-center";
+      li.className =
+        "list-group-item d-flex justify-content-between align-items-center";
       li.innerHTML = `${file.name} 
           <button type="button" class="btn btn-sm btn-success upload-file" data-file-name="${file.name}">
               <i class="bi bi-upload"></i>
@@ -257,17 +262,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetch(`/staff/projects/upload/${projectId}`, {
       method: "POST",
-      body: formData
+      body: formData,
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.success) {
           listItem.innerHTML = `${file.name} <span class="text-success">Uploaded</span>`;
         } else {
           alert("File upload failed: " + data.message);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Upload error:", error);
         alert("An error occurred while uploading the file.");
       });
@@ -348,8 +353,8 @@ document.addEventListener("DOMContentLoaded", () => {
             typeof savedSubcategories !== "undefined" &&
             Array.isArray(savedSubcategories)
           ) {
-            const anySubSaved = data[category].some((sub) =>
-              savedSubcategories.includes(sub)
+            const anySubSaved = data[category].some(
+              (sub) => sub !== "Other" && savedSubcategories.includes(sub)
             );
             if (anySubSaved) {
               categoryCheckbox.checked = true;

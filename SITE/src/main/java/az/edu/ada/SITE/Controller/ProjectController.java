@@ -558,7 +558,7 @@ public class ProjectController {
                     Deliverable deliverable = new Deliverable();
                     deliverable.setName(file.getOriginalFilename());
                     deliverable.setFilePath(uniqueFileName);
-                    deliverable.setProject(projectMapper.projectDTOtoProject(existingProject)); 
+                    deliverable.setProject(projectMapper.projectDTOtoProject(existingProject));
 
                     deliverables.add(deliverable);
                 }
@@ -589,7 +589,7 @@ public class ProjectController {
 
             Path filePath = Paths.get("uploads").resolve(deliverable.getFilePath());
             try {
-                Files.deleteIfExists(filePath); 
+                Files.deleteIfExists(filePath);
             } catch (IOException e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("Error deleting the file from the server.");
@@ -610,32 +610,34 @@ public class ProjectController {
     @PostMapping("/staff/projects/upload/{id}")
     public ResponseEntity<?> uploadFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         Optional<Project> projectOpt = projectRepository.findById(id);
-        
+
         if (projectOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", "Project not found."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Project not found."));
         }
-    
+
         Project project = projectOpt.get();
         Path uploadDir = Paths.get("uploads");
-    
+
         try {
             String uniqueFileName = "PRJ" + project.getId() + "_" + file.getOriginalFilename();
             Path filePath = uploadDir.resolve(uniqueFileName);
-            
+
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-    
+
             Deliverable deliverable = new Deliverable();
             deliverable.setName(file.getOriginalFilename());
             deliverable.setFilePath(uniqueFileName);
             deliverable.setProject(project);
-            
+
             deliverableRepository.save(deliverable);
-    
+
             return ResponseEntity.ok(Map.of("success", true, "message", "File uploaded successfully."));
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "File upload error."));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "File upload error."));
         }
-    }    
+    }
 
     @GetMapping("/staff/projects/delete/{id}")
     public String deleteProject(@PathVariable Long id) {
