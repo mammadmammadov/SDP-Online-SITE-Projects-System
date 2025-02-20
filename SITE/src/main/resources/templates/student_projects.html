@@ -249,9 +249,9 @@
                     <strong>Subcategories:</strong>
                     <div class="category-list">
                       <span
-                        th:each="sub : ${project.subcategories}"
-                        class="badge bg-info me-1"
-                        th:text="${sub}"
+                              th:each="sub : ${project.subcategories}"
+                              class="badge bg-info me-1"
+                              th:text="${#strings.arraySplit(sub, ':')[0]}"
                       ></span>
                     </div>
                   </div>

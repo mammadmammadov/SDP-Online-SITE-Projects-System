@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                   /\s+/g,
                                   "-"
                                 )}">
-                                    ${sub}
+                                    ${sub.split(":")[0]}
                                 </label>
                             </div>
                         `
@@ -271,12 +271,12 @@ fetch("/data/subcategories.json")
           subInput.type = "checkbox";
           subInput.className = "form-check-input subcategory-checkbox";
           subInput.name = "subcategory";
-          subInput.value = sub;
+          subInput.value = sub.split(":")[0];
           subLabel.appendChild(subInput);
 
           const subSpan = document.createElement("span");
           subSpan.className = "form-check-label";
-          subSpan.textContent = sub;
+          subSpan.textContent = sub.split(":")[0];
           subLabel.appendChild(subSpan);
 
           subContainer.appendChild(subLabel);

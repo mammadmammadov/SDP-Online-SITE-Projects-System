@@ -3,42 +3,42 @@
     "Machine Learning",
     "Natural Language Processing",
     "Computer Vision",
-    "Other"
+    "Other:AI"
   ],
   "Software Engineering": [
     "Agile Development",
     "DevOps",
     "Software Architecture",
-    "Other"
+    "Other:SE"
   ],
   "Cybersecurity": [
     "Network Security",
     "Cryptography",
     "Ethical Hacking",
-    "Other"
+    "Other:Cyber"
   ],
   "Data Science": [
     "Big Data",
     "Data Visualization",
     "Statistical Analysis",
-    "Other"
+    "Other:DS"
   ],
   "Networks": [
     "Network Design",
     "Cloud Networking",
     "Wireless Communication",
-    "Other"
+    "Other:Networks"
   ],
   "Web Development": [
     "Frontend Development",
     "Backend Development",
     "Full Stack",
-    "Other"
+    "Other:WD"
   ],
   "Software Development": [
     "Mobile Development",
     "Game Development",
     "Embedded Systems",
-    "Other"
+    "Other:SD"
   ]
 }
