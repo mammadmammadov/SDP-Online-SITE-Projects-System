@@ -69,7 +69,6 @@ function validateInputLimits(inputElement, maxWords, maxChars) {
   inputElement.addEventListener("input", function () {
     let words = this.value.split(/\s+/).filter((word) => word.length > 0);
     let charCount = this.value.length;
-
     if (charCount > maxChars) {
       alert(
         `Maximum character limit is ${maxChars}. Please shorten your text.`
@@ -88,15 +87,12 @@ function updateFileList() {
       dataTransfer.items.add(file);
     }
   });
-
   fileInput.files = dataTransfer.files;
-
   renderFileList();
 }
 
 function renderFileList() {
   fileList.innerHTML = "";
-
   Array.from(dataTransfer.files).forEach((file, index) => {
     const listItem = document.createElement("li");
     listItem.className =
@@ -155,21 +151,18 @@ document
         message: "At least one category must be selected.",
       });
     }
-
     if (!isCheckboxGroupValid("studyYearRestriction")) {
       errors.push({
         id: "studyYearError",
         message: "At least one study year restriction must be selected.",
       });
     }
-
     if (!isCheckboxGroupValid("degreeRestriction")) {
       errors.push({
         id: "degreeError",
         message: "At least one degree restriction must be selected.",
       });
     }
-
     if (!isCheckboxGroupValid("majorRestriction")) {
       errors.push({
         id: "majorError",
@@ -177,9 +170,40 @@ document
       });
     }
 
+    document.querySelectorAll(".category-group").forEach((categoryGroup) => {
+      const categoryCheckbox = categoryGroup.querySelector(
+        "input.category-checkbox"
+      );
+      if (categoryCheckbox && categoryCheckbox.checked) {
+        const subCheckboxes = categoryGroup.querySelectorAll(
+          "input.subcategory-checkbox"
+        );
+        const subChecked = Array.from(subCheckboxes).some((cb) => cb.checked);
+        if (!subChecked) {
+          let errorDiv = categoryGroup.querySelector(".subcategories-error");
+          if (!errorDiv) {
+            errorDiv = document.createElement("div");
+            errorDiv.className = "subcategories-error text-danger";
+            categoryGroup.appendChild(errorDiv);
+          }
+          errorDiv.textContent =
+            "At least one subcategory must be selected for " +
+            categoryCheckbox.value;
+          errors.push({
+            id: categoryCheckbox.value + "_sub",
+            message: "Missing subcategory",
+          });
+        } else {
+          let errorDiv = categoryGroup.querySelector(".subcategories-error");
+          if (errorDiv) {
+            errorDiv.textContent = "";
+          }
+        }
+      }
+    });
+
     if (errors.length > 0) {
       event.preventDefault();
-      errors.forEach((error) => showError(error.id, error.message));
     }
   });
 
@@ -199,20 +223,20 @@ document.addEventListener("DOMContentLoaded", function () {
             subcategoriesContainer.innerHTML = subcategories
               .map(
                 (sub) => `
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       name="subcategories"
-                                       id="sub-${sub.replace(/\s+/g, "-")}"
-                                       value="${sub}">
-                                <label class="form-check-label" for="sub-${sub.replace(
-                                  /\s+/g,
-                                  "-"
-                                )}">
-                                    ${sub.split(":")[0]}
-                                </label>
-                            </div>
-                        `
+                  <div class="form-check">
+                      <input class="form-check-input subcategory-checkbox"
+                             type="checkbox"
+                             name="subcategories"
+                             id="sub-${sub.replace(/\s+/g, "-")}"
+                             value="${sub.split(":")[0]}">
+                      <label class="form-check-label" for="sub-${sub.replace(
+                        /\s+/g,
+                        "-"
+                      )}">
+                          ${sub.split(":")[0]}
+                      </label>
+                  </div>
+                `
               )
               .join("");
             subcategoriesContainer.style.display = "block";
@@ -224,70 +248,69 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     })
     .catch((error) => console.error("Error loading subcategories:", error));
-});
 
-fetch("/data/subcategories.json")
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  })
-  .then((data) => {
-    const container = document.getElementById("categoriesContainer");
-
-    for (const category in data) {
-      if (data.hasOwnProperty(category)) {
-        const categoryGroup = document.createElement("div");
-        categoryGroup.className = "category-group mb-2";
-
-        const label = document.createElement("label");
-        label.className = "form-check form-check-inline";
-
-        const input = document.createElement("input");
-        input.type = "checkbox";
-        input.className = "form-check-input category-checkbox";
-        input.name = "category";
-        input.value = category;
-        input.setAttribute("data-category", category);
-        label.appendChild(input);
-
-        const span = document.createElement("span");
-        span.className = "form-check-label";
-        span.textContent = category;
-        label.appendChild(span);
-
-        categoryGroup.appendChild(label);
-
-        const subContainer = document.createElement("div");
-        subContainer.className = "subcategories-container ms-4";
-        subContainer.style.display = "none";
-
-        data[category].forEach((sub) => {
-          const subLabel = document.createElement("label");
-          subLabel.className = "form-check form-check-inline me-2";
-
-          const subInput = document.createElement("input");
-          subInput.type = "checkbox";
-          subInput.className = "form-check-input subcategory-checkbox";
-          subInput.name = "subcategory";
-          subInput.value = sub.split(":")[0];
-          subLabel.appendChild(subInput);
-
-          const subSpan = document.createElement("span");
-          subSpan.className = "form-check-label";
-          subSpan.textContent = sub.split(":")[0];
-          subLabel.appendChild(subSpan);
-
-          subContainer.appendChild(subLabel);
-        });
-        categoryGroup.appendChild(subContainer);
-        container.appendChild(categoryGroup);
-
-        input.addEventListener("change", function () {
-          subContainer.style.display = this.checked ? "block" : "none";
-        });
+  fetch("/data/subcategories.json")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-    }
-  })
-  .catch((err) => console.error("Error loading categories:", err));
+      return response.json();
+    })
+    .then((data) => {
+      const container = document.getElementById("categoriesContainer");
+      for (const category in data) {
+        if (data.hasOwnProperty(category)) {
+          const categoryGroup = document.createElement("div");
+          categoryGroup.className = "category-group mb-2";
+
+          const label = document.createElement("label");
+          label.className = "form-check form-check-inline";
+
+          const input = document.createElement("input");
+          input.type = "checkbox";
+          input.className = "form-check-input category-checkbox";
+          input.name = "category";
+          input.value = category;
+          input.setAttribute("data-category", category);
+          label.appendChild(input);
+
+          const span = document.createElement("span");
+          span.className = "form-check-label";
+          span.textContent = category;
+          label.appendChild(span);
+
+          categoryGroup.appendChild(label);
+
+          const subContainer = document.createElement("div");
+          subContainer.className = "subcategories-container ms-4";
+          subContainer.style.display = "none";
+
+          data[category].forEach((sub) => {
+            const subLabel = document.createElement("label");
+            subLabel.className = "form-check form-check-inline me-2";
+
+            const subInput = document.createElement("input");
+            subInput.type = "checkbox";
+            subInput.className = "form-check-input subcategory-checkbox";
+            subInput.name = "subcategories";
+            subInput.value = sub.split(":")[0];
+            subLabel.appendChild(subInput);
+
+            const subSpan = document.createElement("span");
+            subSpan.className = "form-check-label";
+            subSpan.textContent = sub.split(":")[0];
+            subLabel.appendChild(subSpan);
+
+            subContainer.appendChild(subLabel);
+          });
+          categoryGroup.appendChild(subContainer);
+          container.appendChild(categoryGroup);
+
+          input.addEventListener("change", function () {
+            subContainer.style.display = this.checked ? "block" : "none";
+          });
+        }
+      }
+    })
+    .catch((err) => console.error("Error loading categories:", err));
+});
