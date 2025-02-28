@@ -2,6 +2,7 @@ package az.edu.ada.SITE.Repository;
 
 import az.edu.ada.SITE.DTO.StaffDTO;
 import az.edu.ada.SITE.Entity.Project;
+import az.edu.ada.SITE.Entity.Staff;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -46,5 +47,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
                         @Param("degree") String degree,
                         @Param("major") String major,
                         Pageable pageable);
+
+        @Query("SELECT p FROM Project p LEFT JOIN p.coSupervisors cosup WHERE p.supervisor = :staff OR cosup = :staff")
+        Page<Project> findProjectsBySupervisorOrCoSupervisor(@Param("staff") Staff staff, Pageable pageable);
+
 
 }

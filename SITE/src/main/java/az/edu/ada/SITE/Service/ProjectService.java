@@ -3,6 +3,7 @@ package az.edu.ada.SITE.Service;
 import az.edu.ada.SITE.DTO.ProjectDTO;
 import az.edu.ada.SITE.DTO.StudentDTO;
 
+import az.edu.ada.SITE.Entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -29,4 +30,6 @@ public interface ProjectService {
             String supervisorName, String supervisorSurname, Pageable pageable);
 
     Optional<ProjectDTO> getProjectByIdWithRubrics(Long id);
+
+    public Page<ProjectDTO> getProjectsSupervisedByUser(User user, Pageable pageable);
 }

@@ -264,6 +264,14 @@
                   </div>
 
                   <div class="mb-3">
+                    <strong>Co-Supervisors:</strong>
+                    <span th:each="coSupervisor, iterStat : ${project.coSupervisors}">
+                            <span th:text="${coSupervisor.name} + ' ' + ${coSupervisor.surname}"></span><th:block th:if="${!iterStat.last}">, </th:block>
+                        </span>
+                    <span th:if="${project.coSupervisors.isEmpty()}">None</span>
+                  </div>
+
+                  <div class="mb-3">
                     <strong>Restrictions:</strong>
                     <div class="mt-2">
                       <div class="restriction-item">

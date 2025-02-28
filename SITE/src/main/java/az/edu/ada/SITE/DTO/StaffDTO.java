@@ -11,24 +11,24 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class StaffDTO extends UserDTO {
-  private String staffId;
-  private String position;
-  private String department;
-  private List<Project> projects = new ArrayList<>();
+    private String staffId;
+    private String position;
+    private String department;
+    private List<Project> projects = new ArrayList<>();
 
-  public StaffDTO() {
+    public StaffDTO() {
 
-  }
+    }
 
-  public StaffDTO(String staffId, String position, String department, List<Project> projects) {
-    this.staffId = staffId;
-    this.position = position;
-    this.department = department;
-    this.projects = projects;
-  }
+    public StaffDTO(String staffId, String position, String department, List<Project> projects) {
+        this.staffId = staffId;
+        this.position = position;
+        this.department = department;
+        this.projects = projects;
+    }
 
-  public Staff toStaff() {
-    return new Staff(staffId, position, department, projects);
-  }
+    public Staff toStaff() {
+        return new Staff(staffId, position, department, projects);
+    }
 
 }

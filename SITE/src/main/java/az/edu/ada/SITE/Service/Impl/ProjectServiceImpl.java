@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import az.edu.ada.SITE.Entity.Staff;
+import az.edu.ada.SITE.Entity.User;
+import az.edu.ada.SITE.Repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +21,7 @@ import az.edu.ada.SITE.Mapper.StudentMapper;
 import az.edu.ada.SITE.Repository.ProjectRepository;
 import az.edu.ada.SITE.Repository.StudentRepository;
 import az.edu.ada.SITE.Service.ProjectService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -25,11 +29,14 @@ public class ProjectServiceImpl implements ProjectService {
   private final ProjectMapper projectMapper;
   private final StudentRepository studentRepository;
 
+  private final UserRepository userRepository;
+
   public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper,
-      StudentRepository studentRepository) {
+      StudentRepository studentRepository, UserRepository userRepository) {
     this.projectRepository = projectRepository;
     this.projectMapper = projectMapper;
     this.studentRepository = studentRepository;
+    this.userRepository = userRepository;
   }
 
   @Override
@@ -69,12 +76,12 @@ public class ProjectServiceImpl implements ProjectService {
       project.setStatus(projectDTO.getStatus());
       project.setMaxStudents(projectDTO.getMaxStudents());
       project.setSupervisor(projectDTO.getSupervisor());
+      project.setCoSupervisors(projectDTO.getCoSupervisors());
       project.setSubcategories(projectDTO.getSubcategories());
       project.setRubrics(project.getRubrics());
       project.setAppStatus(projectDTO.getAppStatus());
       project.setDeliverables(project.getDeliverables());
 
-      // Convert and update requestedStudents
       project.getRequestedStudents().clear();
       if (projectDTO.getRequestedStudents() != null) {
         List<Student> pendingStudents = projectDTO.getRequestedStudents().stream()
@@ -83,7 +90,6 @@ public class ProjectServiceImpl implements ProjectService {
         project.getRequestedStudents().addAll(pendingStudents);
       }
 
-      // Convert and update accepted students
       project.getStudents().clear();
       if (projectDTO.getStudents() != null) {
         List<Student> acceptedStudents = projectDTO.getStudents().stream()
@@ -116,8 +122,15 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public Page<ProjectDTO> getProjectsByStaffId(Long staffId, Pageable pageable) {
-    Page<Project> projectsPage = projectRepository.findProjectsByStaffId(staffId, pageable);
+  public Page<ProjectDTO> getProjectsByStaffId(Long userId, Pageable pageable) {
+
+    Optional<User> userOptional = userRepository.findById(userId);
+    if (!userOptional.isPresent() || !(userOptional.get() instanceof Staff)) {
+      return Page.empty();
+    }
+    Staff staff = (Staff) userOptional.get();
+
+    Page<Project> projectsPage = projectRepository.findProjectsBySupervisorOrCoSupervisor(staff, pageable);
 
     List<ProjectDTO> projectDTOs = projectMapper.projectListToProjectDTOList(projectsPage.getContent());
 
@@ -161,5 +174,30 @@ public class ProjectServiceImpl implements ProjectService {
 
     return projectOptional.map(project -> projectMapper.projectToProjectDTO(project));
   }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Page<ProjectDTO> getProjectsSupervisedByUser(User user, Pageable pageable) {
+    if (!(user instanceof Staff)) {
+      return Page.empty();
+    }
+    Staff staff = (Staff) user;
+    Page<Project> projectsPage = projectRepository.findProjectsBySupervisorOrCoSupervisor(staff, pageable);
+
+    projectsPage.getContent().forEach(project -> {
+      if (project.getSupervisor() != null) {
+        project.getSupervisor().getName();
+      }
+      if (project.getCoSupervisors() != null) {
+        project.getCoSupervisors().size();
+      }
+    });
+
+
+    List<ProjectDTO> projectDTOs = projectMapper.projectListToProjectDTOList(projectsPage.getContent());
+    return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
+  }
+
+
 
 }

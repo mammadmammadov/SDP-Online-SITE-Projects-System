@@ -40,10 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -61,8 +58,8 @@ public class ProjectController {
     private DeliverableMapper deliverableMapper;
 
     public ProjectController(ProjectService projectService, UserRepository userRepository,
-            StudentService studentService, RubricService rubricService, ProjectMapper projectMapper,
-            ProjectRepository projectRepository, DeliverableRepository deliverableRepository) {
+                             StudentService studentService, RubricService rubricService, ProjectMapper projectMapper,
+                             ProjectRepository projectRepository, DeliverableRepository deliverableRepository) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.studentService = studentService;
@@ -120,13 +117,29 @@ public class ProjectController {
         model.addAttribute("majors", List.of("Information Technologies", "Computer Science", "Computer Engineering",
                 "Electrical Engineering"));
 
+        List<Staff> staff_members = userRepository.findAll().stream()
+                .filter(user -> user instanceof Staff)
+                .map(user -> (Staff) user)
+                .collect(Collectors.toList());
+
+        Staff supervisor = projectDTO.getSupervisor();
+        if (supervisor != null) {
+            staff_members.remove(supervisor);
+        }
+
+        model.addAttribute("staffUsers", staff_members);
+
+        model.addAttribute("currentCoSupervisors", projectDTO.getCoSupervisors());
+
         model.addAttribute("project", projectDTO);
+
         return "edit_project_admin";
     }
 
     @PostMapping("/admin/projects/update/{id}")
     public String updateProjectAdmin(@PathVariable Long id, @ModelAttribute ProjectDTO projectDTO,
-            RedirectAttributes redirectAttributes) {
+                                     @RequestParam(value = "coSupervisorIds", required = false) List<Long> coSupervisorIds,
+                                     RedirectAttributes redirectAttributes) {
         ProjectDTO existingProject = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
@@ -145,8 +158,18 @@ public class ProjectController {
         existingProject.setDegreeRestriction(projectDTO.getDegreeRestriction());
         existingProject.setMajorRestriction(projectDTO.getMajorRestriction());
         existingProject.setResearchFocus(projectDTO.getResearchFocus());
-
         existingProject.setSubcategories(projectDTO.getSubcategories());
+
+        List<Staff> updatedCoSupervisors = new ArrayList<>();
+
+        if (coSupervisorIds != null && !coSupervisorIds.isEmpty()) {
+            List<Staff> selectedCoSupervisors = userRepository.findAllById(coSupervisorIds).stream()
+                    .filter(user -> user instanceof Staff)
+                    .map(user -> (Staff) user)
+                    .collect(Collectors.toList());
+            updatedCoSupervisors.addAll(selectedCoSupervisors);
+        }
+        existingProject.setCoSupervisors(updatedCoSupervisors);
 
         projectService.saveProject(existingProject);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
@@ -156,11 +179,11 @@ public class ProjectController {
 
     @GetMapping("/student/projects")
     public String viewProjects(@RequestParam(required = false) String category,
-            @RequestParam(required = false) String keywords,
-            @RequestParam(required = false) String supervisorName,
-            @RequestParam(required = false) String supervisorSurname,
-            @RequestParam(defaultValue = "0") int page,
-            Model model, Principal principal) {
+                               @RequestParam(required = false) String keywords,
+                               @RequestParam(required = false) String supervisorName,
+                               @RequestParam(required = false) String supervisorSurname,
+                               @RequestParam(defaultValue = "0") int page,
+                               Model model, Principal principal) {
 
         String email = principal.getName();
         StudentDTO studentDTO = studentService.getStudentByEmail(email)
@@ -195,7 +218,7 @@ public class ProjectController {
 
     @GetMapping("/staff/projects")
     public String viewProjects(Model model, Principal principal,
-            @RequestParam(defaultValue = "0") int page) {
+                               @RequestParam(defaultValue = "0") int page) {
         try {
             String email = principal.getName();
             User user = userRepository.findByEmail(email)
@@ -224,7 +247,7 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/applicants/{projectId}")
     public String viewApplicants(@PathVariable Long projectId, @RequestParam(required = false) String searchEmail,
-            Model model, Principal principal) {
+                                 Model model, Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -269,8 +292,8 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/applicant/accept/{studentId}/{projectId}")
     public String acceptApplicant(@PathVariable Long studentId,
-            @PathVariable Long projectId,
-            RedirectAttributes redirectAttributes) {
+                                  @PathVariable Long projectId,
+                                  RedirectAttributes redirectAttributes) {
         ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
         StudentDTO studentDTO = studentService.getStudentById(studentId)
@@ -326,8 +349,8 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/remove/{studentId}/{projectId}")
     public String removeAcceptedStudent(@PathVariable Long studentId,
-            @PathVariable Long projectId,
-            RedirectAttributes redirectAttributes) {
+                                        @PathVariable Long projectId,
+                                        RedirectAttributes redirectAttributes) {
         ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
         StudentDTO studentDTO = studentService.getStudentById(studentId)
@@ -347,7 +370,7 @@ public class ProjectController {
 
     @GetMapping("/student/projects/join/{projectId}")
     public String joinProject(@PathVariable Long projectId, Principal principal,
-            RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes) {
         String email = principal.getName();
         StudentDTO studentDTO = studentService.getStudentByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
@@ -396,9 +419,9 @@ public class ProjectController {
 
     @PostMapping("/staff/projects/save")
     public String saveProject(@ModelAttribute ProjectDTO projectDTO,
-            @RequestParam(value = "files", required = false) MultipartFile[] files,
-            Principal principal,
-            RedirectAttributes redirectAttributes) throws Exception {
+                              @RequestParam(value = "files", required = false) MultipartFile[] files,
+                              Principal principal,
+                              RedirectAttributes redirectAttributes) throws Exception {
         Path uploadDir = Paths.get("uploads");
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
@@ -514,8 +537,8 @@ public class ProjectController {
 
     @PostMapping("/staff/projects/update/{id}")
     public String updateProject(@PathVariable Long id, @ModelAttribute ProjectDTO projectDTO,
-            @RequestParam(value = "files", required = false) MultipartFile[] files,
-            RedirectAttributes redirectAttributes) throws IOException {
+                                @RequestParam(value = "files", required = false) MultipartFile[] files,
+                                RedirectAttributes redirectAttributes) throws IOException {
         ProjectDTO existingProject = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
@@ -640,7 +663,19 @@ public class ProjectController {
     }
 
     @GetMapping("/staff/projects/delete/{id}")
-    public String deleteProject(@PathVariable Long id) {
+    public String deleteProject(@PathVariable Long id, Principal principal) {
+
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Staff loggedInStaff = (Staff) user;
+
+        ProjectDTO projectDTO = projectService.getProjectById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID: " + id));
+        if (!projectDTO.getSupervisor().equals(loggedInStaff)) {
+            return "redirect:/staff/projects?error=You are not authorized to delete this project";
+        }
         projectService.deleteProject(id);
         return "redirect:/staff/projects";
     }
@@ -661,7 +696,7 @@ public class ProjectController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
         if (!(user instanceof Staff) || !projectDTO.getSupervisor().equals(user)) {
-            return "redirect:/staff/projects?error=Unauthorized access";
+            return "redirect:/staff/projects?error=You are not allowed to change the course syllabus.";
         }
 
         List<Rubric> rubrics = rubricService.getRubricsByProjectId(projectId);
@@ -676,8 +711,8 @@ public class ProjectController {
 
     @PostMapping("/staff/projects/rubrics/save/{projectId}")
     public String saveRubric(@PathVariable Long projectId,
-            @ModelAttribute("newRubric") Rubric rubric,
-            RedirectAttributes redirectAttributes) {
+                             @ModelAttribute("newRubric") Rubric rubric,
+                             RedirectAttributes redirectAttributes) {
         ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
