@@ -41,7 +41,6 @@
           <table class="table table-bordered">
             <thead>
               <tr>
-                <th>Student Name</th>
                 <th>File</th>
                 <th>Grade</th>
                 <th>Action</th>
@@ -49,20 +48,24 @@
             </thead>
             <tbody>
               <tr th:each="submission : ${submissions}">
-                <td th:text="${submission.studentName}">Student Name</td>
                 <td>
                   <a
                     th:href="@{'/download/' + ${submission.filePath}}"
                     class="btn btn-outline-info btn-sm"
                     target="_blank"
                   >
-                    <i class="bi bi-download"></i> Download
+                    <i class="bi bi-download me-1"></i>
+                    <span th:text="${submission.fileName}"></span>
                   </a>
                 </td>
                 <td>
                   <span
-                    th:text="${submission.grade != null ? submission.grade : 'Not graded'}"
+                    th:if="${submission.grade != null}"
+                    th:text="${#numbers.formatDecimal(submission.grade, 1, 2)}"
                   ></span>
+                  <span th:if="${submission.grade == null}" class="text-muted"
+                    >Not graded</span
+                  >
                 </td>
                 <td>
                   <form
@@ -75,6 +78,7 @@
                       name="grade"
                       step="0.01"
                       min="0"
+                      th:max="${assignment.maxGrade}"
                       th:placeholder="'Max: ' + ${assignment.maxGrade}"
                       class="form-control form-control-sm"
                       required

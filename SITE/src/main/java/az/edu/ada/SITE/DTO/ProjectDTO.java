@@ -4,18 +4,13 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import az.edu.ada.SITE.Entity.Assignment;
-import az.edu.ada.SITE.Entity.Deliverable;
-import az.edu.ada.SITE.Entity.Project;
 import az.edu.ada.SITE.Entity.Rubric;
 import az.edu.ada.SITE.Entity.Staff;
-import az.edu.ada.SITE.Entity.Student;
 import az.edu.ada.SITE.Entity.Project.ApplicationStatus;
 import az.edu.ada.SITE.Entity.Project.ProjectType;
 import az.edu.ada.SITE.Entity.Project.Status;
-import az.edu.ada.SITE.Mapper.StudentMapper;
 
 @Data
 public class ProjectDTO {
@@ -77,24 +72,5 @@ public class ProjectDTO {
                 this.appStatus = appStatus;
                 this.deliverables = deliverables;
                 this.assignments = assignments;
-        }
-
-        public Project toProject() {
-                List<Student> acceptedStudents = this.students.stream()
-                                .map(StudentMapper.INSTANCE::studentDTOtoStudent)
-                                .collect(Collectors.toList());
-                List<Student> pendingStudents = this.requestedStudents.stream()
-                                .map(StudentMapper.INSTANCE::studentDTOtoStudent)
-                                .collect(Collectors.toList());
-
-                List<Deliverable> deliverableEntities = this.deliverables.stream()
-                                .map(DeliverableDTO::toDeliverable)
-                                .collect(Collectors.toList());
-
-                return new Project(id, title, description, objectives, type, keywords, researchFocus,
-                                category, studyYearRestriction, degreeRestriction, majorRestriction, status,
-                                maxStudents, supervisor, coSupervisors,
-                                acceptedStudents, pendingStudents, subcategories, rubrics, assignments, appStatus,
-                                deliverableEntities);
         }
 }

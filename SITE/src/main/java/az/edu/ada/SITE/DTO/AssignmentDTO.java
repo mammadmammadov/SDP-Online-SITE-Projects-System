@@ -12,4 +12,5 @@ public class AssignmentDTO {
   private boolean requiresSubmission;
   private Double maxGrade;
   private Long projectId;
+  private AssignmentSubmissionDTO submission;
 }

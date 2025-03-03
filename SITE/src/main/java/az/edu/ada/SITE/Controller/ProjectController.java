@@ -12,6 +12,7 @@ import az.edu.ada.SITE.Mapper.DeliverableMapper;
 import az.edu.ada.SITE.Mapper.ProjectMapper;
 import az.edu.ada.SITE.Mapper.StudentMapper;
 import az.edu.ada.SITE.Repository.ProjectRepository;
+import az.edu.ada.SITE.Repository.StudentRepository;
 import az.edu.ada.SITE.Repository.UserRepository;
 import az.edu.ada.SITE.Repository.DeliverableRepository;
 import az.edu.ada.SITE.Service.ProjectService;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
@@ -53,20 +55,25 @@ public class ProjectController {
     private final RubricService rubricService;
     private final ProjectRepository projectRepository;
     private final DeliverableRepository deliverableRepository;
+    private final StudentRepository studentRepository;
+    private final StudentMapper studentMapper;
 
     @Autowired
     private DeliverableMapper deliverableMapper;
 
     public ProjectController(ProjectService projectService, UserRepository userRepository,
-                             StudentService studentService, RubricService rubricService, ProjectMapper projectMapper,
-                             ProjectRepository projectRepository, DeliverableRepository deliverableRepository) {
+            StudentService studentService, RubricService rubricService, ProjectMapper projectMapper,
+            ProjectRepository projectRepository, StudentRepository studentRepository,
+            DeliverableRepository deliverableRepository, StudentMapper studentMapper) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.studentService = studentService;
         this.rubricService = rubricService;
         this.projectMapper = projectMapper;
         this.projectRepository = projectRepository;
+        this.studentRepository = studentRepository;
         this.deliverableRepository = deliverableRepository;
+        this.studentMapper = studentMapper;
     }
 
     @GetMapping("/admin/students")
@@ -138,8 +145,8 @@ public class ProjectController {
 
     @PostMapping("/admin/projects/update/{id}")
     public String updateProjectAdmin(@PathVariable Long id, @ModelAttribute ProjectDTO projectDTO,
-                                     @RequestParam(value = "coSupervisorIds", required = false) List<Long> coSupervisorIds,
-                                     RedirectAttributes redirectAttributes) {
+            @RequestParam(value = "coSupervisorIds", required = false) List<Long> coSupervisorIds,
+            RedirectAttributes redirectAttributes) {
         ProjectDTO existingProject = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
@@ -179,11 +186,11 @@ public class ProjectController {
 
     @GetMapping("/student/projects")
     public String viewProjects(@RequestParam(required = false) String category,
-                               @RequestParam(required = false) String keywords,
-                               @RequestParam(required = false) String supervisorName,
-                               @RequestParam(required = false) String supervisorSurname,
-                               @RequestParam(defaultValue = "0") int page,
-                               Model model, Principal principal) {
+            @RequestParam(required = false) String keywords,
+            @RequestParam(required = false) String supervisorName,
+            @RequestParam(required = false) String supervisorSurname,
+            @RequestParam(defaultValue = "0") int page,
+            Model model, Principal principal) {
 
         String email = principal.getName();
         StudentDTO studentDTO = studentService.getStudentByEmail(email)
@@ -218,7 +225,7 @@ public class ProjectController {
 
     @GetMapping("/staff/projects")
     public String viewProjects(Model model, Principal principal,
-                               @RequestParam(defaultValue = "0") int page) {
+            @RequestParam(defaultValue = "0") int page) {
         try {
             String email = principal.getName();
             User user = userRepository.findByEmail(email)
@@ -247,7 +254,7 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/applicants/{projectId}")
     public String viewApplicants(@PathVariable Long projectId, @RequestParam(required = false) String searchEmail,
-                                 Model model, Principal principal) {
+            Model model, Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -266,7 +273,7 @@ public class ProjectController {
 
         List<Student> pendingApplicants = projectDTO.getRequestedStudents().stream()
                 .filter(studentDTO -> !studentDTO.isAccepted())
-                .map(StudentMapper.INSTANCE::studentDTOtoStudent)
+                .map(studentMapper::studentDTOtoStudent)
                 .collect(Collectors.toList());
 
         List<StudentDTO> eligibleStudents = studentService.getAllStudents().stream()
@@ -292,41 +299,38 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/applicant/accept/{studentId}/{projectId}")
     public String acceptApplicant(@PathVariable Long studentId,
-                                  @PathVariable Long projectId,
-                                  RedirectAttributes redirectAttributes) {
-        ProjectDTO projectDTO = projectService.getProjectById(projectId)
+            @PathVariable Long projectId,
+            RedirectAttributes redirectAttributes) {
+        Project projectEntity = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
-        StudentDTO studentDTO = studentService.getStudentById(studentId)
+        Student studentEntity = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Student ID"));
 
-        projectDTO.getRequestedStudents().remove(studentDTO);
+        projectEntity.getRequestedStudents().remove(studentEntity);
 
-        if (projectDTO.getType() == Project.ProjectType.INDIVIDUAL) {
-            if (!projectDTO.getStudents().isEmpty()) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "Individual project already has an accepted student.");
-                return "redirect:/staff/projects/applicants/" + projectId;
-            }
-        } else {
-            if (projectDTO.getStudents().size() >= projectDTO.getMaxStudents()) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "Group project has reached its maximum number of accepted students.");
-                return "redirect:/staff/projects/applicants/" + projectId;
-            }
+        if (projectEntity.getType() == Project.ProjectType.INDIVIDUAL && !projectEntity.getStudents().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Individual project already has an accepted student.");
+            return "redirect:/staff/projects/applicants/" + projectId;
+        }
+        if (projectEntity.getType() == Project.ProjectType.GROUP &&
+                projectEntity.getStudents().size() >= projectEntity.getMaxStudents()) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Group project has reached its maximum number of accepted students.");
+            return "redirect:/staff/projects/applicants/" + projectId;
         }
 
-        if (!projectDTO.getStudents().contains(studentDTO)) {
-            projectDTO.getStudents().add(studentDTO);
-            studentDTO.setAccepted(true);
-            studentService.saveStudent(studentDTO);
+        if (!projectEntity.getStudents().contains(studentEntity)) {
+            projectEntity.getStudents().add(studentEntity);
+            studentEntity.setAccepted(true);
+            studentRepository.save(studentEntity);
         }
-        projectService.saveProject(projectDTO);
+        projectRepository.save(projectEntity);
 
-        List<ProjectDTO> allProjects = projectService.getAllProjects();
-        for (ProjectDTO p : allProjects) {
-            if (!p.getId().equals(projectDTO.getId()) && p.getRequestedStudents().contains(studentDTO)) {
-                p.getRequestedStudents().remove(studentDTO);
-                projectService.saveProject(p);
+        List<Project> allProjects = projectRepository.findAll();
+        for (Project p : allProjects) {
+            if (!p.getId().equals(projectEntity.getId()) && p.getRequestedStudents().contains(studentEntity)) {
+                p.getRequestedStudents().remove(studentEntity);
+                projectRepository.save(p);
             }
         }
 
@@ -349,8 +353,8 @@ public class ProjectController {
 
     @GetMapping("/staff/projects/remove/{studentId}/{projectId}")
     public String removeAcceptedStudent(@PathVariable Long studentId,
-                                        @PathVariable Long projectId,
-                                        RedirectAttributes redirectAttributes) {
+            @PathVariable Long projectId,
+            RedirectAttributes redirectAttributes) {
         ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
         StudentDTO studentDTO = studentService.getStudentById(studentId)
@@ -370,7 +374,7 @@ public class ProjectController {
 
     @GetMapping("/student/projects/join/{projectId}")
     public String joinProject(@PathVariable Long projectId, Principal principal,
-                              RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         String email = principal.getName();
         StudentDTO studentDTO = studentService.getStudentByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
@@ -419,9 +423,9 @@ public class ProjectController {
 
     @PostMapping("/staff/projects/save")
     public String saveProject(@ModelAttribute ProjectDTO projectDTO,
-                              @RequestParam(value = "files", required = false) MultipartFile[] files,
-                              Principal principal,
-                              RedirectAttributes redirectAttributes) throws Exception {
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
+            Principal principal,
+            RedirectAttributes redirectAttributes) throws Exception {
         Path uploadDir = Paths.get("uploads");
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
@@ -484,22 +488,23 @@ public class ProjectController {
         return "redirect:/staff/projects";
     }
 
-    @GetMapping("/download/{filename:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {
-        try {
-            Path filePath = Paths.get("uploads").resolve(filename).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
+    private static final List<Path> FILE_PATHS = List.of(
+            Paths.get("student_submissions"),
+            Paths.get("uploads"));
 
+    @GetMapping("/download/{filename:.+}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws IOException {
+        for (Path basePath : FILE_PATHS) {
+            Path filePath = basePath.resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION,
                                 "attachment; filename=\"" + resource.getFilename() + "\"")
                         .body(resource);
             }
-            return ResponseEntity.notFound().build();
-        } catch (Exception ex) {
-            return ResponseEntity.internalServerError().build();
         }
+        throw new FileNotFoundException("File not found: " + filename);
     }
 
     @GetMapping("/staff/projects/edit/{id}")
@@ -537,8 +542,8 @@ public class ProjectController {
 
     @PostMapping("/staff/projects/update/{id}")
     public String updateProject(@PathVariable Long id, @ModelAttribute ProjectDTO projectDTO,
-                                @RequestParam(value = "files", required = false) MultipartFile[] files,
-                                RedirectAttributes redirectAttributes) throws IOException {
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
+            RedirectAttributes redirectAttributes) throws IOException {
         ProjectDTO existingProject = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
@@ -633,7 +638,6 @@ public class ProjectController {
     @PostMapping("/staff/projects/upload/{id}")
     public ResponseEntity<?> uploadFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         Optional<Project> projectOpt = projectRepository.findById(id);
-
         if (projectOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("success", false, "message", "Project not found."));
@@ -643,6 +647,10 @@ public class ProjectController {
         Path uploadDir = Paths.get("uploads");
 
         try {
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+
             String uniqueFileName = "PRJ" + project.getId() + "_" + file.getOriginalFilename();
             Path filePath = uploadDir.resolve(uniqueFileName);
 
@@ -658,7 +666,7 @@ public class ProjectController {
             return ResponseEntity.ok(Map.of("success", true, "message", "File uploaded successfully."));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "message", "File upload error."));
+                    .body(Map.of("success", false, "message", "File upload error: " + e.getMessage()));
         }
     }
 
@@ -711,12 +719,12 @@ public class ProjectController {
 
     @PostMapping("/staff/projects/rubrics/save/{projectId}")
     public String saveRubric(@PathVariable Long projectId,
-                             @ModelAttribute("newRubric") Rubric rubric,
-                             RedirectAttributes redirectAttributes) {
+            @ModelAttribute("newRubric") Rubric rubric,
+            RedirectAttributes redirectAttributes) {
         ProjectDTO projectDTO = projectService.getProjectById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
-        Project project = ProjectMapper.INSTANCE.projectDTOtoProject(projectDTO);
+        Project project = projectMapper.projectDTOtoProject(projectDTO);
 
         rubric.setProject(project);
         rubricService.saveRubric(rubric);

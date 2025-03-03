@@ -28,15 +28,17 @@ public class ProjectServiceImpl implements ProjectService {
   private final ProjectRepository projectRepository;
   private final ProjectMapper projectMapper;
   private final StudentRepository studentRepository;
+  private final StudentMapper studentMapper;
 
   private final UserRepository userRepository;
 
   public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper,
-      StudentRepository studentRepository, UserRepository userRepository) {
+      StudentRepository studentRepository, UserRepository userRepository, StudentMapper studentMapper) {
     this.projectRepository = projectRepository;
     this.projectMapper = projectMapper;
     this.studentRepository = studentRepository;
     this.userRepository = userRepository;
+    this.studentMapper = studentMapper;
   }
 
   @Override
@@ -85,7 +87,7 @@ public class ProjectServiceImpl implements ProjectService {
       project.getRequestedStudents().clear();
       if (projectDTO.getRequestedStudents() != null) {
         List<Student> pendingStudents = projectDTO.getRequestedStudents().stream()
-            .map(StudentMapper.INSTANCE::studentDTOtoStudent)
+            .map(studentMapper::studentDTOtoStudent)
             .collect(Collectors.toList());
         project.getRequestedStudents().addAll(pendingStudents);
       }
@@ -93,12 +95,12 @@ public class ProjectServiceImpl implements ProjectService {
       project.getStudents().clear();
       if (projectDTO.getStudents() != null) {
         List<Student> acceptedStudents = projectDTO.getStudents().stream()
-            .map(StudentMapper.INSTANCE::studentDTOtoStudent)
+            .map(studentMapper::studentDTOtoStudent)
             .collect(Collectors.toList());
         project.getStudents().addAll(acceptedStudents);
       }
     } else {
-      project = projectDTO.toProject();
+      project = projectMapper.projectDTOtoProject(projectDTO);
     }
 
     project = projectRepository.save(project);
@@ -142,7 +144,7 @@ public class ProjectServiceImpl implements ProjectService {
     Project projectEntity = projectRepository.findById(projectDTO.getId())
         .orElseThrow(() -> new RuntimeException("Project not found"));
 
-    Student studentEntity = StudentMapper.INSTANCE.studentDTOtoStudent(studentDTO);
+    Student studentEntity = studentMapper.studentDTOtoStudent(studentDTO);
 
     studentEntity.setAccepted(true);
     studentRepository.save(studentEntity);
@@ -193,11 +195,8 @@ public class ProjectServiceImpl implements ProjectService {
       }
     });
 
-
     List<ProjectDTO> projectDTOs = projectMapper.projectListToProjectDTOList(projectsPage.getContent());
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
-
-
 
 }

@@ -8,7 +8,10 @@ import az.edu.ada.SITE.Repository.AssignmentRepository;
 import az.edu.ada.SITE.Repository.ProjectRepository;
 import az.edu.ada.SITE.Service.AssignmentService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
@@ -47,5 +50,13 @@ public class AssignmentServiceImpl implements AssignmentService {
   @Override
   public void deleteAssignment(Long id) {
     assignmentRepository.deleteById(id);
+  }
+
+  @Override
+  public List<AssignmentDTO> getAssignmentsByProjectId(Long projectId) {
+    List<Assignment> assignments = assignmentRepository.findByProjectId(projectId);
+    return assignments.stream()
+        .map(assignmentMapper::assignmentToAssignmentDTO)
+        .collect(Collectors.toList());
   }
 }
