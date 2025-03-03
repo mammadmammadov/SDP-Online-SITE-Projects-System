@@ -7,9 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "projects")
@@ -75,11 +73,7 @@ public class Project {
     private Staff supervisor;
 
     @ManyToMany
-    @JoinTable(
-            name = "project_co_supervisors",
-            joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinTable(name = "project_co_supervisors", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<Staff> coSupervisors = new ArrayList<>();
 
     @ManyToMany
@@ -97,6 +91,9 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rubric> rubrics = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Assignment> assignments = new ArrayList<>();
 
     public enum ApplicationStatus {
         PENDING, ACCEPTED

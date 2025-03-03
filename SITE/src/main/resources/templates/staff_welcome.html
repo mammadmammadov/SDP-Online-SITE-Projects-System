@@ -41,7 +41,7 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#"
+              <a class="nav-link" th:href="@{/staff/student-management}"
                 ><i class="fas fa-users me-1"></i>Students</a
               >
             </li>
@@ -67,7 +67,7 @@
           <span class="text-accent" th:text="${staffName}">!</span>
         </h1>
         <p class="lead text-muted fs-5">
-          Manage projects, guide students, and track progress efficiently.
+          Manage projects, grade students, and track progress efficiently.
         </p>
       </div>
 
@@ -80,8 +80,8 @@
               </div>
               <h3 class="card-title fw-bold mb-3">Project Management</h3>
               <p class="card-text text-secondary mb-4">
-                Oversee current projects, track progress, and provide feedback
-                to student teams.
+                Create new projects, oversee current projects, track progress,
+                and add students to projects.
               </p>
               <a th:href="@{/staff/projects}" class="btn btn-primary px-4">
                 <i class="fas fa-arrow-right me-2"></i>Manage Projects
@@ -96,13 +96,16 @@
               <div class="card-icon">
                 <i class="fas fa-user-graduate"></i>
               </div>
-              <h3 class="card-title fw-bold mb-3">Student Support</h3>
+              <h3 class="card-title fw-bold mb-3">Student Management</h3>
               <p class="card-text text-secondary mb-4">
-                Monitor student progress, provide resources, and manage team
-                assignments.
+                Monitor student progress, grade submissions, provide resources,
+                and manage team assignments.
               </p>
-              <a href="#" class="btn btn-primary px-4">
-                <i class="fas fa-arrow-right me-2"></i>View Students
+              <a
+                th:href="@{/staff/student-management}"
+                class="btn btn-primary px-4"
+              >
+                <i class="fas fa-arrow-right me-2"></i>Manage Students
               </a>
             </div>
           </div>
