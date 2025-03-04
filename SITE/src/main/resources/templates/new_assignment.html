@@ -38,6 +38,9 @@
                 class="form-control"
                 required
               />
+              <div th:if="${#fields.hasErrors('title')}" class="text-danger">
+                <small th:errors="*{title}"></small>
+              </div>
             </div>
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
@@ -47,6 +50,12 @@
                 class="form-control"
                 rows="4"
               ></textarea>
+              <div
+                th:if="${#fields.hasErrors('description')}"
+                class="text-danger"
+              >
+                <small th:errors="*{description}"></small>
+              </div>
             </div>
             <div class="mb-3">
               <label for="dueDate" class="form-label">Due Date</label>
@@ -57,6 +66,11 @@
                 class="form-control"
                 required
               />
+              <span
+                class="text-danger"
+                th:if="${#fields.hasErrors('dueDate')}"
+                th:errors="*{dueDate}"
+              ></span>
             </div>
             <div class="form-check mb-3">
               <input

@@ -12,10 +12,12 @@ import az.edu.ada.SITE.Service.AssignmentService;
 import az.edu.ada.SITE.Service.AssignmentSubmissionService;
 import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
+import jakarta.validation.Valid;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -25,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -90,21 +93,37 @@ public class StudentManagementController {
 
   @PostMapping("/staff/student-management/{projectId}/assignments/save")
   public String saveAssignment(@PathVariable Long projectId,
-      @ModelAttribute AssignmentDTO assignmentDTO,
+      @Valid @ModelAttribute("assignment") AssignmentDTO assignmentDTO,
+      BindingResult bindingResult,
+      Model model,
       RedirectAttributes redirectAttributes) {
+
+    if (assignmentDTO.getDueDate() != null && assignmentDTO.getDueDate().isBefore(java.time.LocalDateTime.now())) {
+      bindingResult.rejectValue("dueDate", "error.assignment", "Due date cannot be in the past");
+    }
+
+    if (bindingResult.hasErrors()) {
+      model.addAttribute("assignment", assignmentDTO);
+      return "new_assignment";
+    }
+
     ProjectDTO projectDTO = projectService.getProjectById(projectId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+
     double currentTotal = projectDTO.getAssignments().stream()
         .mapToDouble(a -> a.getMaxGrade() != null ? a.getMaxGrade() : 0)
         .sum();
+
     if (currentTotal + assignmentDTO.getMaxGrade() > 100) {
       redirectAttributes.addFlashAttribute("errorMessage",
           "Total maximum grade for assignments cannot exceed 100. Current total: " + currentTotal);
       return "redirect:/staff/student-management/" + projectId + "/assignments/new";
     }
+
     assignmentDTO.setProjectId(projectId);
     assignmentService.saveAssignment(assignmentDTO);
     redirectAttributes.addFlashAttribute("successMessage", "Assignment created successfully.");
+
     return "redirect:/staff/student-management/" + projectId;
   }
 
@@ -114,6 +133,13 @@ public class StudentManagementController {
       Model model) {
     AssignmentDTO assignmentDTO = assignmentService.getAssignmentById(assignmentId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid Assignment ID"));
+
+    if (assignmentDTO.getDueDate() != null) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+      String formattedDueDate = assignmentDTO.getDueDate().format(formatter);
+      model.addAttribute("formattedDueDate", formattedDueDate);
+    }
+
     model.addAttribute("assignment", assignmentDTO);
     model.addAttribute("projectId", projectId);
     return "edit_assignment";
@@ -122,21 +148,37 @@ public class StudentManagementController {
   @PostMapping("/staff/student-management/{projectId}/assignments/update/{assignmentId}")
   public String updateAssignment(@PathVariable Long projectId,
       @PathVariable Long assignmentId,
-      @ModelAttribute AssignmentDTO assignmentDTO,
+      @Valid @ModelAttribute("assignment") AssignmentDTO assignmentDTO,
+      BindingResult bindingResult,
+      Model model,
       RedirectAttributes redirectAttributes) {
+
+    if (assignmentDTO.getDueDate() != null && assignmentDTO.getDueDate().isBefore(java.time.LocalDateTime.now())) {
+      bindingResult.rejectValue("dueDate", "error.assignment", "Due date cannot be in the past");
+    }
+
+    if (bindingResult.hasErrors()) {
+      model.addAttribute("assignment", assignmentDTO);
+      return "edit_assignment";
+    }
+
     AssignmentDTO existingAssignment = assignmentService.getAssignmentById(assignmentId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid Assignment ID"));
+
     ProjectDTO projectDTO = projectService.getProjectById(projectId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+
     double otherTotal = projectDTO.getAssignments().stream()
         .filter(a -> !a.getId().equals(assignmentId))
         .mapToDouble(a -> a.getMaxGrade() != null ? a.getMaxGrade() : 0)
         .sum();
+
     if (otherTotal + assignmentDTO.getMaxGrade() > 100) {
       redirectAttributes.addFlashAttribute("errorMessage",
           "Total maximum grade for assignments cannot exceed 100. Other assignments total: " + otherTotal);
       return "redirect:/staff/student-management/" + projectId + "/assignments/edit/" + assignmentId;
     }
+
     existingAssignment.setTitle(assignmentDTO.getTitle());
     existingAssignment.setDescription(assignmentDTO.getDescription());
     existingAssignment.setDueDate(assignmentDTO.getDueDate());

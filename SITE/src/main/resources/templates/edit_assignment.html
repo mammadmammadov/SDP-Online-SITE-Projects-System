@@ -29,6 +29,7 @@
             th:object="${assignment}"
             method="post"
           >
+            <input type="hidden" th:field="*{id}" />
             <div class="mb-3">
               <label for="title" class="form-label">Assignment Title</label>
               <input
@@ -38,6 +39,9 @@
                 class="form-control"
                 required
               />
+              <div th:if="${#fields.hasErrors('title')}" class="text-danger">
+                <small th:errors="*{title}"></small>
+              </div>
             </div>
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
@@ -47,16 +51,28 @@
                 class="form-control"
                 rows="4"
               ></textarea>
+              <div
+                th:if="${#fields.hasErrors('description')}"
+                class="text-danger"
+              >
+                <small th:errors="*{description}"></small>
+              </div>
             </div>
             <div class="mb-3">
               <label for="dueDate" class="form-label">Due Date</label>
               <input
                 type="datetime-local"
                 id="dueDate"
-                th:field="*{dueDate}"
+                name="dueDate"
+                th:value="${formattedDueDate}"
                 class="form-control"
                 required
               />
+              <span
+                class="text-danger"
+                th:if="${#fields.hasErrors('dueDate')}"
+                th:errors="*{dueDate}"
+              ></span>
             </div>
             <div class="mb-3">
               <label for="maxGrade" class="form-label">Maximum Grade</label>
