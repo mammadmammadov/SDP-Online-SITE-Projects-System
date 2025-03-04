@@ -138,6 +138,17 @@ public class ProjectServiceImpl implements ProjectService {
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
 
+  public Page<ProjectDTO> getProjectsExceptStaff(Long staffId, Pageable pageable) {
+    Page<Project> projectsPage = projectRepository.findAll(pageable);
+
+    List<ProjectDTO> projectDTOs = projectsPage.getContent().stream()
+            .filter(project -> project.getSupervisor() == null || !project.getSupervisor().getId().equals(staffId))
+            .map(project -> projectMapper.projectToProjectDTO(project))
+            .collect(Collectors.toList());
+
+    return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
+  }
+
   @Override
   public void addStudentToProject(StudentDTO studentDTO, ProjectDTO projectDTO) {
     Project projectEntity = projectRepository.findById(projectDTO.getId())

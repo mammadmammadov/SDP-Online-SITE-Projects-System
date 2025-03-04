@@ -2,7 +2,6 @@ package az.edu.ada.SITE.Service;
 
 import az.edu.ada.SITE.DTO.ProjectDTO;
 import az.edu.ada.SITE.DTO.StudentDTO;
-
 import az.edu.ada.SITE.Entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +22,8 @@ public interface ProjectService {
     void toggleProjectStatus(ProjectDTO projectDTO);
 
     Page<ProjectDTO> getProjectsByStaffId(Long staffId, Pageable pageable);
+
+    Page<ProjectDTO> getProjectsExceptStaff(Long staffId, Pageable pageable);
 
     void addStudentToProject(StudentDTO student, ProjectDTO project);
 

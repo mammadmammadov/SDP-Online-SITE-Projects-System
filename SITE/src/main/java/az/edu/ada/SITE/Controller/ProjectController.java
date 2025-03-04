@@ -19,6 +19,7 @@ import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
 
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -227,22 +228,33 @@ public class ProjectController {
             String email = principal.getName();
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
+    
             String fullName = user.getName() + " " + user.getSurname();
             model.addAttribute("staffName", fullName);
+    
             Long staffId = null;
             if (user instanceof Staff) {
                 staffId = ((Staff) user).getId();
             }
-
+    
             if (page < 0)
                 page = 0;
             var pageable = org.springframework.data.domain.PageRequest.of(page, 4);
-            var projectPage = projectService.getProjectsByStaffId(staffId, pageable);
-            model.addAttribute("projects", projectPage.getContent());
+    
+            Page<ProjectDTO> projectPage = projectService.getProjectsExceptStaff(staffId, pageable);
+            List<ProjectDTO> sortedProjects = new ArrayList<>();
+    
+            if (staffId != null) {
+                sortedProjects.addAll(projectService.getProjectsByStaffId(staffId, pageable).getContent());
+            }
+    
+            sortedProjects.addAll(projectPage.getContent());
+    
+            model.addAttribute("projects", sortedProjects);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", projectPage.getTotalPages());
-
+            model.addAttribute("staffId", staffId);
+    
             return "staff_projects";
         } catch (UsernameNotFoundException e) {
             return "redirect:/auth/login?error=user_not_found";

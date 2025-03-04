@@ -65,6 +65,9 @@ public class DataInitializer implements CommandLineRunner {
                         Staff supervisor = (Staff) userRepository.findByEmail("staff@ada.edu.az")
                                         .orElseThrow(() -> new IllegalArgumentException("Supervisor not found"));
 
+                        Staff supervisor2 = (Staff) userRepository.findByEmail("staff2@ada.edu.az")
+                                        .orElseThrow(() -> new IllegalArgumentException("Supervisor not found"));
+                                        
                         Project project1 = new Project();
                         project1.setCategory(List.of("Artificial Intelligence"));
                         project1.setSubcategories(List.of("Machine Learning", "Natural Language Processing"));
@@ -162,6 +165,24 @@ public class DataInitializer implements CommandLineRunner {
 
                         projectRepository.save(project5);
 
+                        Project project6 = new Project();
+                        project6.setCategory(List.of("Artificial Intelligence"));
+                        project6.setSubcategories(List.of("Machine Learning"));
+                        project6.setTitle("AI (Machine Learning) Project");
+                        project6.setDescription(
+                                        "A project using machine learning methodologies and best practices.");
+                        project6.setObjectives(
+                                        "1. Gather user requirements\n2. Design and implement necessary features\n3. Conduct user testing and feedback.");
+                        project6.setStatus(Project.Status.OPEN);
+                        project6.setSupervisor(supervisor2);
+                        project6.setResearchFocus(List.of("Research Project"));
+                        project6.setDegreeRestriction(List.of("Undergraduate"));
+                        project6.setMajorRestriction(List.of("Computer Science"));
+                        project6.setStudyYearRestriction(List.of("Sophomore"));
+                        project6.setType(ProjectType.GROUP);
+                        project6.setMaxStudents(3);
+
+                        projectRepository.save(project6);
                 }
         }
 }
