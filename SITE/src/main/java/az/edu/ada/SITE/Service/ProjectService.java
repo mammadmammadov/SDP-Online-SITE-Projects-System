@@ -29,7 +29,5 @@ public interface ProjectService {
     Page<ProjectDTO> getEligibleProjectsForStudent(StudentDTO student, String category, String keywords,
             String supervisorName, String supervisorSurname, Pageable pageable);
 
-    Optional<ProjectDTO> getProjectByIdWithRubrics(Long id);
-
     public Page<ProjectDTO> getProjectsSupervisedByUser(User user, Pageable pageable);
 }

@@ -1,0 +1,205 @@
+:root {
+            --ada-blue: #00549e;
+            --ada-teal: #00b5ad;
+            --gradient-primary: linear-gradient(135deg, var(--ada-blue) 0%, var(--ada-teal) 100%);
+        }
+
+body {
+            background: #f8fafc;
+            color: #2c3e50;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+.header {
+            background: #ffffff;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+.logo {
+            height: 45px;
+            margin-right: 1.5rem;
+        }
+
+.management-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+.management-card .card-header {
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+
+.student-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 0.5rem;
+        }
+
+.student-list li {
+            padding: 0.75rem 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+.table {
+            border-radius: 12px;
+            overflow: hidden;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+.table thead {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+.table th {
+            font-weight: 500;
+            padding: 1rem;
+        }
+
+.table td {
+            vertical-align: middle;
+            padding: 1rem;
+            background: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+.btn-success {
+            background: var(--ada-teal);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+
+.btn-success:hover {
+            background: #009c94;
+            transform: translateY(-2px);
+        }
+
+.action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+.btn-outline-primary {
+            border-color: var(--ada-blue);
+            color: var(--ada-blue);
+        }
+
+.btn-outline-primary:hover {
+            background: var(--ada-blue);
+            color: white;
+        }
+
+.btn-outline-danger:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+.status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+.due-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+.management-card .card-body {
+            padding: 2rem;
+        }
+
+.management-card .card-body p {
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+.management-card .card-body p strong i {
+            position: absolute;
+            left: -1.2rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+.management-card .card-body p strong {
+            display: block;
+            margin-bottom: 0.75rem;
+        }
+
+.management-card .card-body .text-muted {
+            display: inline-block;
+            padding-left: 0.5rem;
+        }
+
+.empty-state i {
+    opacity: 0.6;
+    margin-bottom: 1rem;
+}
+
+tr.empty-state-row:hover {
+    background-color: transparent !important;
+}
+
+.management-card .card-body {
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+.empty-state i {
+    opacity: 0.6;
+    margin-bottom: 1rem;
+}
+
+.empty-state-row .empty-state {
+    display: inline-block;
+    text-align: center;
+}
+
+.empty-state-row td {
+    width: 100%;
+    height: 200px;
+    vertical-align: middle;
+    text-align: center;
+    background: white !important;
+    border: none !important;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.empty-state-row:hover td {
+    background: white !important;
+}

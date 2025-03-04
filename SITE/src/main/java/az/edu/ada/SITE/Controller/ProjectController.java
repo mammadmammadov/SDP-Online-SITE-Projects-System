@@ -17,8 +17,6 @@ import az.edu.ada.SITE.Repository.UserRepository;
 import az.edu.ada.SITE.Repository.DeliverableRepository;
 import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
-import az.edu.ada.SITE.Entity.Rubric;
-import az.edu.ada.SITE.Service.RubricService;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +50,7 @@ public class ProjectController {
     private final UserRepository userRepository;
     private final StudentService studentService;
     private final ProjectMapper projectMapper;
-    private final RubricService rubricService;
+
     private final ProjectRepository projectRepository;
     private final DeliverableRepository deliverableRepository;
     private final StudentRepository studentRepository;
@@ -62,13 +60,12 @@ public class ProjectController {
     private DeliverableMapper deliverableMapper;
 
     public ProjectController(ProjectService projectService, UserRepository userRepository,
-            StudentService studentService, RubricService rubricService, ProjectMapper projectMapper,
+            StudentService studentService, ProjectMapper projectMapper,
             ProjectRepository projectRepository, StudentRepository studentRepository,
             DeliverableRepository deliverableRepository, StudentMapper studentMapper) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.studentService = studentService;
-        this.rubricService = rubricService;
         this.projectMapper = projectMapper;
         this.projectRepository = projectRepository;
         this.studentRepository = studentRepository;
@@ -692,56 +689,5 @@ public class ProjectController {
     public String toggleProjectStatus(@PathVariable ProjectDTO projectDTO) {
         projectService.toggleProjectStatus(projectDTO);
         return "redirect:/staff/projects";
-    }
-
-    @GetMapping("/staff/projects/rubrics/{projectId}")
-    public String manageRubrics(@PathVariable Long projectId, Model model, Principal principal) {
-        String email = principal.getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        ProjectDTO projectDTO = projectService.getProjectById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
-
-        if (!(user instanceof Staff) || !projectDTO.getSupervisor().equals(user)) {
-            return "redirect:/staff/projects?error=You are not allowed to change the course syllabus.";
-        }
-
-        List<Rubric> rubrics = rubricService.getRubricsByProjectId(projectId);
-        double totalWeightage = rubrics.stream().mapToDouble(Rubric::getWeightage).sum();
-
-        model.addAttribute("project", projectDTO);
-        model.addAttribute("rubrics", rubrics);
-        model.addAttribute("newRubric", new Rubric());
-        model.addAttribute("totalWeightage", totalWeightage);
-        return "rubric_management";
-    }
-
-    @PostMapping("/staff/projects/rubrics/save/{projectId}")
-    public String saveRubric(@PathVariable Long projectId,
-            @ModelAttribute("newRubric") Rubric rubric,
-            RedirectAttributes redirectAttributes) {
-        ProjectDTO projectDTO = projectService.getProjectById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
-
-        Project project = projectMapper.projectDTOtoProject(projectDTO);
-
-        rubric.setProject(project);
-        rubricService.saveRubric(rubric);
-
-        redirectAttributes.addFlashAttribute("successMessage", "Rubric added successfully");
-        return "redirect:/staff/projects/rubrics/" + projectId;
-    }
-
-    @GetMapping("/staff/projects/rubrics/delete/{rubricId}")
-    public String deleteRubric(@PathVariable Long rubricId, RedirectAttributes redirectAttributes) {
-        Rubric rubric = rubricService.getRubricById(rubricId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Rubric ID"));
-
-        Long projectId = rubric.getProject().getId();
-        rubricService.deleteRubric(rubricId);
-
-        redirectAttributes.addFlashAttribute("successMessage", "Rubric deleted successfully");
-        return "redirect:/staff/projects/rubrics/" + projectId;
     }
 }

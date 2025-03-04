@@ -80,7 +80,6 @@ public class ProjectServiceImpl implements ProjectService {
       project.setSupervisor(projectDTO.getSupervisor());
       project.setCoSupervisors(projectDTO.getCoSupervisors());
       project.setSubcategories(projectDTO.getSubcategories());
-      project.setRubrics(project.getRubrics());
       project.setAppStatus(projectDTO.getAppStatus());
       project.setDeliverables(project.getDeliverables());
 
@@ -170,12 +169,6 @@ public class ProjectServiceImpl implements ProjectService {
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
 
-  @Override
-  public Optional<ProjectDTO> getProjectByIdWithRubrics(Long id) {
-    Optional<Project> projectOptional = projectRepository.findByIdWithRubrics(id);
-
-    return projectOptional.map(project -> projectMapper.projectToProjectDTO(project));
-  }
 
   @Override
   @Transactional(readOnly = true)

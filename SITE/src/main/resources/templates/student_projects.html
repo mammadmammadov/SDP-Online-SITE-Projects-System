@@ -315,48 +315,6 @@
                       </ul>
                     </div>
                   </div>
-
-                  <div class="mb-3">
-                    <strong>Grading Rubric:</strong>
-                    <div
-                      th:if="${not #lists.isEmpty(project.rubrics)}"
-                      class="mt-2"
-                    >
-                      <div class="progress mb-3" style="height: 25px">
-                        <div
-                          class="progress-bar"
-                          role="progressbar"
-                          th:style="'width: ' + ${#aggregates.sum(project.rubrics.![weightage])} + '%;'"
-                          th:classappend="${#aggregates.sum(project.rubrics.![weightage]) == 100} ? 'bg-success' : 'bg-warning'"
-                        >
-                          <span
-                            th:text="${#aggregates.sum(project.rubrics.![weightage])} + '% Total Weightage'"
-                          ></span>
-                        </div>
-                      </div>
-                      <div class="rubric-criteria">
-                        <div
-                          th:each="rubric : ${project.rubrics}"
-                          class="mb-2 d-flex justify-content-between"
-                        >
-                          <span
-                            th:text="${rubric.criteria}"
-                            class="fw-medium"
-                          ></span>
-                          <span
-                            th:text="${#numbers.formatDecimal(rubric.weightage, 1, 1)} + '%'"
-                            class="badge bg-primary rounded-pill"
-                          ></span>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      th:if="${#lists.isEmpty(project.rubrics)}"
-                      class="text-muted"
-                    >
-                      No grading rubric available yet
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

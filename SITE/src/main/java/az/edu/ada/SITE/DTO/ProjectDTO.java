@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import az.edu.ada.SITE.Entity.Assignment;
-import az.edu.ada.SITE.Entity.Rubric;
 import az.edu.ada.SITE.Entity.Staff;
 import az.edu.ada.SITE.Entity.Project.ApplicationStatus;
 import az.edu.ada.SITE.Entity.Project.ProjectType;
@@ -33,7 +32,6 @@ public class ProjectDTO {
         private List<StudentDTO> students = new ArrayList<>();
         private List<StudentDTO> requestedStudents = new ArrayList<>();
         private List<String> subcategories = new ArrayList<>();
-        private List<Rubric> rubrics = new ArrayList<>();
         private ApplicationStatus appStatus;
         private List<DeliverableDTO> deliverables = new ArrayList<>();
         private List<Assignment> assignments = new ArrayList<>();
@@ -48,7 +46,7 @@ public class ProjectDTO {
                         Status status, Integer maxStudents, Staff supervisor, List<Staff> coSupervisors,
                         List<StudentDTO> students,
                         List<StudentDTO> requestedStudents,
-                        List<String> subcategories, List<Rubric> rubrics, ApplicationStatus appStatus,
+                        List<String> subcategories, ApplicationStatus appStatus,
                         List<DeliverableDTO> deliverables, List<Assignment> assignments) {
                 this.id = id;
                 this.title = title;
@@ -68,7 +66,6 @@ public class ProjectDTO {
                 this.students = students;
                 this.requestedStudents = requestedStudents;
                 this.subcategories = subcategories;
-                this.rubrics = rubrics;
                 this.appStatus = appStatus;
                 this.deliverables = deliverables;
                 this.assignments = assignments;

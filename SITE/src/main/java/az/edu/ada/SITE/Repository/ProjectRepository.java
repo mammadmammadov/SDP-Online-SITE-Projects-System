@@ -21,9 +21,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         @Query("SELECT p FROM Project p WHERE p.supervisor.id = :staffId")
         Page<Project> findProjectsByStaffId(@Param("staffId") Long staffId, Pageable pageable);
 
-        @Query("SELECT p FROM Project p LEFT JOIN FETCH p.rubrics WHERE p.id = :id")
-        Optional<Project> findByIdWithRubrics(Long id);
-
         @EntityGraph(attributePaths = { "deliverables" })
         @Query("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.deliverables WHERE " +
                         "(:category IS NULL OR :category = '' OR :category MEMBER OF p.category) AND " +
