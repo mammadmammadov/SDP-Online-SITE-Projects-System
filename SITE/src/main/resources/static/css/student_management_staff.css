@@ -1,0 +1,72 @@
+:root {
+            --ada-blue: #00549e;
+            --ada-teal: #00b5ad;
+            --gradient-primary: linear-gradient(135deg, var(--ada-blue) 0%, var(--ada-teal) 100%);
+        }
+
+body {
+            background: #f8fafc;
+            color: #2c3e50;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+.header {
+            background: var(--gradient-primary);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+.logo {
+            height: 45px;
+            margin-right: 1.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+.management-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+.management-card .card-header {
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+
+.table {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+.table thead {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+.table th {
+            font-weight: 600;
+            color: var(--ada-blue);
+        }
+
+.table td {
+            vertical-align: middle;
+        }
+
+.btn-outline-primary {
+            border-color: var(--ada-blue);
+            color: var(--ada-blue);
+            transition: all 0.3s ease;
+        }
+
+.btn-outline-primary:hover {
+            background: var(--ada-blue);
+            color: white;
+        }
+
+tr:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
