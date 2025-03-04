@@ -200,53 +200,53 @@
                   </option>
                 </select>
               </div>
-            </div>
 
-            <div class="mb-3">
-              <label for="staffUsers" class="form-label">Co-Supervisors</label>
-              <select class="form-select" id="staffUsers" name="coSupervisorIds" multiple>
-                <option th:each="staff : ${staffUsers}"
-                        th:value="${staff.id}"
-                        th:text="${staff.name + ' ' + staff.surname}"
-                        th:selected="${currentCoSupervisors != null and currentCoSupervisors.contains(staff)}">
-                  Staff Member Name
-                </option>
-              </select>
-              <div class="form-text">Select co-supervisors for this project. Hold down the Ctrl/Command button to select multiple options.</div>
-            </div>
+              <div class="mb-3">
+                <label for="staffUsers" class="form-label">Co-Supervisors</label>
+                <select class="form-select" id="staffUsers" name="coSupervisorIds" multiple>
+                  <option th:each="staff : ${staffUsers}"
+                          th:value="${staff.id}"
+                          th:text="${staff.name + ' ' + staff.surname}"
+                          th:selected="${currentCoSupervisors != null and currentCoSupervisors.contains(staff)}">
+                    Staff Member Name
+                  </option>
+                </select>
+                <div class="form-text">Select co-supervisors for this project. Hold down the Ctrl/Command button to select multiple options.</div>
+              </div>
 
-            <div class="mb-4">
-              <label class="form-label">
-                <i class="bi bi-file-earmark-pdf me-2"></i>Project Deliverables
-              </label>
-
-              <ul id="existingFiles" class="list-group mb-3">
-                <li
-                  th:each="deliverable : ${project.deliverables}"
-                  class="list-group-item d-flex justify-content-between align-items-center existing-file"
-                >
-                  <span th:text="${deliverable.name}"></span>
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-danger delete-existing"
-                    th:data-file-id="${deliverable.id}"
-                    th:data-file-name="${deliverable.name}"
+              <div class="mb-4">
+                <label class="form-label">
+                  <i class="bi bi-file-earmark-pdf me-2"></i>Project Deliverables
+                </label>
+  
+                <ul id="existingFiles" class="list-group mb-3">
+                  <li
+                    th:each="deliverable : ${project.deliverables}"
+                    class="list-group-item d-flex justify-content-between align-items-center existing-file"
                   >
-                    <i class="bi bi-x-circle"></i>
-                  </button>
-                </li>
-              </ul>
-
-              <input
-                type="file"
-                id="fileInput"
-                name="files"
-                accept=".pdf"
-                class="form-control mb-3"
-                multiple
-              />
-
-              <ul id="newFileList" class="list-group"></ul>
+                    <span th:text="${deliverable.name}"></span>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-danger delete-existing"
+                      th:data-file-id="${deliverable.id}"
+                      th:data-file-name="${deliverable.name}"
+                    >
+                      <i class="bi bi-x-circle"></i>
+                    </button>
+                  </li>
+                </ul>
+  
+                <input
+                  type="file"
+                  id="fileInput"
+                  name="files"
+                  accept=".pdf"
+                  class="form-control mb-3"
+                  multiple
+                />
+  
+                <ul id="newFileList" class="list-group"></ul>
+              </div>
             </div>
 
             <div class="mb-4">
