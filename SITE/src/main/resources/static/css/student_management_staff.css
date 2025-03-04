@@ -1,6 +1,6 @@
 :root {
-            --ada-blue: #00549e;
-            --ada-teal: #00b5ad;
+            --ada-blue: #34495e;
+            --ada-teal: #34495e;
             --gradient-primary: linear-gradient(135deg, var(--ada-blue) 0%, var(--ada-teal) 100%);
         }
 

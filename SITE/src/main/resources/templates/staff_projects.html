@@ -25,8 +25,9 @@
   >
     <span th:text="${param.error}"></span>
   </div>
+
   <header
-          class="d-flex justify-content-between align-items-center p-3 header"
+          class="d-flex justify-content-between align-items-center mb-4 header"
   >
     <div class="d-flex align-items-center">
       <img
@@ -34,14 +35,14 @@
               alt="University Logo"
               class="logo me-3"
       />
-      <h4 class="mb-0 fw-normal">
+      <h4 class="mb-0 fw-normal text-white">
         Staff Portal:
         <span th:text="${staffName}" class="fw-semibold"></span>
       </h4>
     </div>
     <nav>
-      <a th:href="@{/staff/welcome}" class="btn btn-light btn-ada me-2">
-        <i class="fas fa-home me-2"></i>Home
+      <a th:href="@{/staff/student-management}" class="btn btn-outline-light me-2">
+        <i class="fas fa-chart-line ms-2"></i>Manage Students
       </a>
       <a th:href="@{/logout}" class="btn btn-danger ms-2">
         <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -59,89 +60,81 @@
     </button>
   </div>
 
-  <div class="project-table mt-4">
-    <table class="table table-hover align-middle">
-      <thead>
-      <tr>
-        <th class="py-3">Project Title</th>
-        <th class="py-3">Research Focus</th>
-        <th class="py-3">Category</th>
-        <th class="py-3">Restrictions</th>
-        <th class="py-3">Status</th>
-        <th class="py-3">Maximum Students</th>
-        <th class="py-3">Accepted Students</th>
-        <th class="py-3">Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="project : ${projects}">
-        <td class="fw-medium" th:text="${project.title}"></td>
-        <td
-                th:text="${#strings.listJoin(project.researchFocus, ', ')}"
-        ></td>
-        <td th:text="${#strings.listJoin(project.category, ', ')}"></td>
-        <td>
-          <ul class="list-unstyled mb-0">
-            <li>
-              <strong>Year:</strong>
-              <span
-                      th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"
-              ></span>
-            </li>
-            <li>
-              <strong>Degree:</strong>
-              <span
-                      th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"
-              ></span>
-            </li>
-            <li>
-              <strong>Major:</strong>
-              <span
-                      th:text="${#strings.listJoin(project.majorRestriction, ', ')}"
-              ></span>
-            </li>
-          </ul>
-        </td>
-        <td>
-                <span
-                        th:text="${project.status}"
-                        th:class="${#strings.equalsIgnoreCase(project.status, 'OPEN')} ? 'status-open' : 'status-closed'"
-                        class="status-badge"
-                ></span>
-        </td>
-        <td><span th:text="${project.maxStudents}"></span></td>
-        <td>
-                <span
-                        class="applicant-count"
-                        th:text="${project.students.size()}"
-                ></span>
-          <a
-                  class="btn btn-outline-secondary btn-sm ms-2"
-                  th:href="@{'/staff/projects/applicants/' + ${project.id}}"
-          >
-            <i class="fas fa-users me-2"></i>View Applicants
-          </a>
-        </td>
-        <td>
-          <a
-                  th:if="${project.status == T(az.edu.ada.SITE.Entity.Project.Status).OPEN}"
-                  th:href="@{'/staff/projects/edit/' + ${project.id}}"
-                  class="btn btn-outline-primary action-btn"
-          >
-            <i class="fas fa-edit me-2"></i>
-          </a>
-          <a
-                  th:href="@{'/staff/projects/delete/' + ${project.id}}"
-                  class="btn btn-outline-danger action-btn"
-                  onclick="return confirm('Confirm project deletion?')"
-          >
-            <i class="fas fa-trash-alt me-2"></i>
-          </a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+  <div class="project-grid mt-4">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div class="col" th:each="project : ${projects}">
+        <div class="card h-100 shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0" th:text="${project.title}"></h5>
+            <span th:text="${project.status}"
+                  th:class="${#strings.equalsIgnoreCase(project.status, 'OPEN')} ? 'status-open' : 'status-closed'"
+                  class="status-badge"></span>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <h6 class="text-secondary mb-2">Research Focus</h6>
+              <p class="mb-0" th:text="${#strings.listJoin(project.researchFocus, ', ')}"></p>
+            </div>
+
+            <div class="mb-3">
+              <h6 class="text-secondary mb-2">Category</h6>
+              <p class="mb-0" th:text="${#strings.listJoin(project.category, ', ')}"></p>
+            </div>
+
+            <div class="mb-3">
+              <h6 class="text-secondary mb-2">Restrictions</h6>
+              <ul class="list-unstyled mb-0">
+                <li>
+                  <strong>Year:</strong>
+                  <span th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"></span>
+                </li>
+                <li>
+                  <strong>Degree:</strong>
+                  <span th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"></span>
+                </li>
+                <li>
+                  <strong>Major:</strong>
+                  <span th:text="${#strings.listJoin(project.majorRestriction, ', ')}"></span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <h6 class="text-secondary">Max Students</h6>
+                <p class="mb-0" th:text="${project.maxStudents}"></p>
+              </div>
+              <div class="col-6">
+                <h6 class="text-secondary">Accepted</h6>
+                <p class="mb-0 applicant-count" th:text="${project.students.size()}"></p>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent">
+            <div class="d-flex justify-content-between align-items-center">
+              <a th:href="@{'/staff/projects/applicants/' + ${project.id}}"
+                 class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-users me-2"></i>Applicants
+              </a>
+              <div class="action-buttons">
+                <a th:if="${project.status == T(az.edu.ada.SITE.Entity.Project.Status).OPEN}"
+                   th:href="@{'/staff/projects/edit/' + ${project.id}}"
+                   class="btn btn-outline-primary btn-sm">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a th:href="@{'/staff/projects/delete/' + ${project.id}}"
+                   class="btn btn-outline-danger btn-sm"
+                   onclick="return confirm('Confirm project deletion?')">
+                  <i class="fas fa-trash-alt"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
   <div class="d-flex justify-content-center mt-4">
     <nav>
       <ul class="pagination">

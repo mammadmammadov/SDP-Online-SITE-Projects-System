@@ -38,8 +38,8 @@ public class SecurityConfig {
             User user = (User) authentication.getPrincipal();
             String redirectUrl = switch (user.getRole()) {
                 case ADMIN -> "/admin/welcome";
-                case STAFF -> "/staff/welcome";
-                case STUDENT -> "/student/welcome";
+                case STAFF -> "/staff/projects";
+                case STUDENT -> "/student/projects";
             };
             response.sendRedirect(redirectUrl);
         };

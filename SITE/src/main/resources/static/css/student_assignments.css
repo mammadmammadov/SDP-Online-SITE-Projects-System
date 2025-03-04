@@ -79,3 +79,34 @@ body {
     background-color: orange !important;
     color: white;
 }
+
+.header {
+        background-color: #1a5276;
+        padding: 1.5rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+        height: 45px;
+    }
+
+    .header h4 {
+        font-size: 1.2rem;
+    }
+
+    .header .btn-outline-light {
+        border-color: rgba(255, 255, 255, 0.7);
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .header .btn-outline-light:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: white;
+    }
+
+    .header .btn-outline-light i {
+        color: white;
+    }
+
