@@ -69,6 +69,21 @@
                 <small th:errors="*{description}"></small>
               </div>
             </div>
+            <div class="mb-3 form-check form-switch">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="requiresSubmission"
+                th:field="*{requiresSubmission}"
+              />
+              <label class="form-check-label" for="requiresSubmission">
+                Requires File Submission
+              </label>
+              <div class="form-text">
+                When enabled, students must upload a file. When disabled, grades
+                can be entered directly.
+              </div>
+            </div>
             <div class="mb-3">
               <label for="dueDate" class="form-label">Due Date</label>
               <input

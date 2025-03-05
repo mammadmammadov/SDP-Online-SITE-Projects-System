@@ -23,14 +23,20 @@ public class AssignmentSubmission {
   private String filePath;
 
   private LocalDateTime submittedAt;
-
   private Double grade;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "assignment_id", nullable = false)
   private Assignment assignment;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "student_id", nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "student_id")
   private Student student;
+
+  @Column(length = 300)
+  private String feedback;
+
+  @ManyToOne
+  @JoinColumn(name = "project_id")
+  private Project project;
 }

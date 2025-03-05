@@ -1,112 +1,123 @@
 :root {
-         --ada-blue: #00549e;
-         --ada-teal: #00b5ad;
-         --gradient-primary: linear-gradient(135deg, var(--ada-blue) 0%, var(--ada-teal) 100%);
-        }
+  --ada-blue: #00549e;
+  --ada-teal: #00b5ad;
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--ada-blue) 0%,
+    var(--ada-teal) 100%
+  );
+}
 
 body {
-         background: #f8fafc;
-         color: #2c3e50;
-         font-family: 'Segoe UI', Roboto, sans-serif;
-     }
-
-.header {
-         background: white;
-         padding: 1rem 2rem;
-         border-radius: 12px;
-         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-         margin-bottom: 2rem;
-        }
-
-.logo {
-         height: 50px;
-         filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-      }
-
-.assignment-card {
-            background: white;
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
-            transition: transform 0.2s ease;
-        }
-
-.assignment-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
-        }
-
-.due-date-badge {
-            background: #e3f2fd;
-            color: var(--ada-blue);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-
- .grade-status {
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-        }
-
-.upload-section {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-
-.btn-outline-primary {
-            border-color: var(--ada-blue);
-            color: var(--ada-blue);
-            transition: all 0.2s ease;
-        }
-
-.btn-outline-primary:hover {
-            background: var(--ada-blue);
-            color: white;
-        }
-
-.alert-custom {
-            border-radius: 8px;
-            border: none;
-        }
-
-.bg-orange {
-    background-color: orange !important;
-    color: white;
+  background: #f8fafc;
+  color: #2c3e50;
+  font-family: "Segoe UI", Roboto, sans-serif;
 }
 
 .header {
-        background-color: #1a5276;
-        padding: 1.5rem 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+  background: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
 
-    .logo {
-        height: 45px;
-    }
+.logo {
+  height: 50px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
 
-    .header h4 {
-        font-size: 1.2rem;
-    }
+.assignment-card {
+  background: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  transition: transform 0.2s ease;
+}
 
-    .header .btn-outline-light {
-        border-color: rgba(255, 255, 255, 0.7);
-        color: white;
-        transition: all 0.3s ease;
-    }
+.assignment-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+}
 
-    .header .btn-outline-light:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-color: white;
-    }
+.due-date-badge {
+  background: #e3f2fd;
+  color: var(--ada-blue);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
 
-    .header .btn-outline-light i {
-        color: white;
-    }
+.grade-status {
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
 
+.upload-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-outline-primary {
+  border-color: var(--ada-blue);
+  color: var(--ada-blue);
+  transition: all 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+  background: var(--ada-blue);
+  color: white;
+}
+
+.alert-custom {
+  border-radius: 8px;
+  border: none;
+}
+
+.bg-orange {
+  background-color: orange !important;
+  color: white;
+}
+
+.header {
+  background-color: #1a5276;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  height: 45px;
+}
+
+.header h4 {
+  font-size: 1.2rem;
+}
+
+.header .btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.7);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.header .btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
+
+.header .btn-outline-light i {
+  color: white;
+}
+
+.upload-section .form-control {
+  max-width: 500px;
+}
+
+.team-submission-grade {
+  margin-top: 1rem;
+}

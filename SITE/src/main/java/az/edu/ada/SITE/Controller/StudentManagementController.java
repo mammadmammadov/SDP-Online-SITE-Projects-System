@@ -22,14 +22,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -183,9 +187,35 @@ public class StudentManagementController {
     existingAssignment.setDescription(assignmentDTO.getDescription());
     existingAssignment.setDueDate(assignmentDTO.getDueDate());
     existingAssignment.setMaxGrade(assignmentDTO.getMaxGrade());
+    existingAssignment.setRequiresSubmission(assignmentDTO.isRequiresSubmission());
     assignmentService.saveAssignment(existingAssignment);
     redirectAttributes.addFlashAttribute("successMessage", "Assignment updated successfully.");
     return "redirect:/staff/student-management/" + projectId;
+  }
+
+  @GetMapping("/staff/student-management/{projectId}/assignments/{assignmentId}/submissions/{submissionId}/delete")
+  public String deleteSubmission(
+      @PathVariable Long projectId,
+      @PathVariable Long assignmentId,
+      @PathVariable Long submissionId,
+      RedirectAttributes redirectAttributes) {
+
+    AssignmentSubmissionDTO submission = assignmentSubmissionService.getSubmissionById(submissionId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid submission ID"));
+
+    try {
+      if (submission.getFilePath() != null && !submission.getFilePath().isEmpty()) {
+        Path filePath = Paths.get("student_submissions").resolve(submission.getFilePath());
+        Files.deleteIfExists(filePath);
+      }
+    } catch (IOException e) {
+      redirectAttributes.addFlashAttribute("errorMessage",
+          "File deletion failed: " + e.getMessage());
+    }
+
+    assignmentSubmissionService.deleteSubmission(submissionId);
+    redirectAttributes.addFlashAttribute("successMessage", "Submission deleted successfully.");
+    return "redirect:/staff/student-management/" + projectId + "/assignments/" + assignmentId + "/submissions";
   }
 
   @GetMapping("/staff/student-management/{projectId}/assignments/delete/{assignmentId}")
@@ -201,40 +231,125 @@ public class StudentManagementController {
   public String viewSubmissions(@PathVariable Long projectId,
       @PathVariable Long assignmentId,
       Model model) {
+
     AssignmentDTO assignmentDTO = assignmentService.getAssignmentById(assignmentId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid assignment ID"));
 
-    List<AssignmentSubmissionDTO> submissions = assignmentSubmissionService.getSubmissionsByAssignmentId(assignmentId);
+    ProjectDTO projectDTO = projectService.getProjectById(projectId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
 
+    List<AssignmentSubmissionDTO> submissionsToDisplay = new ArrayList<>();
+
+    if (assignmentDTO.isRequiresSubmission()) {
+      submissionsToDisplay = assignmentSubmissionService
+          .getSubmissionsByAssignmentAndProject(assignmentId, projectId);
+
+      if (projectDTO.getStudents().size() > 1) {
+        submissionsToDisplay.removeIf(s -> s.getStudentId() != null);
+      }
+    } else {
+      List<StudentDTO> students = projectDTO.getStudents();
+      List<AssignmentSubmissionDTO> existingSubmissions = assignmentSubmissionService
+          .getSubmissionsByAssignmentId(assignmentId);
+
+      List<AssignmentSubmissionDTO> tempSubmissions = new ArrayList<>();
+      students.forEach(student -> {
+        Optional<AssignmentSubmissionDTO> existing = existingSubmissions.stream()
+            .filter(s -> s.getStudentId() != null && s.getStudentId().equals(student.getId()))
+            .findFirst();
+
+        if (existing.isEmpty()) {
+          AssignmentSubmissionDTO newSubmission = new AssignmentSubmissionDTO();
+          newSubmission.setStudentId(student.getId());
+          newSubmission.setStudentName(student.getName() + " " + student.getSurname());
+          tempSubmissions.add(newSubmission);
+        } else {
+          tempSubmissions.add(existing.get());
+        }
+      });
+      submissionsToDisplay.addAll(tempSubmissions);
+    }
+
+    model.addAttribute("project", projectDTO);
     model.addAttribute("assignment", assignmentDTO);
-    model.addAttribute("projectId", projectId);
-    model.addAttribute("submissions", submissions);
+    model.addAttribute("submissions", submissionsToDisplay);
     return "assignment_submissions";
   }
 
-  @PostMapping("/staff/student-management/{projectId}/assignments/{assignmentId}/submissions/{submissionId}/grade")
-  public String gradeSubmission(@PathVariable Long projectId,
+  @PostMapping("/staff/student-management/{projectId}/assignments/{assignmentId}/submissions")
+  public String gradeSubmission(
+      @PathVariable Long projectId,
       @PathVariable Long assignmentId,
-      @PathVariable Long submissionId,
-      @RequestParam Double grade,
+      @RequestParam(required = false) Long submissionId,
+      @RequestParam(required = false) Long studentId,
+      @RequestParam(required = false) Double grade,
+      @RequestParam(required = false) String feedback,
       RedirectAttributes redirectAttributes) {
-    AssignmentSubmissionDTO submissionDTO = assignmentSubmissionService.getSubmissionById(submissionId)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid submission ID"));
 
-    AssignmentDTO assignmentDTO = assignmentService.getAssignmentById(assignmentId)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid assignment ID"));
+    try {
+      AssignmentDTO assignment = assignmentService.getAssignmentById(assignmentId)
+          .orElseThrow(() -> new IllegalArgumentException("Invalid assignment ID"));
 
-    if (grade > assignmentDTO.getMaxGrade()) {
-      redirectAttributes.addFlashAttribute("errorMessage",
-          "Grade cannot exceed the maximum grade of the assignment.");
-      return "redirect:/staff/student-management/" + projectId + "/assignments/" + assignmentId + "/submissions";
+      ProjectDTO project = projectService.getProjectById(projectId)
+          .orElseThrow(() -> new IllegalArgumentException("Invalid project ID"));
+
+      if (grade != null) {
+        if (grade < 0)
+          throw new IllegalArgumentException("Grade cannot be negative");
+        if (grade > assignment.getMaxGrade()) {
+          throw new IllegalArgumentException("Grade cannot exceed maximum value");
+        }
+      }
+
+      if (feedback != null && feedback.length() > 300) {
+        throw new IllegalArgumentException("Feedback cannot exceed 300 characters");
+      }
+
+      if (assignment.isRequiresSubmission()) {
+        if (submissionId == null) {
+          throw new IllegalArgumentException("Submission ID required for grading");
+        }
+
+        AssignmentSubmissionDTO submission = assignmentSubmissionService.getSubmissionById(submissionId)
+            .orElseThrow(() -> new IllegalArgumentException("Submission not found"));
+
+        if (project.getStudents().size() > 1 && submission.getStudentId() != null) {
+          throw new IllegalArgumentException("Invalid team submission format");
+        }
+
+        submission.setGrade(grade);
+        submission.setFeedback(feedback);
+        assignmentSubmissionService.saveSubmission(submission);
+      } else {
+        if (studentId == null) {
+          throw new IllegalArgumentException("Student ID required for grading");
+        }
+
+        boolean validStudent = project.getStudents().stream()
+            .anyMatch(s -> s.getId().equals(studentId));
+
+        if (!validStudent) {
+          throw new IllegalArgumentException("Student not found in project");
+        }
+
+        AssignmentSubmissionDTO submission = assignmentSubmissionService
+            .getOrCreateIndividualSubmission(assignmentId, studentId);
+
+        submission.setGrade(grade);
+        submission.setFeedback(feedback);
+        assignmentSubmissionService.saveSubmission(submission);
+      }
+
+      redirectAttributes.addFlashAttribute("successMessage", "Grade updated successfully");
+    } catch (IllegalArgumentException e) {
+      redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+    } catch (Exception e) {
+      redirectAttributes.addFlashAttribute("errorMessage", "An unexpected error occurred");
     }
 
-    submissionDTO.setGrade(grade);
-    assignmentSubmissionService.saveSubmission(submissionDTO);
-
-    redirectAttributes.addFlashAttribute("successMessage", "Submission graded successfully.");
-    return "redirect:/staff/student-management/" + projectId + "/assignments/" + assignmentId + "/submissions";
+    return "redirect:/staff/student-management/" + projectId +
+        "/assignments/" + assignmentId +
+        "/submissions?t=" + System.currentTimeMillis();
   }
 
   @GetMapping("/student/assignments")
@@ -246,13 +361,20 @@ public class StudentManagementController {
       ProjectDTO projectDTO = studentDTO.getProjects().stream()
           .map(projectMapper::projectToProjectDTO)
           .findFirst()
-          .orElseThrow(() -> new IllegalArgumentException());
+          .orElseThrow(IllegalArgumentException::new);
 
       List<AssignmentDTO> assignments = assignmentService.getAssignmentsByProjectId(projectDTO.getId());
 
       for (AssignmentDTO assignment : assignments) {
-        assignment.setSubmission(assignmentSubmissionService
-            .getSubmissionByAssignmentAndStudent(assignment.getId(), studentDTO.getId()).orElse(null));
+        if (assignment.isRequiresSubmission()) {
+          List<AssignmentSubmissionDTO> teamSubmissions = assignmentSubmissionService
+              .getSubmissionsByAssignmentAndProject(assignment.getId(), projectDTO.getId());
+          assignment.setSubmissions(teamSubmissions);
+        } else {
+          assignment.setSubmission(assignmentSubmissionService
+              .getSubmissionByAssignmentAndStudent(assignment.getId(), studentDTO.getId())
+              .orElse(null));
+        }
       }
 
       model.addAttribute("project", projectDTO);
@@ -285,6 +407,11 @@ public class StudentManagementController {
       Files.createDirectories(uploadDir);
     }
 
+    if (file.isEmpty()) {
+      redirectAttributes.addFlashAttribute("errorMessage", "File cannot be empty");
+      return "redirect:/student/assignments";
+    }
+
     AssignmentDTO assignmentDTO = assignmentService.getAssignmentById(assignmentId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid assignment ID"));
 
@@ -296,10 +423,16 @@ public class StudentManagementController {
     AssignmentSubmissionDTO submissionDTO = new AssignmentSubmissionDTO();
     submissionDTO.setFileName(file.getOriginalFilename());
     submissionDTO.setFilePath(uniqueFileName);
-    submissionDTO.setSubmittedAt(java.time.LocalDateTime.now());
+    submissionDTO.setSubmittedAt(LocalDateTime.now());
     submissionDTO.setAssignmentId(assignmentId);
-    submissionDTO.setStudentId(studentDTO.getId());
-    submissionDTO.setStudentName(studentDTO.getName() + " " + studentDTO.getSurname());
+    submissionDTO.setProjectId(projectId);
+
+    ProjectDTO projectDTO = projectService.getProjectById(projectId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid project ID"));
+    boolean isGroupProject = projectDTO.getStudents().size() > 1;
+    if (!isGroupProject) {
+      submissionDTO.setStudentId(studentDTO.getId());
+    }
 
     assignmentSubmissionService.saveSubmission(submissionDTO);
     redirectAttributes.addFlashAttribute("successMessage", "Assignment submitted successfully!");

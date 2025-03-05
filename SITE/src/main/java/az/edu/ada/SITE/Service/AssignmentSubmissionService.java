@@ -15,4 +15,9 @@ public interface AssignmentSubmissionService {
 
   Optional<AssignmentSubmissionDTO> getSubmissionByAssignmentAndStudent(Long assignmentId, Long studentId);
 
+  AssignmentSubmissionDTO getOrCreateTeamSubmission(Long assignmentId, Long projectId);
+
+  AssignmentSubmissionDTO getOrCreateIndividualSubmission(Long assignmentId, Long studentId);
+
+  List<AssignmentSubmissionDTO> getSubmissionsByAssignmentAndProject(Long assignmentId, Long projectId);
 }

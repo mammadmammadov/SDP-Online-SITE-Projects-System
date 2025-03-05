@@ -1,112 +1,126 @@
 :root {
-            --ada-blue: #00549e;
-            --ada-teal: #00b5ad;
-            --gradient-primary: linear-gradient(135deg, var(--ada-blue) 0%, var(--ada-teal) 100%);
-        }
+  --ada-blue: #00549e;
+  --ada-teal: #00b5ad;
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--ada-blue) 0%,
+    var(--ada-teal) 100%
+  );
+}
 
 body {
-            background: #f8fafc;
-            color: #2c3e50;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
+  background: #f8fafc;
+  color: #2c3e50;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
 
 .header {
-            background: var(--gradient-primary);
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+  background: var(--gradient-primary);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
 .logo {
-            height: 45px;
-            margin-right: 1.5rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-        }
+  height: 45px;
+  margin-right: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
 
 .submissions-card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
 
 .submissions-card .card-header {
-            background: var(--gradient-primary);
-            color: white;
-            border-bottom: none;
-            padding: 1.5rem;
-        }
+  background: var(--gradient-primary);
+  color: white;
+  border-bottom: none;
+  padding: 1.5rem;
+}
 
 .grade-table {
-            border-collapse: separate;
-            border-spacing: 0;
-            border-radius: 12px;
-            overflow: hidden;
-        }
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
 
 .grade-table thead {
-            background: var(--ada-blue);
-            color: white;
-        }
+  background: var(--ada-blue);
+  color: white;
+}
 
 .grade-table th {
-            font-weight: 500;
-            padding: 1rem;
-        }
+  font-weight: 500;
+  padding: 1rem;
+}
 
 .grade-table td {
-            vertical-align: middle;
-            padding: 1rem;
-            background: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
+  vertical-align: middle;
+  padding: 1rem;
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
 
 .grade-form {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
 
 .grade-input {
-            flex: 1;
-            max-width: 150px;
-            border-radius: 8px;
-            border: 2px solid #e2e8f0;
-            padding: 0.5rem 1rem;
-            transition: all 0.3s ease;
-        }
+  flex: 1;
+  max-width: 150px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
 
 .grade-input:focus {
-            border-color: var(--ada-teal);
-            box-shadow: 0 0 0 3px rgba(0, 180, 173, 0.1);
-        }
+  border-color: var(--ada-teal);
+  box-shadow: 0 0 0 3px rgba(0, 180, 173, 0.1);
+}
 
 .btn-success {
-            background: var(--ada-teal);
-            border: none;
-            padding: 0.5rem 1.25rem;
-            border-radius: 8px;
-            transition: transform 0.2s ease;
-        }
+  background: var(--ada-teal);
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
 
 .btn-success:hover {
-            transform: translateY(-2px);
-        }
+  transform: translateY(-2px);
+}
 
 .download-btn {
-            border-color: var(--ada-blue);
-            color: var(--ada-blue);
-            transition: all 0.3s ease;
-        }
+  border-color: var(--ada-blue);
+  color: var(--ada-blue);
+  transition: all 0.3s ease;
+}
 
 .download-btn:hover {
-            background: var(--ada-blue);
-            color: white;
-        }
+  background: var(--ada-blue);
+  color: white;
+}
 
 .alert-custom {
-            border-radius: 8px;
-            border: none;
-            padding: 1rem;
-        }
+  border-radius: 8px;
+  border: none;
+  padding: 1rem;
+}
+
+.grade-form .form-control {
+  max-width: 300px;
+}
+.grade-form textarea {
+  min-height: 100px;
+}
+.input-group-text {
+  min-width: 80px;
+}

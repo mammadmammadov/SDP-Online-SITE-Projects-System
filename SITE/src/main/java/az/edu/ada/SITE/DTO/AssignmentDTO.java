@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class AssignmentDTO {
@@ -21,4 +23,6 @@ public class AssignmentDTO {
   private Double maxGrade;
   private Long projectId;
   private AssignmentSubmissionDTO submission;
+  private List<AssignmentSubmissionDTO> submissions = new ArrayList<>();
+
 }
