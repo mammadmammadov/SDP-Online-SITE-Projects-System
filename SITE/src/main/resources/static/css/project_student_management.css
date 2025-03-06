@@ -11,7 +11,7 @@ body {
         }
 
 .header {
-            background: #ffffff;
+            background: #1a5276;
             padding: 1rem 2rem;
             border-radius: 12px;
             margin-bottom: 2rem;
@@ -202,4 +202,9 @@ tr.empty-state-row:hover {
 
 .empty-state-row:hover td {
     background: white !important;
+}
+
+.logo {
+  height: 45px;
+  filter: brightness(0) invert(1);
 }

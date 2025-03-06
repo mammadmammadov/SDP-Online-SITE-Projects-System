@@ -26,28 +26,37 @@
     <span th:text="${param.error}"></span>
   </div>
 
-  <header
-          class="d-flex justify-content-between align-items-center mb-4 header"
-  >
-    <div class="d-flex align-items-center">
-      <img
-              src="/images/ada_logo.png"
-              alt="University Logo"
-              class="logo me-3"
-      />
-      <h4 class="mb-0 fw-normal text-white">
-        Staff Portal:
-        <span th:text="${staffName}" class="fw-semibold"></span>
-      </h4>
+  <header class="d-flex justify-content-between align-items-center mb-4 header">
+    <div class="container-fluid">
+      <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
+        <div class="d-flex align-items-center">
+          <img src="/images/ada_logo.png"
+               alt="University Logo"
+               class="logo me-3"
+               >
+          <h4 class="mb-0 fw-normal text-white m-0">
+            <span class="d-none d-sm-inline">Staff Portal:</span>
+            <span th:text="${staffName}" class="fw-semibold ms-1"></span>
+          </h4>
+        </div>
+
+        <nav class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
+          <a th:href="@{/staff/student-management}"
+             class="btn btn-outline-light btn-sm py-1 py-md-2">
+            <i class="fas fa-chart-line d-inline d-md-none"></i>
+            <span class="d-none d-md-inline">Manage Students</span>
+            <i class="fas fa-chart-line ms-2 d-none d-md-inline"></i>
+          </a>
+
+          <a th:href="@{/logout}"
+             class="btn btn-danger btn-sm py-1 py-md-2">
+            <i class="fas fa-sign-out-alt d-inline d-md-none"></i>
+            <span class="d-none d-md-inline">Logout</span>
+            <i class="fas fa-sign-out-alt ms-2 d-none d-md-inline"></i>
+          </a>
+        </nav>
+      </div>
     </div>
-    <nav>
-      <a th:href="@{/staff/student-management}" class="btn btn-outline-light me-2">
-        <i class="fas fa-chart-line ms-2"></i>Manage Students
-      </a>
-      <a th:href="@{/logout}" class="btn btn-danger ms-2">
-        <i class="fas fa-sign-out-alt me-2"></i>Logout
-      </a>
-    </nav>
   </header>
 
   <div class="mt-4 d-flex justify-content-between align-items-center">
@@ -56,7 +65,7 @@
             onclick="location.href='/staff/projects/new'"
             class="btn btn-ada"
     >
-      <i class="fas fa-plus me-2"></i>Create New Project
+      <i class="fas fa-plus me-2"></i>New Project
     </button>
   </div>
 
@@ -112,26 +121,35 @@
           </div>
           <div class="card-footer bg-transparent">
             <div class="d-flex justify-content-between align-items-center">
-              <a th:href="@{'/staff/projects/applicants/' + ${project.id}}"
-                 class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-users me-2"></i>Applicants
-              </a>
+              <div class="d-flex gap-2">
+                <a th:href="@{'/staff/projects/applicants/' + ${project.id}}"
+                   class="btn btn-outline-secondary btn-sm">
+                  <i class="fas fa-users me-2"></i>
+                </a>
+                <button type="button"
+                        class="btn btn-outline-primary btn-sm"
+                        data-bs-toggle="modal"
+                        th:attr="data-bs-target='#projectModal-' + ${project.id}">
+                  <i class="fas fa-info-circle me-2"></i>
+                </button>
+              </div>
+
               <div class="action-buttons">
                 <a th:if="${project.supervisor != null and project.supervisor.id == staffId}"
                    th:href="@{'/staff/projects/edit/' + ${project.id}}"
                    class="btn btn-outline-primary btn-sm">
                   <i class="fas fa-edit"></i>
                 </a>
-              
+
                 <a th:if="${project.supervisor != null and project.supervisor.id == staffId}"
                    th:href="@{'/staff/projects/delete/' + ${project.id}}"
                    class="btn btn-outline-danger btn-sm"
                    onclick="return confirm('Confirm project deletion?')">
                   <i class="fas fa-trash-alt"></i>
                 </a>
-              
+
                 <a th:if="${project.supervisor == null or project.supervisor.id != staffId}"
-                   class="btn btn-outline-secondary btn-sm disabled" 
+                   class="btn btn-outline-secondary btn-sm disabled"
                    href="javascript:void(0)">
                   <i class="fas fa-ban"></i> No Permission
                 </a>
@@ -139,9 +157,132 @@
             </div>
           </div>
         </div>
+        <div
+                class="modal fade"
+                th:id="'projectModal-' + ${project.id}"
+                tabindex="-1"
+                th:attr="aria-labelledby='projectModalLabel-' + ${project.id}"
+                aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5
+                        class="modal-title"
+                        th:id="'projectModalLabel-' + ${project.id}"
+                >
+                  <i class="fas fa-project-diagram me-2"></i>
+                  <span th:text="${project.title}"></span>
+                </h5>
+                <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  <strong>Description:</strong>
+                  <span th:text="${project.description}"></span>
+                </p>
+
+                <div class="mb-3">
+                  <strong>Objectives:</strong>
+                  <div>
+                      <span
+                              th:each="obj : ${#strings.arraySplit(project.objectives, ',')}"
+                              class="objective-badge"
+                      >
+                        <i class="fas fa-hashtag me-1"></i>
+                        <span th:text="${obj.trim()}"></span>
+                      </span>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <strong>Research Focus:</strong>
+                  <div class="category-list">
+                      <span
+                              th:each="cat : ${project.researchFocus}"
+                              class="category-badge"
+                              th:text="${cat}"
+                      ></span>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <strong>Category:</strong>
+                  <div class="category-list">
+                      <span
+                              th:each="cat : ${project.category}"
+                              class="category-badge"
+                              th:text="${cat}"
+                      ></span>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <strong>Subcategories:</strong>
+                  <div class="category-list">
+                      <span
+                              th:each="sub : ${project.subcategories}"
+                              class="badge bg-info me-1"
+                              th:text="${#strings.arraySplit(sub, ':')[0]}"
+                      ></span>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <strong>Supervisor:</strong>
+                  <span
+                          th:text="${project.supervisor.name} + ' ' + ${project.supervisor.surname}"
+                  ></span>
+                </div>
+
+                <div class="mb-3">
+                  <strong>Co-Supervisors:</strong>
+                  <span th:each="coSupervisor, iterStat : ${project.coSupervisors}">
+                            <span th:text="${coSupervisor.name} + ' ' + ${coSupervisor.surname}"></span><th:block th:if="${!iterStat.last}">, </th:block>
+                        </span>
+                  <span th:if="${project.coSupervisors.isEmpty()}">None</span>
+                </div>
+
+                <div class="mb-3">
+                  <strong>Restrictions:</strong>
+                  <div class="mt-2">
+                    <div class="restriction-item">
+                      <i class="fas fa-calendar-alt"></i>
+                      <span>Study Year: </span>
+                      <span
+                              th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"
+                      ></span>
+                    </div>
+                    <div class="restriction-item">
+                      <i class="fas fa-mortar-board"></i>
+                      <span>Degree: </span>
+                      <span
+                              th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"
+                      ></span>
+                    </div>
+                    <div class="restriction-item">
+                      <i class="fas fa-book"></i>
+                      <span>Major: </span>
+                      <span
+                              th:text="${#strings.listJoin(project.majorRestriction, ', ')}"
+                      ></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+
 
   <div class="d-flex justify-content-center mt-4">
     <nav>

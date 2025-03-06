@@ -11,7 +11,7 @@ body {
         }
 
 .header {
-            background: var(--gradient-primary);
+            background-color: #1a5276;
             padding: 1rem 2rem;
             border-radius: 12px;
             margin-bottom: 2rem;
@@ -20,8 +20,7 @@ body {
 
 .logo {
             height: 45px;
-            margin-right: 1.5rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            filter: brightness(0) invert(1);
         }
 
 .management-card {
@@ -70,3 +69,22 @@ body {
 tr:hover {
             background: rgba(0, 0, 0, 0.02);
         }
+
+
+@media (max-width: 576px) {
+
+    .btn-sm {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .project-grid .card {
+        margin-bottom: 1rem;
+    }
+
+    .action-buttons .btn {
+        margin-left: 0.25rem;
+    }
+}

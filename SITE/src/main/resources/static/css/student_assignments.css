@@ -23,8 +23,8 @@ body {
 }
 
 .logo {
-  height: 50px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  height: 45px;
+  filter: brightness(0) invert(1);
 }
 
 .assignment-card {
@@ -89,10 +89,6 @@ body {
   padding: 1.5rem 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.logo {
-  height: 45px;
 }
 
 .header h4 {

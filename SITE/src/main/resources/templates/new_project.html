@@ -1,334 +1,345 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
+<head>
     <title>Create New Project</title>
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     />
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="/css/new_project.css" />
-  </head>
-  <body>
-    <div class="container mt-4 mb-5">
-      <header
-        class="d-flex justify-content-between align-items-center p-4 rounded-3 shadow-lg gradient-header text-white mb-4"
-      >
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="/css/new_project.css"/>
+</head>
+<body>
+<div class="container mt-4 mb-5">
+    <header
+            class="d-flex justify-content-between align-items-center mb-4 header"
+    >
         <div class="d-flex align-items-center">
-          <img
-            src="/images/ada_logo.png"
-            alt="University Logo"
-            class="logo me-3"
-            style="height: 50px; width: auto"
-          />
-          <h4 class="mb-0">
-            <i class="bi bi-clipboard2-plus-fill me-2"></i>Create New Project
-          </h4>
+            <img
+                    src="/images/ada_logo.png"
+                    alt="University Logo"
+                    class="logo me-3"
+            />
+            <h4 class="mb-0 fw-normal text-white">
+                <i class="bi bi-clipboard2-plus-fill me-2"></i>Create New Project
+            </h4>
         </div>
-        <nav>
-          <a th:href="@{/staff/projects}" class="btn btn-light me-2">
-            <i class="bi bi-arrow-left-circle me-2"></i>Back to Projects
-          </a>
+        <nav class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
+            <a th:href="@{/staff/projects}" class="btn btn-outline-light btn-sm py-1 py-md-2">
+                <i class="bi bi-arrow-left-circle me-2"></i>
+                <span class="d-none d-md-inline">Go Back</span>
+            </a>
+
+            <a th:href="@{/logout}"
+               class="btn btn-danger btn-sm py-1 py-md-2">
+                <i class="fas fa-sign-out-alt d-inline d-md-none"></i>
+                <span class="d-none d-md-inline">Logout</span>
+                <i class="fas fa-sign-out-alt ms-2 d-none d-md-inline"></i>
+            </a>
         </nav>
-      </header>
+    </header>
 
-      <div class="card project-card shadow-lg">
+    <div class="card project-card shadow-lg">
         <div class="card-body p-4">
-          <form
-            th:action="@{/staff/projects/save}"
-            th:object="${project}"
-            method="post"
-            enctype="multipart/form-data"
-            id="projectForm"
-          >
-            <div class="mb-4">
-              <label for="title" class="form-label">
-                <i class="bi bi-card-heading me-2 text-primary"></i>Project
-                Title
-              </label>
-              <input
-                type="text"
-                class="form-control form-control-lg"
-                id="title"
-                th:field="*{title}"
-                placeholder="Enter project title"
-                required
-              />
-            </div>
-
-            <div class="mb-4">
-              <label for="description" class="form-label">
-                <i class="bi bi-text-paragraph me-2 text-info"></i>Description
-              </label>
-              <textarea
-                class="form-control"
-                id="description"
-                th:field="*{description}"
-                rows="4"
-                placeholder="Describe the project purpose and scope"
-                required
-              ></textarea>
-            </div>
-
-            <div class="mb-4">
-              <label class="form-label">
-                <i class="bi bi-list-task me-2 text-success"></i>Objectives
-              </label>
-              <div class="objective-input-container">
-                <div id="objectivesList" class="mb-3"></div>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="objectiveInput"
-                    placeholder="Enter an objective and press Enter"
-                    aria-label="Project objective"
-                  />
-                  <button
-                    class="btn btn-outline-primary"
-                    type="button"
-                    id="addObjectiveBtn"
-                  >
-                    <i class="bi bi-plus-lg"></i> Add Objective
-                  </button>
-                </div>
-                <small class="text-muted mt-2 d-block">
-                  Press Enter or click Add to include objectives
-                </small>
-              </div>
-              <input
-                type="hidden"
-                th:field="*{objectives}"
-                id="hiddenObjectives"
-              />
-            </div>
-
-            <div class="mb-4">
-              <label for="researchFocus" class="form-label">
-                <i class="bi bi-diagram-3 me-2 text-warning"></i>Research Focus
-              </label>
-              <select
-                class="form-select form-select-lg"
-                id="researchFocus"
-                th:field="*{researchFocus}"
-                required
-              >
-                <option value="Senior Design Project">
-                  Senior Design Project
-                </option>
-                <option value="Research Project">Research Project</option>
-              </select>
-            </div>
-
-            <div id="categoryError" class="error-message"></div>
-
-            <div class="mb-4">
-              <label class="form-label">
-                <i class="bi bi-list me-2 text-secondary"></i>Categories
-              </label>
-              <div class="checkbox-group" id="categoriesContainer"></div>
-            </div>
-
-            <div id="studyYearError" class="error-message"></div>
-            <div class="mb-4">
-              <label class="form-label">
-                <i class="bi bi-calendar me-2 text-secondary"></i>Study Year
-                Restrictions
-              </label>
-              <div class="checkbox-group">
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{studyYearRestriction}"
-                    value="Freshman"
-                  />
-                  <span class="form-check-label">Freshman</span>
-                </label>
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{studyYearRestriction}"
-                    value="Sophomore"
-                  />
-                  <span class="form-check-label">Sophomore</span>
-                </label>
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{studyYearRestriction}"
-                    value="Junior"
-                  />
-                  <span class="form-check-label">Junior</span>
-                </label>
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{studyYearRestriction}"
-                    value="Senior"
-                  />
-                  <span class="form-check-label">Senior</span>
-                </label>
-              </div>
-            </div>
-
-            <div id="degreeError" class="error-message"></div>
-            <div class="mb-4">
-              <label class="form-label">
-                <i class="bi bi-mortarboard me-2 text-secondary"></i>Degree
-                Restrictions
-              </label>
-              <div class="checkbox-group">
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{degreeRestriction}"
-                    value="Undergraduate"
-                  />
-                  <span class="form-check-label">Undergraduate</span>
-                </label>
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{degreeRestriction}"
-                    value="Graduate"
-                  />
-                  <span class="form-check-label">Graduate</span>
-                </label>
-              </div>
-            </div>
-
-            <div id="majorError" class="error-message"></div>
-            <div class="mb-4">
-              <label class="form-label">
-                <i class="bi bi-book me-2 text-secondary"></i>Major Restrictions
-              </label>
-              <div class="checkbox-group">
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{majorRestriction}"
-                    value="Information Technologies"
-                  />
-                  <span class="form-check-label">Information Technologies</span>
-                </label>
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{majorRestriction}"
-                    value="Computer Science"
-                  />
-                  <span class="form-check-label">Computer Science</span>
-                </label>
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{majorRestriction}"
-                    value="Computer Engineering"
-                  />
-                  <span class="form-check-label">Computer Engineering</span>
-                </label>
-                <label class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    th:field="*{majorRestriction}"
-                    value="Electrical Engineering"
-                  />
-                  <span class="form-check-label">Electrical Engineering</span>
-                </label>
-              </div>
-            </div>
-
-            <div class="mb-4">
-              <label for="type" class="form-label">
-                <i class="bi bi-diagram-3 me-2 text-warning"></i>Project Type
-              </label>
-              <select
-                class="form-select form-select-lg"
-                id="type"
-                th:field="*{type}"
-                required
-              >
-                <option value="INDIVIDUAL">Individual Project</option>
-                <option value="GROUP">Group Project</option>
-              </select>
-            </div>
-
-            <div id="maxStudentsContainer" class="mb-4" style="display: none">
-              <label for="maxStudents" class="form-label">
-                <i class="bi bi-person-lines-fill me-2 text-danger"></i>Maximum
-                Number of Enrolled Students
-              </label>
-              <select
-                class="form-select form-select-lg"
-                id="maxStudents"
-                name="maxStudents"
-              >
-                <option value="2">2 Students</option>
-                <option value="3">3 Students</option>
-                <option value="4">4 Students</option>
-              </select>
-            </div>
-            <div
-              th:if="${errorMessage}"
-              class="alert alert-danger"
-              role="alert"
+            <form
+                    th:action="@{/staff/projects/save}"
+                    th:object="${project}"
+                    method="post"
+                    enctype="multipart/form-data"
+                    id="projectForm"
             >
-              <span th:text="${errorMessage}"></span>
-            </div>
+                <div class="mb-4">
+                    <label for="title" class="form-label">
+                        <i class="bi bi-card-heading me-2 text-primary"></i>Project
+                        Title
+                    </label>
+                    <input
+                            type="text"
+                            class="form-control form-control-lg"
+                            id="title"
+                            th:field="*{title}"
+                            placeholder="Enter project title"
+                            required
+                    />
+                </div>
 
-            <div class="mb-4">
-              <label for="fileUpload" class="form-label">
-                <i class="bi bi-cloud-upload me-2 text-primary"></i>Upload Files
-              </label>
-              <div class="input-group">
-                <input
-                  type="file"
-                  class="form-control"
-                  id="fileUpload"
-                  name="files"
-                  multiple
-                  accept=".pdf"
-                  onchange="updateFileList()"
-                />
-                <div id="fileError" class="text-danger mt-2"></div>
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  onclick="document.getElementById('fileUpload').click();"
+                <div class="mb-4">
+                    <label for="description" class="form-label">
+                        <i class="bi bi-text-paragraph me-2 text-info"></i>Description
+                    </label>
+                    <textarea
+                            class="form-control"
+                            id="description"
+                            th:field="*{description}"
+                            rows="4"
+                            placeholder="Describe the project purpose and scope"
+                            required
+                    ></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="bi bi-list-task me-2 text-success"></i>Objectives
+                    </label>
+                    <div class="objective-input-container">
+                        <div id="objectivesList" class="mb-3"></div>
+                        <div class="input-group">
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="objectiveInput"
+                                    placeholder="Enter an objective and press Enter"
+                                    aria-label="Project objective"
+                            />
+                            <button
+                                    class="btn btn-outline-primary"
+                                    type="button"
+                                    id="addObjectiveBtn"
+                            >
+                                <i class="bi bi-plus-lg"></i> Add Objective
+                            </button>
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            Press Enter or click Add to include objectives
+                        </small>
+                    </div>
+                    <input
+                            type="hidden"
+                            th:field="*{objectives}"
+                            id="hiddenObjectives"
+                    />
+                </div>
+
+                <div class="mb-4">
+                    <label for="researchFocus" class="form-label">
+                        <i class="bi bi-diagram-3 me-2 text-warning"></i>Research Focus
+                    </label>
+                    <select
+                            class="form-select form-select-lg"
+                            id="researchFocus"
+                            th:field="*{researchFocus}"
+                            required
+                    >
+                        <option value="Senior Design Project">
+                            Senior Design Project
+                        </option>
+                        <option value="Research Project">Research Project</option>
+                    </select>
+                </div>
+
+                <div id="categoryError" class="error-message"></div>
+
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="bi bi-list me-2 text-secondary"></i>Categories
+                    </label>
+                    <div class="checkbox-group" id="categoriesContainer"></div>
+                </div>
+
+                <div id="studyYearError" class="error-message"></div>
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="bi bi-calendar me-2 text-secondary"></i>Study Year
+                        Restrictions
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{studyYearRestriction}"
+                                    value="Freshman"
+                            />
+                            <span class="form-check-label">Freshman</span>
+                        </label>
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{studyYearRestriction}"
+                                    value="Sophomore"
+                            />
+                            <span class="form-check-label">Sophomore</span>
+                        </label>
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{studyYearRestriction}"
+                                    value="Junior"
+                            />
+                            <span class="form-check-label">Junior</span>
+                        </label>
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{studyYearRestriction}"
+                                    value="Senior"
+                            />
+                            <span class="form-check-label">Senior</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="degreeError" class="error-message"></div>
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="bi bi-mortarboard me-2 text-secondary"></i>Degree
+                        Restrictions
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{degreeRestriction}"
+                                    value="Undergraduate"
+                            />
+                            <span class="form-check-label">Undergraduate</span>
+                        </label>
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{degreeRestriction}"
+                                    value="Graduate"
+                            />
+                            <span class="form-check-label">Graduate</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="majorError" class="error-message"></div>
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="bi bi-book me-2 text-secondary"></i>Major Restrictions
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{majorRestriction}"
+                                    value="Information Technologies"
+                            />
+                            <span class="form-check-label">Information Technologies</span>
+                        </label>
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{majorRestriction}"
+                                    value="Computer Science"
+                            />
+                            <span class="form-check-label">Computer Science</span>
+                        </label>
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{majorRestriction}"
+                                    value="Computer Engineering"
+                            />
+                            <span class="form-check-label">Computer Engineering</span>
+                        </label>
+                        <label class="form-check form-check-inline">
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{majorRestriction}"
+                                    value="Electrical Engineering"
+                            />
+                            <span class="form-check-label">Electrical Engineering</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="type" class="form-label">
+                        <i class="bi bi-diagram-3 me-2 text-warning"></i>Project Type
+                    </label>
+                    <select
+                            class="form-select form-select-lg"
+                            id="type"
+                            th:field="*{type}"
+                            required
+                    >
+                        <option value="INDIVIDUAL">Individual Project</option>
+                        <option value="GROUP">Group Project</option>
+                    </select>
+                </div>
+
+                <div id="maxStudentsContainer" class="mb-4" style="display: none">
+                    <label for="maxStudents" class="form-label">
+                        <i class="bi bi-person-lines-fill me-2 text-danger"></i>Maximum
+                        Number of Enrolled Students
+                    </label>
+                    <select
+                            class="form-select form-select-lg"
+                            id="maxStudents"
+                            name="maxStudents"
+                    >
+                        <option value="2">2 Students</option>
+                        <option value="3">3 Students</option>
+                        <option value="4">4 Students</option>
+                    </select>
+                </div>
+                <div
+                        th:if="${errorMessage}"
+                        class="alert alert-danger"
+                        role="alert"
                 >
-                  <i class="bi bi-folder2-open"></i> Choose Files
-                </button>
-              </div>
-              <small class="text-muted d-block mt-2">
-                You can select multiple files.
-              </small>
-              <ul id="fileList" class="list-group mt-2"></ul>
-            </div>
+                    <span th:text="${errorMessage}"></span>
+                </div>
 
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-              <button type="submit" class="btn btn-success btn-lg px-4">
-                <i class="bi bi-save-fill me-2"></i>Create Project
-              </button>
-            </div>
-          </form>
+                <div class="mb-4">
+                    <label for="fileUpload" class="form-label">
+                        <i class="bi bi-cloud-upload me-2 text-primary"></i>Upload Files
+                    </label>
+                    <div class="input-group">
+                        <input
+                                type="file"
+                                class="form-control"
+                                id="fileUpload"
+                                name="files"
+                                multiple
+                                accept=".pdf"
+                                onchange="updateFileList()"
+                        />
+                        <div id="fileError" class="text-danger mt-2"></div>
+                        <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                onclick="document.getElementById('fileUpload').click();"
+                        >
+                            <i class="bi bi-folder2-open"></i> Choose Files
+                        </button>
+                    </div>
+                    <small class="text-muted d-block mt-2">
+                        You can select multiple files.
+                    </small>
+                    <ul id="fileList" class="list-group mt-2"></ul>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button type="submit" class="btn btn-success btn-lg px-4">
+                        <i class="bi bi-save-fill me-2"></i>Create Project
+                    </button>
+                </div>
+            </form>
         </div>
-      </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/new_project_script.js"></script>
-  </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/new_project_script.js"></script>
+</body>
 </html>
