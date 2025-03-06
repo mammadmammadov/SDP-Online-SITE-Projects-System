@@ -196,7 +196,7 @@ public class ProjectController {
 
         if (page < 0)
             page = 0;
-        var pageable = org.springframework.data.domain.PageRequest.of(page, 4);
+        var pageable = org.springframework.data.domain.PageRequest.of(page, 6);
         var projectPage = projectService.getEligibleProjectsForStudent(studentDTO, category, keywords, supervisorName,
                 supervisorSurname, pageable);
 
@@ -239,7 +239,7 @@ public class ProjectController {
     
             if (page < 0)
                 page = 0;
-            var pageable = org.springframework.data.domain.PageRequest.of(page, 4);
+            var pageable = org.springframework.data.domain.PageRequest.of(page, 6);
     
             Page<ProjectDTO> projectPage = projectService.getProjectsExceptStaff(staffId, pageable);
             List<ProjectDTO> sortedProjects = new ArrayList<>();

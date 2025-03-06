@@ -1,283 +1,308 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
+<head>
     <title>Edit Project</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     />
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
     />
-    <link rel="stylesheet" href="/css/edit_project.css" />
-  </head>
-  <body class="bg-light">
-    <div class="container mt-4 mb-5">
-      <header
-        class="d-flex justify-content-between align-items-center p-4 rounded shadow-sm mb-4 gradient-header"
-      >
-        <h4 class="mb-0">
-          <i class="bi bi-pencil-square me-2"></i>Edit Project
-        </h4>
-        <nav>
-          <a th:href="@{/admin/projects}" class="btn btn-outline-light">
-            <i class="bi bi-arrow-left-circle me-2"></i>Back to Projects
-          </a>
-        </nav>
-      </header>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/edit_project.css"/>
+    <link rel="stylesheet" href="/css/admin_projects.css">
+</head>
+<body class="bg-light">
+<div class="container mt-4">
+    <header class="d-flex justify-content-between align-items-center mb-4 header">
+        <div class="container-fluid">
+            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
+                <div class="d-flex align-items-center">
+                    <img src="/images/ada_logo.png"
+                         alt="University Logo"
+                         class="logo me-3"
+                    >
+                    <h4 class="mb-0 fw-normal text-white m-0">
+                        <span class="d-none d-sm-inline">Admin Dashboard</span>
+                    </h4>
+                </div>
+                <nav class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
+                    <a th:href="@{/admin/projects}"
+                       class="btn btn-outline-light btn-sm py-1 py-md-2">
+                        <i class="bi bi-arrow-left-circle me-2"></i>
+                        <span class="d-none d-md-inline">Back to Projects</span>
+                    </a>
 
-      <div class="card shadow-lg border-0">
+                    <a th:href="@{/logout}"
+                       class="btn btn-danger btn-sm py-1 py-md-2">
+                        <i class="fas fa-sign-out-alt d-inline d-md-none"></i>
+                        <span class="d-none d-md-inline">Logout</span>
+                        <i class="fas fa-sign-out-alt ms-2 d-none d-md-inline"></i>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="card shadow-lg border-0">
         <div class="card-header bg-white">
-          <h3 class="card-title mb-0 text-primary">
-            <i class="bi bi-clipboard2-data me-2"></i>Project Details
-          </h3>
+            <h3 class="card-title mb-0 text-primary">
+                <i class="bi bi-clipboard2-data me-2"></i>Project Details
+            </h3>
         </div>
         <div class="card-body bg-white rounded-bottom">
-          <form
-            th:action="@{/admin/projects/update/{id}(id=${project.id})}"
-            th:object="${project}"
-            method="post"
-          >
-            <div id="editableFields">
-              <div class="mb-4">
-                <label for="title" class="form-label">
-                  <i class="bi bi-card-heading me-2"></i>Project Title
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  th:field="*{title}"
-                  class="form-control form-control-lg"
-                  required
-                />
-              </div>
+            <form
+                    th:action="@{/admin/projects/update/{id}(id=${project.id})}"
+                    th:object="${project}"
+                    method="post"
+            >
+                <div id="editableFields">
+                    <div class="mb-4">
+                        <label for="title" class="form-label">
+                            <i class="bi bi-card-heading me-2"></i>Project Title
+                        </label>
+                        <input
+                                type="text"
+                                id="title"
+                                th:field="*{title}"
+                                class="form-control form-control-lg"
+                                required
+                        />
+                    </div>
 
-              <div class="mb-4">
-                <label for="description" class="form-label">
-                  <i class="bi bi-text-paragraph me-2"></i>Description
-                </label>
-                <textarea
-                  id="description"
-                  th:field="*{description}"
-                  class="form-control"
-                  rows="4"
-                  required
-                ></textarea>
-              </div>
+                    <div class="mb-4">
+                        <label for="description" class="form-label">
+                            <i class="bi bi-text-paragraph me-2"></i>Description
+                        </label>
+                        <textarea
+                                id="description"
+                                th:field="*{description}"
+                                class="form-control"
+                                rows="4"
+                                required
+                        ></textarea>
+                    </div>
 
-              <div class="mb-4">
-                <label for="objectives" class="form-label">
-                  <i class="bi bi-list-task me-2"></i>Objectives
-                </label>
-                <textarea
-                  id="objectives"
-                  th:field="*{objectives}"
-                  class="form-control"
-                  rows="4"
-                  required
-                ></textarea>
-              </div>
+                    <div class="mb-4">
+                        <label for="objectives" class="form-label">
+                            <i class="bi bi-list-task me-2"></i>Objectives
+                        </label>
+                        <textarea
+                                id="objectives"
+                                th:field="*{objectives}"
+                                class="form-control"
+                                rows="4"
+                                required
+                        ></textarea>
+                    </div>
 
-              <div class="col-md-6 mb-4">
-                <label for="researchFocus" class="form-label">
-                  <i class="bi bi-diagram-3 me-2 text-warning"></i>Research
-                  Focus
-                </label>
-                <select
-                  id="researchFocus"
-                  th:field="*{researchFocus}"
-                  class="form-select"
-                >
-                  <option value="Senior Design Project">
-                    Senior Design Project
-                  </option>
-                  <option value="Research Project">Research Project</option>
-                </select>
-              </div>
+                    <div class="col-md-6 mb-4">
+                        <label for="researchFocus" class="form-label">
+                            <i class="bi bi-diagram-3 me-2 text-warning"></i>Research
+                            Focus
+                        </label>
+                        <select
+                                id="researchFocus"
+                                th:field="*{researchFocus}"
+                                class="form-select"
+                        >
+                            <option value="Senior Design Project">
+                                Senior Design Project
+                            </option>
+                            <option value="Research Project">Research Project</option>
+                        </select>
+                    </div>
 
-              <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                  <label for="type" class="form-label">
-                    <i class="bi bi-people-fill me-2"></i>Project Type
-                  </label>
-                  <select id="type" th:field="*{type}" class="form-select">
-                    <option value="INDIVIDUAL">Individual</option>
-                    <option value="GROUP">Group</option>
-                  </select>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="type" class="form-label">
+                                <i class="bi bi-people-fill me-2"></i>Project Type
+                            </label>
+                            <select id="type" th:field="*{type}" class="form-select">
+                                <option value="INDIVIDUAL">Individual</option>
+                                <option value="GROUP">Group</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-list me-2 text-secondary"></i>Categories
+                        </label>
+                        <div class="checkbox-group" id="categoriesContainer"></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-calendar me-2 text-primary"></i>Study Year
+                            Restrictions
+                        </label>
+                        <div class="checkbox-group">
+                            <label
+                                    class="form-check form-check-inline"
+                                    th:each="year : ${studyYears}"
+                            >
+                                <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        th:field="*{studyYearRestriction}"
+                                        th:value="${year}"
+                                />
+                                <span class="form-check-label" th:text="${year}"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-mortarboard me-2 text-primary"></i>Degree
+                            Restrictions
+                        </label>
+                        <div class="checkbox-group">
+                            <label
+                                    class="form-check form-check-inline"
+                                    th:each="deg : ${degrees}"
+                            >
+                                <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        th:field="*{degreeRestriction}"
+                                        th:value="${deg}"
+                                />
+                                <span class="form-check-label" th:text="${deg}"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-book me-2 text-primary"></i>Major Restrictions
+                        </label>
+                        <div class="checkbox-group">
+                            <label
+                                    class="form-check form-check-inline"
+                                    th:each="maj : ${majors}"
+                            >
+                                <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        th:field="*{majorRestriction}"
+                                        th:value="${maj}"
+                                />
+                                <span class="form-check-label" th:text="${maj}"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4" id="maxStudentsContainer" style="display: none">
+                        <label for="maxStudents" class="form-label">
+                            <i class="bi bi-person-lines-fill me-2 text-danger"></i
+                            >Maximum Number of Students
+                        </label>
+                        <select
+                                id="maxStudents"
+                                th:field="*{maxStudents}"
+                                class="form-select"
+                        >
+                            <option value="2" th:selected="${project.maxStudents == 2}">
+                                2 Students
+                            </option>
+                            <option value="3" th:selected="${project.maxStudents == 3}">
+                                3 Students
+                            </option>
+                            <option value="4" th:selected="${project.maxStudents == 4}">
+                                4 Students
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="staffUsers" class="form-label">Co-Supervisors</label>
+                        <select class="form-select" id="staffUsers" name="coSupervisorIds" multiple>
+                            <option th:each="staff : ${staffUsers}"
+                                    th:value="${staff.id}"
+                                    th:text="${staff.name + ' ' + staff.surname}"
+                                    th:selected="${currentCoSupervisors != null and currentCoSupervisors.contains(staff)}">
+                                Staff Member Name
+                            </option>
+                        </select>
+                        <div class="form-text">Select co-supervisors for this project. Hold down the Ctrl/Command button
+                            to select multiple options.
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>Project Deliverables
+                        </label>
+
+                        <ul id="existingFiles" class="list-group mb-3">
+                            <li
+                                    th:each="deliverable : ${project.deliverables}"
+                                    class="list-group-item d-flex justify-content-between align-items-center existing-file"
+                            >
+                                <span th:text="${deliverable.name}"></span>
+                                <button
+                                        type="button"
+                                        class="btn btn-sm btn-danger delete-existing"
+                                        th:data-file-id="${deliverable.id}"
+                                        th:data-file-name="${deliverable.name}"
+                                >
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </li>
+                        </ul>
+
+                        <input
+                                type="file"
+                                id="fileInput"
+                                name="files"
+                                accept=".pdf"
+                                class="form-control mb-3"
+                                multiple
+                        />
+
+                        <ul id="newFileList" class="list-group"></ul>
+                    </div>
                 </div>
-              </div>
 
-              <div class="mb-4">
-                <label class="form-label">
-                  <i class="bi bi-list me-2 text-secondary"></i>Categories
-                </label>
-                <div class="checkbox-group" id="categoriesContainer"></div>
-              </div>
-
-              <div class="mb-4">
-                <label class="form-label">
-                  <i class="bi bi-calendar me-2 text-primary"></i>Study Year
-                  Restrictions
-                </label>
-                <div class="checkbox-group">
-                  <label
-                    class="form-check form-check-inline"
-                    th:each="year : ${studyYears}"
-                  >
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      th:field="*{studyYearRestriction}"
-                      th:value="${year}"
-                    />
-                    <span class="form-check-label" th:text="${year}"></span>
-                  </label>
+                <div class="mb-4">
+                    <label for="status" class="form-label">
+                        <i class="bi bi-toggle-on me-2"></i>Status
+                    </label>
+                    <select id="status" th:field="*{status}" class="form-select">
+                        <option value="OPEN" th:selected="*{status} == 'OPEN'">
+                            Open
+                        </option>
+                        <option value="CLOSED" th:selected="*{status} == 'CLOSED'">
+                            Closed
+                        </option>
+                    </select>
                 </div>
-              </div>
 
-              <div class="mb-4">
-                <label class="form-label">
-                  <i class="bi bi-mortarboard me-2 text-primary"></i>Degree
-                  Restrictions
-                </label>
-                <div class="checkbox-group">
-                  <label
-                    class="form-check form-check-inline"
-                    th:each="deg : ${degrees}"
-                  >
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      th:field="*{degreeRestriction}"
-                      th:value="${deg}"
-                    />
-                    <span class="form-check-label" th:text="${deg}"></span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="mb-4">
-                <label class="form-label">
-                  <i class="bi bi-book me-2 text-primary"></i>Major Restrictions
-                </label>
-                <div class="checkbox-group">
-                  <label
-                    class="form-check form-check-inline"
-                    th:each="maj : ${majors}"
-                  >
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      th:field="*{majorRestriction}"
-                      th:value="${maj}"
-                    />
-                    <span class="form-check-label" th:text="${maj}"></span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="mb-4" id="maxStudentsContainer" style="display: none">
-                <label for="maxStudents" class="form-label">
-                  <i class="bi bi-person-lines-fill me-2 text-danger"></i
-                  >Maximum Number of Students
-                </label>
-                <select
-                  id="maxStudents"
-                  th:field="*{maxStudents}"
-                  class="form-select"
-                >
-                  <option value="2" th:selected="${project.maxStudents == 2}">
-                    2 Students
-                  </option>
-                  <option value="3" th:selected="${project.maxStudents == 3}">
-                    3 Students
-                  </option>
-                  <option value="4" th:selected="${project.maxStudents == 4}">
-                    4 Students
-                  </option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="staffUsers" class="form-label">Co-Supervisors</label>
-                <select class="form-select" id="staffUsers" name="coSupervisorIds" multiple>
-                  <option th:each="staff : ${staffUsers}"
-                          th:value="${staff.id}"
-                          th:text="${staff.name + ' ' + staff.surname}"
-                          th:selected="${currentCoSupervisors != null and currentCoSupervisors.contains(staff)}">
-                    Staff Member Name
-                  </option>
-                </select>
-                <div class="form-text">Select co-supervisors for this project. Hold down the Ctrl/Command button to select multiple options.</div>
-              </div>
-
-              <div class="mb-4">
-                <label class="form-label">
-                  <i class="bi bi-file-earmark-pdf me-2"></i>Project Deliverables
-                </label>
-  
-                <ul id="existingFiles" class="list-group mb-3">
-                  <li
-                    th:each="deliverable : ${project.deliverables}"
-                    class="list-group-item d-flex justify-content-between align-items-center existing-file"
-                  >
-                    <span th:text="${deliverable.name}"></span>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-danger delete-existing"
-                      th:data-file-id="${deliverable.id}"
-                      th:data-file-name="${deliverable.name}"
-                    >
-                      <i class="bi bi-x-circle"></i>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg px-4">
+                        <i class="bi bi-save2 me-2"></i>Update Project
                     </button>
-                  </li>
-                </ul>
-  
-                <input
-                  type="file"
-                  id="fileInput"
-                  name="files"
-                  accept=".pdf"
-                  class="form-control mb-3"
-                  multiple
-                />
-  
-                <ul id="newFileList" class="list-group"></ul>
-              </div>
-            </div>
-
-            <div class="mb-4">
-              <label for="status" class="form-label">
-                <i class="bi bi-toggle-on me-2"></i>Status
-              </label>
-              <select id="status" th:field="*{status}" class="form-select">
-                <option value="OPEN" th:selected="*{status} == 'OPEN'">
-                  Open
-                </option>
-                <option value="CLOSED" th:selected="*{status} == 'CLOSED'">
-                  Closed
-                </option>
-              </select>
-            </div>
-
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-              <button type="submit" class="btn btn-primary btn-lg px-4">
-                <i class="bi bi-save2 me-2"></i>Update Project
-              </button>
-            </div>
-          </form>
+                </div>
+            </form>
         </div>
-      </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:inline="javascript">
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
       /*<![CDATA[*/
       var savedSubcategories = /*[[${project.subcategories}]]*/ [];
       /*]]>*/
-    </script>
-    <script src="/js/edit_project_script.js"></script>
-  </body>
+
+</script>
+<script src="/js/edit_project_script.js"></script>
+</body>
 </html>
