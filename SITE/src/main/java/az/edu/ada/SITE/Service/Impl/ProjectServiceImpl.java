@@ -138,6 +138,7 @@ public class ProjectServiceImpl implements ProjectService {
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
 
+  @Override
   public Page<ProjectDTO> getProjectsExceptStaff(Long staffId, Pageable pageable) {
     Page<Project> projectsPage = projectRepository.findAll(pageable);
 

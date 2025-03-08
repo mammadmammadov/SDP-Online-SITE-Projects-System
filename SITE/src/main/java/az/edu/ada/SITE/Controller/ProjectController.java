@@ -19,7 +19,7 @@ import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
 
 import org.hibernate.Hibernate;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -237,22 +237,27 @@ public class ProjectController {
                 staffId = ((Staff) user).getId();
             }
     
-            if (page < 0)
-                page = 0;
-            var pageable = org.springframework.data.domain.PageRequest.of(page, 6);
+            if (page < 0) page = 0;
+            int pageSize = 6;
     
-            Page<ProjectDTO> projectPage = projectService.getProjectsExceptStaff(staffId, pageable);
-            List<ProjectDTO> sortedProjects = new ArrayList<>();
+            List<ProjectDTO> staffProjects = staffId != null
+                    ? projectService.getProjectsByStaffId(staffId, Pageable.unpaged()).getContent()
+                    : new ArrayList<>();
+            List<ProjectDTO> otherProjects = projectService.getProjectsExceptStaff(staffId, Pageable.unpaged()).getContent();
     
-            if (staffId != null) {
-                sortedProjects.addAll(projectService.getProjectsByStaffId(staffId, pageable).getContent());
-            }
+            List<ProjectDTO> mergedProjects = new ArrayList<>();
+            mergedProjects.addAll(staffProjects);
+            mergedProjects.addAll(otherProjects);
     
-            sortedProjects.addAll(projectPage.getContent());
+            int totalProjects = mergedProjects.size();
+            int fromIndex = page * pageSize;
+            int toIndex = Math.min(fromIndex + pageSize, totalProjects);
     
-            model.addAttribute("projects", sortedProjects);
+            List<ProjectDTO> paginatedProjects = mergedProjects.subList(fromIndex, toIndex);
+    
+            model.addAttribute("projects", paginatedProjects);
             model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", projectPage.getTotalPages());
+            model.addAttribute("totalPages", (int) Math.ceil((double) totalProjects / pageSize));
             model.addAttribute("staffId", staffId);
     
             return "staff_projects";
