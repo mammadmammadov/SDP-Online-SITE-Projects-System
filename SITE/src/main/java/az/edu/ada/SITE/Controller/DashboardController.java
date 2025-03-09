@@ -13,7 +13,7 @@ import az.edu.ada.SITE.Entity.User;
 import az.edu.ada.SITE.Repository.UserRepository;
 
 @Controller
-@RequestMapping({"", "/"})
+@RequestMapping({ "", "/" })
 public class DashboardController {
 
     @Autowired
