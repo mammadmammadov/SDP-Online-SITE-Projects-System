@@ -2,6 +2,7 @@ HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
+data/siteproject.mv.db
 !**/src/main/**/build/
 !**/src/test/**/build/
 
