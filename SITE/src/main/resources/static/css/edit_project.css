@@ -31,3 +31,23 @@
 .header h4 {
         font-size: 1.2rem;
     }
+
+.objective-tag {
+        display: inline-flex;
+        align-items: center;
+        background-color: #f1f1f1;
+        color: #333;
+        padding: 5px 10px;
+        border-radius: 15px;
+        margin: 5px;
+    }
+
+.tag-remove-btn {
+        cursor: pointer;
+        margin-left: 8px;
+        color: red;
+    }
+
+.tag-remove-btn:hover {
+        color: darkred;
+    }

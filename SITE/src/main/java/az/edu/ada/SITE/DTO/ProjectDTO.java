@@ -16,7 +16,7 @@ public class ProjectDTO {
         private Long id;
         private String title;
         private String description;
-        private String objectives;
+        private List<String> objectives;
         private ProjectType type;
         private String keywords;
         private List<String> researchFocus = new ArrayList<>();
@@ -39,7 +39,7 @@ public class ProjectDTO {
         public ProjectDTO() {
         }
 
-        public ProjectDTO(Long id, String title, String description, String objectives, ProjectType type,
+        public ProjectDTO(Long id, String title, String description, List<String> objectives, ProjectType type,
                         String keywords,
                         List<String> researchFocus, List<String> category, List<String> studyYearRestriction,
                         List<String> degreeRestriction, List<String> majorRestriction,

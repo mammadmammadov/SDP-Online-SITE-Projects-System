@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const typeSelect = document.getElementById("type");
-  const maxStudentsContainer = document.getElementById("maxStudentsContainer");
-  const maxStudentsInput = document.getElementById("maxStudents");
-
-  const toggleMaxStudentsField = () => {
+const typeSelect = document.getElementById("type");
+const maxStudentsContainer = document.getElementById("maxStudentsContainer");
+const maxStudentsInput = document.getElementById("maxStudents");
+const toggleMaxStudentsField = () => {
     if (typeSelect.value === "GROUP") {
       maxStudentsContainer.style.display = "block";
       maxStudentsInput.required = true;
@@ -412,5 +411,4 @@ document.addEventListener("DOMContentLoaded", () => {
           event.preventDefault();
       }
     });
-
-  });
+});

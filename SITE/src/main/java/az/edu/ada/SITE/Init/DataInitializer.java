@@ -74,8 +74,7 @@ public class DataInitializer implements CommandLineRunner {
                         project1.setTitle("AI Research Project");
                         project1.setDescription(
                                         "A project focused on artificial intelligence research, exploring new algorithms.");
-                        project1.setObjectives(
-                                        "1. Develop new AI algorithms\n2. Apply AI solutions to real-world problems\n3. Collaborate with industry partners.");
+                        project1.setObjectives(List.of("Develop new AI algorithms", "Apply AI solutions to real-world problems", "Collaborate with industry partners"));
                         project1.setStatus(Project.Status.OPEN);
                         project1.setSupervisor(supervisor);
                         project1.setResearchFocus(List.of("Research Project"));
@@ -94,8 +93,7 @@ public class DataInitializer implements CommandLineRunner {
                         project2.setTitle("Web Development Research Project");
                         project2.setDescription(
                                         "A project focused on Web Development research, exploring new algorithms.");
-                        project2.setObjectives(
-                                        "1. Develop new WD algorithms\n2. Apply WD solutions to real-world problems\n3. Collaborate with industry partners.");
+                        project2.setObjectives(List.of("Develop new WD algorithms", "Apply WD solutions to real-world problems", "Collaborate with industry partners"));
                         project2.setStatus(Project.Status.OPEN);
                         project2.setResearchFocus(List.of("Senior Design Project"));
                         project2.setCategory(List.of("Web Development"));
@@ -114,8 +112,7 @@ public class DataInitializer implements CommandLineRunner {
                         project3.setTitle("Big Data Analytics Project");
                         project3.setDescription(
                                         "A project aimed at analyzing large datasets to extract meaningful insights and patterns.");
-                        project3.setObjectives(
-                                        "1. Collect and preprocess large datasets\n2. Apply data mining techniques\n3. Visualize data insights.");
+                        project3.setObjectives(List.of("Collect and preprocess large datasets", "Apply data mining techniques", "Visualize data insights"));
                         project3.setStatus(Project.Status.OPEN);
                         project3.setSupervisor(supervisor);
                         project3.setResearchFocus(List.of("Senior Design Project"));
@@ -133,8 +130,7 @@ public class DataInitializer implements CommandLineRunner {
                         project4.setTitle("Network Security Assessment");
                         project4.setDescription(
                                         "A project focused on evaluating and improving the security of network infrastructures.");
-                        project4.setObjectives(
-                                        "1. Conduct vulnerability assessments\n2. Implement security protocols\n3. Develop incident response strategies.");
+                        project4.setObjectives(List.of("Conduct vulnerability assessments", "Implement security protocols", "Develop incident response strategies."));
                         project4.setStatus(Project.Status.OPEN);
                         project4.setSupervisor(supervisor);
                         project4.setResearchFocus(List.of("Senior Design Project"));
@@ -152,8 +148,7 @@ public class DataInitializer implements CommandLineRunner {
                         project5.setTitle("Agile Development of Web Application");
                         project5.setDescription(
                                         "A project to develop a web application using agile methodologies and best practices.");
-                        project5.setObjectives(
-                                        "1. Gather user requirements\n2. Design and implement application features\n3. Conduct user testing and feedback.");
+                        project5.setObjectives(List.of("Gather user requirements", "Design and implement application features", "Conduct user testing and feedback"));
                         project5.setStatus(Project.Status.OPEN);
                         project5.setSupervisor(supervisor);
                         project5.setResearchFocus(List.of("Senior Design Project"));
@@ -171,8 +166,7 @@ public class DataInitializer implements CommandLineRunner {
                         project6.setTitle("AI (Machine Learning) Project");
                         project6.setDescription(
                                         "A project using machine learning methodologies and best practices.");
-                        project6.setObjectives(
-                                        "1. Gather user requirements\n2. Design and implement necessary features\n3. Conduct user testing and feedback.");
+                        project6.setObjectives(List.of("Gather user requirements", "Design and implement necessary features", "Conduct user testing and feedback"));
                         project6.setStatus(Project.Status.OPEN);
                         project6.setSupervisor(supervisor2);
                         project6.setResearchFocus(List.of("Research Project"));

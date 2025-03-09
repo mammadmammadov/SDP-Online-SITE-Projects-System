@@ -88,17 +88,55 @@
                 ></textarea>
               </div>
 
+<!--              <div class="mb-4">-->
+<!--                <label for="objectives" class="form-label">-->
+<!--                  <i class="bi bi-list-task me-2"></i>Objectives-->
+<!--                </label>-->
+<!--                <textarea-->
+<!--                  id="objectives"-->
+<!--                  th:field="*{objectives}"-->
+<!--                  class="form-control"-->
+<!--                  rows="4"-->
+<!--                  required-->
+<!--                ></textarea>-->
+<!--              </div>-->
+
               <div class="mb-4">
-                <label for="objectives" class="form-label">
-                  <i class="bi bi-list-task me-2"></i>Objectives
+                <label class="form-label">
+                  <i class="bi bi-list-task me-2"></i> Objectives
                 </label>
-                <textarea
-                  id="objectives"
-                  th:field="*{objectives}"
-                  class="form-control"
-                  rows="4"
-                  required
-                ></textarea>
+                <div class="objective-input-container">
+                  <div id="objectivesList" class="mb-3">
+            <span th:each="obj : ${objectives}" class="objective-tag">
+                <span th:text="${obj}"></span>
+                <span class="tag-remove-btn" onclick="removeObjective(this)">
+                    <i class="bi bi-x-circle"></i>
+                </span>
+            </span>
+                  </div>
+
+                  <div class="input-group">
+                    <input
+                            type="text"
+                            class="form-control"
+                            id="objectiveInput"
+                            placeholder="Enter an objective and press Enter"
+                            aria-label="Project objective"
+                    />
+                    <button
+                            class="btn btn-outline-primary"
+                            type="button"
+                            id="addObjectiveBtn"
+                    >
+                      <i class="bi bi-plus-lg"></i> Add Objective
+                    </button>
+                  </div>
+                  <small class="text-muted mt-2 d-block">
+                    Press Enter or click Add to include objectives
+                  </small>
+                </div>
+
+                <input type="hidden" th:field="*{objectives}" id="hiddenObjectives" />
               </div>
 
               <div class="col-md-6 mb-4">
@@ -273,5 +311,6 @@
       /*]]>*/
     </script>
     <script src="/js/edit_project_script.js"></script>
+    <script src="/js/objectives.js"></script>
   </body>
 </html>

@@ -25,8 +25,9 @@ public class Project {
     @Column(length = 1000)
     private String description;
 
+    @ElementCollection
     @Column(nullable = false, length = 500)
-    private String objectives;
+    private List<String> objectives;
 
     @Enumerated(EnumType.STRING)
     private ProjectType type;
