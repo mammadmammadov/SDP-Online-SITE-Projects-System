@@ -90,7 +90,6 @@ public class Project {
     @Column(name = "subcategory")
     private List<String> subcategories = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Assignment> assignments = new ArrayList<>();
 

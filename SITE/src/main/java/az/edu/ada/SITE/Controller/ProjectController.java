@@ -228,38 +228,40 @@ public class ProjectController {
             String email = principal.getName();
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    
+
             String fullName = user.getName() + " " + user.getSurname();
             model.addAttribute("staffName", fullName);
-    
+
             Long staffId = null;
             if (user instanceof Staff) {
                 staffId = ((Staff) user).getId();
             }
-    
-            if (page < 0) page = 0;
+
+            if (page < 0)
+                page = 0;
             int pageSize = 6;
-    
+
             List<ProjectDTO> staffProjects = staffId != null
                     ? projectService.getProjectsByStaffId(staffId, Pageable.unpaged()).getContent()
                     : new ArrayList<>();
-            List<ProjectDTO> otherProjects = projectService.getProjectsExceptStaff(staffId, Pageable.unpaged()).getContent();
-    
+            List<ProjectDTO> otherProjects = projectService.getProjectsExceptStaff(staffId, Pageable.unpaged())
+                    .getContent();
+
             List<ProjectDTO> mergedProjects = new ArrayList<>();
             mergedProjects.addAll(staffProjects);
             mergedProjects.addAll(otherProjects);
-    
+
             int totalProjects = mergedProjects.size();
             int fromIndex = page * pageSize;
             int toIndex = Math.min(fromIndex + pageSize, totalProjects);
-    
+
             List<ProjectDTO> paginatedProjects = mergedProjects.subList(fromIndex, toIndex);
-    
+
             model.addAttribute("projects", paginatedProjects);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", (int) Math.ceil((double) totalProjects / pageSize));
             model.addAttribute("staffId", staffId);
-    
+
             return "staff_projects";
         } catch (UsernameNotFoundException e) {
             return "redirect:/auth/login?error=user_not_found";
@@ -425,7 +427,6 @@ public class ProjectController {
             projectService.saveProject(projectDTO);
             redirectAttributes.addFlashAttribute("message", "Join request sent successfully");
         }
-
         return "redirect:/student/projects";
     }
 

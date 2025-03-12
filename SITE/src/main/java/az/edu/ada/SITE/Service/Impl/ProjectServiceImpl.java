@@ -143,9 +143,9 @@ public class ProjectServiceImpl implements ProjectService {
     Page<Project> projectsPage = projectRepository.findAll(pageable);
 
     List<ProjectDTO> projectDTOs = projectsPage.getContent().stream()
-            .filter(project -> project.getSupervisor() == null || !project.getSupervisor().getId().equals(staffId))
-            .map(project -> projectMapper.projectToProjectDTO(project))
-            .collect(Collectors.toList());
+        .filter(project -> project.getSupervisor() == null || !project.getSupervisor().getId().equals(staffId))
+        .map(project -> projectMapper.projectToProjectDTO(project))
+        .collect(Collectors.toList());
 
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
@@ -202,5 +202,4 @@ public class ProjectServiceImpl implements ProjectService {
     List<ProjectDTO> projectDTOs = projectMapper.projectListToProjectDTOList(projectsPage.getContent());
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
-
 }

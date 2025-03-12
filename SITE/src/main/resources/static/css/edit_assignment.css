@@ -1,51 +1,51 @@
 :root {
-            --ada-blue: #00549e;
-            --ada-teal: #00b5ad;
-        }
+  --ada-blue: #00549e;
+  --ada-teal: #00b5ad;
+}
 
 body {
-            background: #f8f9fa;
-            font-family: 'Segoe UI', sans-serif;
-        }
+  background: #f8f9fa;
+  font-family: "Segoe UI", sans-serif;
+}
 
 .header {
-            background: #1a5276;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
+  background: #1a5276;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
 
 .logo {
-            height: 45px;
-            margin-right: 1.5rem;
-        }
+  height: 45px;
+  margin-right: 1.5rem;
+}
 
 .form-card {
-            background: white;
-            border-radius: 8px;
-            padding: 2rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
 
 .form-control {
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            padding: 0.75rem 1rem;
-        }
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
 
 .btn-primary {
-            background-color: var(--ada-blue);
-            border: none;
-            padding: 0.75rem 1.5rem;
-        }
+  background-color: var(--ada-blue);
+  border: none;
+  padding: 0.75rem 1.5rem;
+}
 
 .alert-danger {
-            background: #f8d7da;
-            border: none;
-            color: #721c24;
-            border-radius: 6px;
-        }
+  background: #f8d7da;
+  border: none;
+  color: #721c24;
+  border-radius: 6px;
+}
 
 .logo {
   height: 45px;

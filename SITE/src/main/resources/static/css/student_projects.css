@@ -116,56 +116,55 @@ footer {
 }
 
 .header {
-        background-color: #1a5276;
-        padding: 1.5rem 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+  background-color: #1a5276;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-    .logo {
-        filter: brightness(0) invert(1);
-        height: 45px;
-    }
+.logo {
+  filter: brightness(0) invert(1);
+  height: 45px;
+}
 
-    .header h4 {
-        font-size: 1.2rem;
-    }
+.header h4 {
+  font-size: 1.2rem;
+}
 
-    .header .btn-outline-light {
-        border-color: rgba(255, 255, 255, 0.7);
-        color: white;
-        transition: all 0.3s ease;
-    }
+.header .btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.7);
+  color: white;
+  transition: all 0.3s ease;
+}
 
-    .header .btn-outline-light:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-color: white;
-    }
+.header .btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
 
-    .header .btn-outline-light i {
-        color: white;
-    }
+.header .btn-outline-light i {
+  color: white;
+}
 
 .objective-badge {
-    display: inline-flex;
-    align-items: center;
-    background-color: #e0f2f1;
-    color: #00796b;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  background-color: #e0f2f1;
+  color: #00796b;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .objective-badge:hover {
-    transform: scale(1.05);
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 .objective-badge i {
-    color: #004d40;
-    margin-right: 5px;
+  color: #004d40;
+  margin-right: 5px;
 }
-

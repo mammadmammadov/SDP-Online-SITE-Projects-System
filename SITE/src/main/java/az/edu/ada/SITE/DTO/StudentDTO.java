@@ -21,7 +21,7 @@ public class StudentDTO extends UserDTO {
     }
 
     public StudentDTO(String studentId, String degree, String major, String studyYear, boolean accepted,
-                      List<Project> projects) {
+            List<Project> projects) {
         this.studentId = studentId;
         this.degree = degree;
         this.major = major;

@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-const typeSelect = document.getElementById("type");
-const maxStudentsContainer = document.getElementById("maxStudentsContainer");
-const maxStudentsInput = document.getElementById("maxStudents");
-const toggleMaxStudentsField = () => {
+  const typeSelect = document.getElementById("type");
+  const maxStudentsContainer = document.getElementById("maxStudentsContainer");
+  const maxStudentsInput = document.getElementById("maxStudents");
+  const toggleMaxStudentsField = () => {
     if (typeSelect.value === "GROUP") {
       maxStudentsContainer.style.display = "block";
       maxStudentsInput.required = true;
@@ -278,137 +278,142 @@ const toggleMaxStudentsField = () => {
   }
 
   fetch("/data/subcategories.json")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const container = document.getElementById("categoriesContainer");
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const container = document.getElementById("categoriesContainer");
 
-        const errorDiv = document.getElementById("categoryError");
+      const errorDiv = document.getElementById("categoryError");
 
-        container.innerHTML = "";
+      container.innerHTML = "";
 
-        for (const category in data) {
-          if (data.hasOwnProperty(category)) {
-            const categoryGroup = document.createElement("div");
-            categoryGroup.className = "category-group mb-2";
+      for (const category in data) {
+        if (data.hasOwnProperty(category)) {
+          const categoryGroup = document.createElement("div");
+          categoryGroup.className = "category-group mb-2";
 
-            const label = document.createElement("label");
-            label.className = "form-check form-check-inline";
+          const label = document.createElement("label");
+          label.className = "form-check form-check-inline";
 
-            const categoryCheckbox = document.createElement("input");
-            categoryCheckbox.type = "checkbox";
-            categoryCheckbox.className = "form-check-input category-checkbox";
-            categoryCheckbox.name = "category";
-            categoryCheckbox.value = category;
-            categoryCheckbox.setAttribute("data-category", category);
-            label.appendChild(categoryCheckbox);
+          const categoryCheckbox = document.createElement("input");
+          categoryCheckbox.type = "checkbox";
+          categoryCheckbox.className = "form-check-input category-checkbox";
+          categoryCheckbox.name = "category";
+          categoryCheckbox.value = category;
+          categoryCheckbox.setAttribute("data-category", category);
+          label.appendChild(categoryCheckbox);
 
-            const span = document.createElement("span");
-            span.className = "form-check-label";
-            span.textContent = category;
-            label.appendChild(span);
+          const span = document.createElement("span");
+          span.className = "form-check-label";
+          span.textContent = category;
+          label.appendChild(span);
 
-            categoryGroup.appendChild(label);
+          categoryGroup.appendChild(label);
 
-            const subContainer = document.createElement("div");
-            subContainer.className = "subcategories-container ms-4";
-            subContainer.style.display = "none";
+          const subContainer = document.createElement("div");
+          subContainer.className = "subcategories-container ms-4";
+          subContainer.style.display = "none";
 
-            data[category].forEach((sub) => {
-              const subLabel = document.createElement("label");
-              subLabel.className = "form-check form-check-inline me-2";
+          data[category].forEach((sub) => {
+            const subLabel = document.createElement("label");
+            subLabel.className = "form-check form-check-inline me-2";
 
-              const subInput = document.createElement("input");
-              subInput.type = "checkbox";
-              subInput.className = "form-check-input subcategory-checkbox";
-              subInput.name = "subcategories";
-              subInput.value = sub;
-              subInput.setAttribute("data-category", category);
-
-              if (
-                typeof savedSubcategories !== "undefined" &&
-                Array.isArray(savedSubcategories) &&
-                savedSubcategories.includes(sub)
-              ) {
-                subInput.checked = true;
-              }
-              subLabel.appendChild(subInput);
-
-              const subSpan = document.createElement("span");
-              subSpan.className = "form-check-label";
-              subSpan.textContent = sub.split(":")[0];
-              subLabel.appendChild(subSpan);
-
-              subContainer.appendChild(subLabel);
-            });
-
-            categoryGroup.appendChild(subContainer);
-            container.appendChild(categoryGroup);
-
-            categoryCheckbox.addEventListener("change", function () {
-              if (this.checked) {
-                subContainer.style.display = "block";
-              } else {
-                subContainer.style.display = "none";
-                subContainer.querySelectorAll(".subcategory-checkbox").forEach((subCheckbox) => {
-                  subCheckbox.checked = false;
-                });
-              }
-              validateCategorySelection();
-            });
-
-            subContainer.addEventListener("change", validateCategorySelection);
+            const subInput = document.createElement("input");
+            subInput.type = "checkbox";
+            subInput.className = "form-check-input subcategory-checkbox";
+            subInput.name = "subcategories";
+            subInput.value = sub;
+            subInput.setAttribute("data-category", category);
 
             if (
               typeof savedSubcategories !== "undefined" &&
-              Array.isArray(savedSubcategories)
+              Array.isArray(savedSubcategories) &&
+              savedSubcategories.includes(sub)
             ) {
-              const anySubSaved = data[category].some((sub) =>
-                savedSubcategories.includes(sub)
-              );
-              if (anySubSaved) {
-                categoryCheckbox.checked = true;
-                subContainer.style.display = "block";
-              }
+              subInput.checked = true;
+            }
+            subLabel.appendChild(subInput);
+
+            const subSpan = document.createElement("span");
+            subSpan.className = "form-check-label";
+            subSpan.textContent = sub.split(":")[0];
+            subLabel.appendChild(subSpan);
+
+            subContainer.appendChild(subLabel);
+          });
+
+          categoryGroup.appendChild(subContainer);
+          container.appendChild(categoryGroup);
+
+          categoryCheckbox.addEventListener("change", function () {
+            if (this.checked) {
+              subContainer.style.display = "block";
+            } else {
+              subContainer.style.display = "none";
+              subContainer
+                .querySelectorAll(".subcategory-checkbox")
+                .forEach((subCheckbox) => {
+                  subCheckbox.checked = false;
+                });
+            }
+            validateCategorySelection();
+          });
+
+          subContainer.addEventListener("change", validateCategorySelection);
+
+          if (
+            typeof savedSubcategories !== "undefined" &&
+            Array.isArray(savedSubcategories)
+          ) {
+            const anySubSaved = data[category].some((sub) =>
+              savedSubcategories.includes(sub)
+            );
+            if (anySubSaved) {
+              categoryCheckbox.checked = true;
+              subContainer.style.display = "block";
             }
           }
         }
-      })
-      .catch((err) => console.error("Error loading categories:", err));
+      }
+    })
+    .catch((err) => console.error("Error loading categories:", err));
 
-      function validateCategorySelection() {
-        const selectedCategories = document.querySelectorAll(".category-checkbox:checked");
-        let valid = true;
+  function validateCategorySelection() {
+    const selectedCategories = document.querySelectorAll(
+      ".category-checkbox:checked"
+    );
+    let valid = true;
 
-        selectedCategories.forEach((categoryCheckbox) => {
-            const category = categoryCheckbox.value;
-            const subcategoryCheckboxes = document.querySelectorAll(
-                `.subcategory-checkbox[data-category="${category}"]:checked`
-            );
+    selectedCategories.forEach((categoryCheckbox) => {
+      const category = categoryCheckbox.value;
+      const subcategoryCheckboxes = document.querySelectorAll(
+        `.subcategory-checkbox[data-category="${category}"]:checked`
+      );
 
-            if (subcategoryCheckboxes.length === 0) {
-                valid = false;
-            }
-        });
-
-        const errorDiv = document.getElementById("categoryError");
-
-        if (!valid) {
-            errorDiv.textContent = "Please select at least one subcategory for each chosen category.";
-            errorDiv.style.display = "block";
-        } else {
-            errorDiv.style.display = "none";
-        }
-    }
-
-    document.querySelector("form").addEventListener("submit", function (event) {
-      validateCategorySelection();
-      if (document.getElementById("categoryError").style.display === "block") {
-          event.preventDefault();
+      if (subcategoryCheckboxes.length === 0) {
+        valid = false;
       }
     });
+
+    const errorDiv = document.getElementById("categoryError");
+
+    if (!valid) {
+      errorDiv.textContent =
+        "Please select at least one subcategory for each chosen category.";
+      errorDiv.style.display = "block";
+    } else {
+      errorDiv.style.display = "none";
+    }
+  }
+
+  document.querySelector("form").addEventListener("submit", function (event) {
+    validateCategorySelection();
+    if (document.getElementById("categoryError").style.display === "block") {
+      event.preventDefault();
+    }
+  });
 });

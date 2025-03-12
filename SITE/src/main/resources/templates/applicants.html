@@ -1,187 +1,265 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Applicants - ADA University</title>
     <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/applicants.css">
-</head>
-<body>
-<div class="container mt-4">
-    <header class="d-flex justify-content-between align-items-center mb-4 header">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="/css/applicants.css" />
+  </head>
+  <body>
+    <div class="container mt-4">
+      <header
+        class="d-flex justify-content-between align-items-center mb-4 header"
+      >
         <div class="container-fluid">
-            <div class="d-flex flex-wrap justify-content-between align-items-center py-2">
-                <div class="d-flex align-items-center">
-                    <img src="/images/ada_logo.png"
-                         alt="University Logo"
-                         class="logo me-3"
-                    >
-                    <h4 class="mb-0 fw-normal text-white m-0">
-                        <span class="d-none d-sm-inline">Applicants:</span>
-                        <span th:text="${project.title}" class="fw-semibold ms-1"></span>
-                    </h4>
-                </div>
-
-                <nav class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
-                    <a th:href="@{/staff/projects}" class="btn btn-outline-light btn-sm py-1 py-md-2">
-                        <i class="bi bi-arrow-left-circle me-2"></i>
-                        <span class="d-none d-md-inline">Go Back</span>
-                    </a>
-
-                    <a th:href="@{/logout}"
-                       class="btn btn-danger btn-sm py-1 py-md-2">
-                        <i class="fas fa-sign-out-alt d-inline d-md-none"></i>
-                        <span class="d-none d-md-inline">Logout</span>
-                        <i class="fas fa-sign-out-alt ms-2 d-none d-md-inline"></i>
-                    </a>
-                </nav>
+          <div
+            class="d-flex flex-wrap justify-content-between align-items-center py-2"
+          >
+            <div class="d-flex align-items-center">
+              <img
+                src="/images/ada_logo.png"
+                alt="University Logo"
+                class="logo me-3"
+              />
+              <h4 class="mb-0 fw-normal text-white m-0">
+                <span class="d-none d-sm-inline">Applicants:</span>
+                <span
+                  th:text="${project.title}"
+                  class="fw-semibold ms-1"
+                ></span>
+              </h4>
             </div>
-        </div>
-    </header>
 
-    <div class="content-container bg-white rounded-bottom p-4 shadow-sm">
-        <div th:if="${errorMessage != null}" class="alert alert-danger alert-custom alert-dismissible fade show">
-            <i class="fas fa-exclamation-circle me-2"></i>
-            <span th:text="${errorMessage}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <nav class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
+              <a
+                th:href="@{/staff/projects}"
+                class="btn btn-outline-light btn-sm py-1 py-md-2"
+              >
+                <i class="bi bi-arrow-left-circle me-2"></i>
+                <span class="d-none d-md-inline">Go Back</span>
+              </a>
+
+              <a
+                th:href="@{/logout}"
+                class="btn btn-danger btn-sm py-1 py-md-2"
+              >
+                <i class="fas fa-sign-out-alt d-inline d-md-none"></i>
+                <span class="d-none d-md-inline">Logout</span>
+                <i class="fas fa-sign-out-alt ms-2 d-none d-md-inline"></i>
+              </a>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-container bg-white rounded-bottom p-4 shadow-sm">
+        <div
+          th:if="${errorMessage != null}"
+          class="alert alert-danger alert-custom alert-dismissible fade show"
+        >
+          <i class="fas fa-exclamation-circle me-2"></i>
+          <span th:text="${errorMessage}"></span>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+          ></button>
         </div>
 
-        <div th:if="${successMessage != null}" class="alert alert-success alert-custom alert-dismissible fade show">
-            <i class="fas fa-check-circle me-2"></i>
-            <span th:text="${successMessage}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div
+          th:if="${successMessage != null}"
+          class="alert alert-success alert-custom alert-dismissible fade show"
+        >
+          <i class="fas fa-check-circle me-2"></i>
+          <span th:text="${successMessage}"></span>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+          ></button>
         </div>
 
         <div class="mt-4">
-            <h5 class="section-title"><i class="fas fa-user-check me-2"></i>Accepted Students</h5>
-            <div th:if="${#lists.isEmpty(project.students)}" class="alert alert-info mt-3">
-                No students have been accepted yet.
-            </div>
-            <div th:unless="${#lists.isEmpty(project.students)}" class="table-responsive">
-                <table class="table table-custom table-hover align-middle">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Surname</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="student : ${project.students}">
-                        <td th:text="${student.name}"></td>
-                        <td th:text="${student.surname}"></td>
-                        <td th:text="${student.email}"></td>
-                        <td>
-                            <a th:href="@{'/staff/projects/remove/' + ${student.id} + '/' + ${project.id}}"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Are you sure you want to remove this student?')">
-                                <i class="fas fa-user-minus me-1"></i>Remove
-                            </a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+          <h5 class="section-title">
+            <i class="fas fa-user-check me-2"></i>Accepted Students
+          </h5>
+          <div
+            th:if="${#lists.isEmpty(project.students)}"
+            class="alert alert-info mt-3"
+          >
+            No students have been accepted yet.
+          </div>
+          <div
+            th:unless="${#lists.isEmpty(project.students)}"
+            class="table-responsive"
+          >
+            <table class="table table-custom table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Surname</th>
+                  <th>Email</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="student : ${project.students}">
+                  <td th:text="${student.name}"></td>
+                  <td th:text="${student.surname}"></td>
+                  <td th:text="${student.email}"></td>
+                  <td>
+                    <a
+                      th:href="@{'/staff/projects/remove/' + ${student.id} + '/' + ${project.id}}"
+                      class="btn btn-danger btn-sm"
+                      onclick="return confirm('Are you sure you want to remove this student?')"
+                    >
+                      <i class="fas fa-user-minus me-1"></i>Remove
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div class="mt-5">
-            <h5 class="section-title"><i class="fas fa-clock me-2"></i>Pending Applicants</h5>
-            <div th:if="${#lists.isEmpty(applicants)}" class="alert alert-warning mt-3">
-                No pending applications
-            </div>
-            <div th:unless="${#lists.isEmpty(applicants)}" class="table-responsive">
-                <table class="table table-custom table-hover align-middle">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Surname</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="applicant : ${applicants}">
-                        <td th:text="${applicant.name}"></td>
-                        <td th:text="${applicant.surname}"></td>
-                        <td th:text="${applicant.email}"></td>
-                        <td>
-                            <div th:if="${not applicant.accepted}" class="d-flex gap-2">
-                                <a th:href="@{'/staff/projects/applicant/accept/' + ${applicant.id} + '/' + ${project.id}}"
-                                   class="btn btn-success btn-sm">
-                                    <i class="fas fa-check me-1"></i>Accept
-                                </a>
-                                <a th:href="@{'/staff/projects/applicant/reject/' + ${applicant.id} + '/' + ${project.id}}"
-                                   class="btn btn-danger btn-sm">
-                                    <i class="fas fa-times me-1"></i>Reject
-                                </a>
-                            </div>
-                            <div th:if="${applicant.accepted}" class="text-muted small">
-                                <i class="fas fa-info-circle me-1"></i>Already accepted to another project
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+          <h5 class="section-title">
+            <i class="fas fa-clock me-2"></i>Pending Applicants
+          </h5>
+          <div
+            th:if="${#lists.isEmpty(applicants)}"
+            class="alert alert-warning mt-3"
+          >
+            No pending applications
+          </div>
+          <div
+            th:unless="${#lists.isEmpty(applicants)}"
+            class="table-responsive"
+          >
+            <table class="table table-custom table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Surname</th>
+                  <th>Email</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="applicant : ${applicants}">
+                  <td th:text="${applicant.name}"></td>
+                  <td th:text="${applicant.surname}"></td>
+                  <td th:text="${applicant.email}"></td>
+                  <td>
+                    <div th:if="${not applicant.accepted}" class="d-flex gap-2">
+                      <a
+                        th:href="@{'/staff/projects/applicant/accept/' + ${applicant.id} + '/' + ${project.id}}"
+                        class="btn btn-success btn-sm"
+                      >
+                        <i class="fas fa-check me-1"></i>Accept
+                      </a>
+                      <a
+                        th:href="@{'/staff/projects/applicant/reject/' + ${applicant.id} + '/' + ${project.id}}"
+                        class="btn btn-danger btn-sm"
+                      >
+                        <i class="fas fa-times me-1"></i>Reject
+                      </a>
+                    </div>
+                    <div th:if="${applicant.accepted}" class="text-muted small">
+                      <i class="fas fa-info-circle me-1"></i>Already accepted to
+                      another project
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div class="mt-5">
-            <h5 class="section-title"><i class="fas fa-search me-2"></i>Eligible Students</h5>
-            <form th:action="@{'/staff/projects/applicants/' + ${project.id}}" method="get" class="search-form mt-4">
-                <div class="input-group">
-                    <input type="text" name="searchEmail" class="form-control"
-                           placeholder="Search by email..." th:value="${searchEmail}">
-                    <input type="hidden" name="projectId" th:value="${project.id}">
-                    <button type="submit" class="btn btn-ada">
-                        <i class="fas fa-search me-2"></i>Search
-                    </button>
-                </div>
-            </form>
+          <h5 class="section-title">
+            <i class="fas fa-search me-2"></i>Eligible Students
+          </h5>
+          <form
+            th:action="@{'/staff/projects/applicants/' + ${project.id}}"
+            method="get"
+            class="search-form mt-4"
+          >
+            <div class="input-group">
+              <input
+                type="text"
+                name="searchEmail"
+                class="form-control"
+                placeholder="Search by email..."
+                th:value="${searchEmail}"
+              />
+              <input type="hidden" name="projectId" th:value="${project.id}" />
+              <button type="submit" class="btn btn-ada">
+                <i class="fas fa-search me-2"></i>Search
+              </button>
+            </div>
+          </form>
 
-            <div th:if="${#lists.isEmpty(eligibleStudents)}" class="alert alert-secondary mt-4">
-                No students found.
-            </div>
-            <div th:unless="${#lists.isEmpty(eligibleStudents)}" class="table-responsive mt-4">
-                <table class="table table-custom table-hover align-middle">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Surname</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="student : ${eligibleStudents}">
-                        <td th:text="${student.name}"></td>
-                        <td th:text="${student.surname}"></td>
-                        <td th:text="${student.email}"></td>
-                        <td>
-                            <div th:if="${not project.students.contains(student)}">
-                                <a th:href="@{'/staff/projects/applicant/accept/' + ${student.id} + '/' + ${project.id}}"
-                                   class="btn btn-primary btn-sm"
-                                   onclick="return confirm('Are you sure you want to add this student to the project?')">
-                                    <i class="fas fa-plus me-1"></i>Add
-                                </a>
-                            </div>
-                            <div th:if="${project.students.contains(student)}" class="text-muted small">
-                                <i class="fas fa-check-circle me-1"></i>Already in project
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+          <div
+            th:if="${#lists.isEmpty(eligibleStudents)}"
+            class="alert alert-secondary mt-4"
+          >
+            No students found.
+          </div>
+          <div
+            th:unless="${#lists.isEmpty(eligibleStudents)}"
+            class="table-responsive mt-4"
+          >
+            <table class="table table-custom table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Surname</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="student : ${eligibleStudents}">
+                  <td th:text="${student.name}"></td>
+                  <td th:text="${student.surname}"></td>
+                  <td th:text="${student.email}"></td>
+                  <td>
+                    <div th:if="${not project.students.contains(student)}">
+                      <a
+                        th:href="@{'/staff/projects/applicant/accept/' + ${student.id} + '/' + ${project.id}}"
+                        class="btn btn-primary btn-sm"
+                        onclick="return confirm('Are you sure you want to add this student to the project?')"
+                      >
+                        <i class="fas fa-plus me-1"></i>Add
+                      </a>
+                    </div>
+                    <div
+                      th:if="${project.students.contains(student)}"
+                      class="text-muted small"
+                    >
+                      <i class="fas fa-check-circle me-1"></i>Already in project
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

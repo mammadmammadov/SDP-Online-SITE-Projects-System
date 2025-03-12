@@ -1,90 +1,92 @@
 :root {
-            --ada-blue: #34495e;
-            --ada-teal: #34495e;
-            --gradient-primary: linear-gradient(135deg, var(--ada-blue) 0%, var(--ada-teal) 100%);
-        }
+  --ada-blue: #34495e;
+  --ada-teal: #34495e;
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--ada-blue) 0%,
+    var(--ada-teal) 100%
+  );
+}
 
 body {
-            background: #f8fafc;
-            color: #2c3e50;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
+  background: #f8fafc;
+  color: #2c3e50;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
 
 .header {
-            background-color: #1a5276;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+  background-color: #1a5276;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
 .logo {
-            height: 45px;
-            filter: brightness(0) invert(1);
-        }
+  height: 45px;
+  filter: brightness(0) invert(1);
+}
 
 .management-card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
 
 .management-card .card-header {
-            background: var(--gradient-primary);
-            color: white;
-            border-bottom: none;
-            padding: 1.5rem;
-        }
+  background: var(--gradient-primary);
+  color: white;
+  border-bottom: none;
+  padding: 1.5rem;
+}
 
 .table {
-            border-radius: 12px;
-            overflow: hidden;
-        }
+  border-radius: 12px;
+  overflow: hidden;
+}
 
 .table thead {
-            background: rgba(0, 0, 0, 0.03);
-        }
+  background: rgba(0, 0, 0, 0.03);
+}
 
 .table th {
-            font-weight: 600;
-            color: var(--ada-blue);
-        }
+  font-weight: 600;
+  color: var(--ada-blue);
+}
 
 .table td {
-            vertical-align: middle;
-        }
+  vertical-align: middle;
+}
 
 .btn-outline-primary {
-            border-color: var(--ada-blue);
-            color: var(--ada-blue);
-            transition: all 0.3s ease;
-        }
+  border-color: var(--ada-blue);
+  color: var(--ada-blue);
+  transition: all 0.3s ease;
+}
 
 .btn-outline-primary:hover {
-            background: var(--ada-blue);
-            color: white;
-        }
+  background: var(--ada-blue);
+  color: white;
+}
 
 tr:hover {
-            background: rgba(0, 0, 0, 0.02);
-        }
-
+  background: rgba(0, 0, 0, 0.02);
+}
 
 @media (max-width: 576px) {
-
-    .btn-sm {
-        font-size: 0.8rem;
-        padding: 0.25rem 0.5rem;
-    }
+  .btn-sm {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+  }
 }
 
 @media (max-width: 768px) {
-    .project-grid .card {
-        margin-bottom: 1rem;
-    }
+  .project-grid .card {
+    margin-bottom: 1rem;
+  }
 
-    .action-buttons .btn {
-        margin-left: 0.25rem;
-    }
+  .action-buttons .btn {
+    margin-left: 0.25rem;
+  }
 }
