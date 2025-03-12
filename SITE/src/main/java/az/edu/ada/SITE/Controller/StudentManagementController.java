@@ -71,20 +71,50 @@ public class StudentManagementController {
   }
 
   @GetMapping("/staff/student-management/{projectId}")
-  public String viewProjectStudentManagement(@PathVariable Long projectId, Model model, Principal principal) {
-    ProjectDTO projectDTO = projectService.getProjectById(projectId)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
-    List<Assignment> assignments = projectDTO.getAssignments();
-    model.addAttribute("project", projectDTO);
-    model.addAttribute("assignments", assignments);
-    return "project_student_management";
+  public String viewProjectStudentManagement(@PathVariable Long projectId,
+      Model model,
+      Principal principal,
+      RedirectAttributes redirectAttributes) {
+    String email = principal.getName();
+    Staff staff = (Staff) userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+    try {
+      ProjectDTO projectDTO = projectService.getProjectById(projectId)
+          .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+
+      if (!projectDTO.getSupervisor().getId().equals(staff.getId())) {
+        redirectAttributes.addFlashAttribute("errorMessage",
+            "You don't have permission to view this project");
+        return "redirect:/staff/student-management";
+      }
+
+      List<Assignment> assignments = projectDTO.getAssignments();
+      model.addAttribute("project", projectDTO);
+      model.addAttribute("assignments", assignments);
+      return "project_student_management";
+
+    } catch (IllegalArgumentException e) {
+      redirectAttributes.addFlashAttribute("errorMessage",
+          e.getMessage().contains("not found") ? "Project Not Found"
+              : "Invalid project ID");
+      return "redirect:/staff/student-management";
+    }
   }
 
   @GetMapping("/staff/student-management/{projectId}/assignments/new")
   public String newAssignmentForm(@PathVariable Long projectId, Model model, Principal principal,
       RedirectAttributes redirectAttributes) {
+    String email = principal.getName();
+    Staff staff = (Staff) userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     ProjectDTO projectDTO = projectService.getProjectById(projectId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+    if (!projectDTO.getSupervisor().getId().equals(staff.getId())) {
+      redirectAttributes.addFlashAttribute("errorMessage",
+          "You don't have permission to add assignments for this project");
+      return "redirect:/staff/student-management";
+    }
     double currentTotal = projectDTO.getAssignments().stream()
         .mapToDouble(a -> a.getMaxGrade() != null ? a.getMaxGrade() : 0)
         .sum();
@@ -134,7 +164,17 @@ public class StudentManagementController {
   @GetMapping("/staff/student-management/{projectId}/assignments/edit/{assignmentId}")
   public String editAssignmentForm(@PathVariable Long projectId,
       @PathVariable Long assignmentId,
-      Model model) {
+      Model model, Principal principal, RedirectAttributes redirectAttributes) {
+    String email = principal.getName();
+    Staff staff = (Staff) userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    ProjectDTO projectDTO = projectService.getProjectById(projectId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+    if (!projectDTO.getSupervisor().getId().equals(staff.getId())) {
+      redirectAttributes.addFlashAttribute("errorMessage",
+          "You don't have permission to edit assignments of this project");
+      return "redirect:/staff/student-management";
+    }
     AssignmentDTO assignmentDTO = assignmentService.getAssignmentById(assignmentId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid Assignment ID"));
 
@@ -198,7 +238,19 @@ public class StudentManagementController {
       @PathVariable Long projectId,
       @PathVariable Long assignmentId,
       @PathVariable Long submissionId,
-      RedirectAttributes redirectAttributes) {
+      RedirectAttributes redirectAttributes, Principal principal) {
+
+    String email = principal.getName();
+    Staff staff = (Staff) userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    ProjectDTO projectDTO = projectService.getProjectById(projectId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+
+    if (!projectDTO.getSupervisor().getId().equals(staff.getId())) {
+      redirectAttributes.addFlashAttribute("errorMessage",
+          "You don't have permission to edit assignments of this project");
+      return "redirect:/staff/student-management";
+    }
 
     AssignmentSubmissionDTO submission = assignmentSubmissionService.getSubmissionById(submissionId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid submission ID"));
@@ -221,7 +273,18 @@ public class StudentManagementController {
   @GetMapping("/staff/student-management/{projectId}/assignments/delete/{assignmentId}")
   public String deleteAssignment(@PathVariable Long projectId,
       @PathVariable Long assignmentId,
-      RedirectAttributes redirectAttributes) {
+      RedirectAttributes redirectAttributes, Principal principal) {
+    String email = principal.getName();
+    Staff staff = (Staff) userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    ProjectDTO projectDTO = projectService.getProjectById(projectId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+
+    if (!projectDTO.getSupervisor().getId().equals(staff.getId())) {
+      redirectAttributes.addFlashAttribute("errorMessage",
+          "You don't have permission to delete assignments of this project");
+      return "redirect:/staff/student-management";
+    }
     assignmentService.deleteAssignment(assignmentId);
     redirectAttributes.addFlashAttribute("successMessage", "Assignment deleted successfully.");
     return "redirect:/staff/student-management/" + projectId;

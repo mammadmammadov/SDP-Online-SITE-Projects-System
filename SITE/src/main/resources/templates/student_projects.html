@@ -49,10 +49,13 @@
 
       <div
         th:if="${message != null}"
-        class="alert alert-success alert-dismissible fade show"
+        th:class="${alertType == 'error' ? 'alert alert-error alert-dismissible fade show' : 'alert alert-success alert-dismissible fade show'}"
         role="alert"
       >
-        <i class="fas fa-check-circle me-2"></i>
+        <i
+          class="fas"
+          th:classappend="${(alertType == 'error' ? ' fa-times-circle' : ' fa-check-circle') + ' me-2'}"
+        ></i>
         <span th:text="${message}"></span>
         <button
           type="button"

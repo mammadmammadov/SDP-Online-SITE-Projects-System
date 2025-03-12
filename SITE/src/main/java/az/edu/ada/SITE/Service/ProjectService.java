@@ -31,4 +31,6 @@ public interface ProjectService {
             String supervisorName, String supervisorSurname, Pageable pageable);
 
     public Page<ProjectDTO> getProjectsSupervisedByUser(User user, Pageable pageable);
+
+    boolean isStudentEligibleForProject(StudentDTO student, ProjectDTO project);
 }

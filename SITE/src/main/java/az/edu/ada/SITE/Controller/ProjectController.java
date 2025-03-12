@@ -410,18 +410,34 @@ public class ProjectController {
             return "redirect:/student/projects";
         }
 
-        ProjectDTO projectDTO = projectService.getProjectById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
+        Optional<ProjectDTO> projectOpt = projectService.getProjectById(projectId);
+        if (projectOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Project not found.");
+            redirectAttributes.addFlashAttribute("alertType", "error");
+            return "redirect:/student/projects";
+        }
+
+        ProjectDTO projectDTO = projectOpt.get();
+
+        boolean isEligible = projectService.isStudentEligibleForProject(studentDTO, projectDTO);
+        if (!isEligible) {
+            redirectAttributes.addFlashAttribute("message", "You are not eligible to join this project");
+            redirectAttributes.addFlashAttribute("alertType", "error");
+            return "redirect:/student/projects";
+        }
 
         if (projectDTO.getStatus() != Project.Status.OPEN) {
             redirectAttributes.addFlashAttribute("message", "Project is not open for applications");
+            redirectAttributes.addFlashAttribute("alertType", "error");
             return "redirect:/student/projects";
         }
 
         if (projectDTO.getStudents().contains(studentDTO)) {
             redirectAttributes.addFlashAttribute("message", "You are already part of this project");
+            redirectAttributes.addFlashAttribute("alertType", "error");
         } else if (projectDTO.getRequestedStudents().contains(studentDTO)) {
             redirectAttributes.addFlashAttribute("message", "Request already pending");
+            redirectAttributes.addFlashAttribute("alertType", "error");
         } else {
             projectDTO.getRequestedStudents().add(studentDTO);
             projectService.saveProject(projectDTO);

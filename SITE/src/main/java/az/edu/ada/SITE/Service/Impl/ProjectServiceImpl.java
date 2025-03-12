@@ -202,4 +202,23 @@ public class ProjectServiceImpl implements ProjectService {
     List<ProjectDTO> projectDTOs = projectMapper.projectListToProjectDTOList(projectsPage.getContent());
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
+
+  @Override
+  public boolean isStudentEligibleForProject(StudentDTO student, ProjectDTO project) {
+    if (!project.getStudyYearRestriction().isEmpty()
+        && !project.getStudyYearRestriction().contains(student.getStudyYear())) {
+      return false;
+    }
+
+    if (!project.getDegreeRestriction().isEmpty()
+        && !project.getDegreeRestriction().contains(student.getDegree())) {
+      return false;
+    }
+
+    if (!project.getMajorRestriction().isEmpty()
+        && !project.getMajorRestriction().contains(student.getMajor())) {
+      return false;
+    }
+    return true;
+  }
 }

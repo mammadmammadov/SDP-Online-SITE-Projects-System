@@ -168,3 +168,9 @@ footer {
   color: #004d40;
   margin-right: 5px;
 }
+
+.alert-error {
+  background-color: #f6061a;
+  color: #ffffff;
+  border-color: #f6061a;
+}
