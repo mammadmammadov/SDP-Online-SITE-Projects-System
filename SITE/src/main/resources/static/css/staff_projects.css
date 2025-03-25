@@ -235,11 +235,15 @@ body {
 }
 
 .objective-badge:hover {
-  transform: scale(1.05);
+  transform: scale(1.01);
   box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 .objective-badge i {
   color: #004d40;
   margin-right: 5px;
+}
+
+.card-clickable {
+  cursor: pointer;
 }

@@ -160,7 +160,7 @@ footer {
 }
 
 .objective-badge:hover {
-  transform: scale(1.05);
+  transform: scale(1.01);
   box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -173,4 +173,8 @@ footer {
   background-color: #f6061a;
   color: #ffffff;
   border-color: #f6061a;
+}
+
+.card-clickable {
+  cursor: pointer;
 }
