@@ -178,3 +178,10 @@ footer {
 .card-clickable {
   cursor: pointer;
 }
+
+.notification-badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+  margin-left: -0.8em;
+  margin-top: -0.8em;
+}

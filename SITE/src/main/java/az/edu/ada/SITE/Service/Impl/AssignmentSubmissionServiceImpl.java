@@ -11,6 +11,8 @@ import az.edu.ada.SITE.Repository.AssignmentSubmissionRepository;
 import az.edu.ada.SITE.Repository.ProjectRepository;
 import az.edu.ada.SITE.Repository.StudentRepository;
 import az.edu.ada.SITE.Service.AssignmentSubmissionService;
+import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -135,5 +137,16 @@ public class AssignmentSubmissionServiceImpl implements AssignmentSubmissionServ
         .stream()
         .map(submissionMapper::assignmentSubmissionToAssignmentSubmissionDTO)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional
+  public void markGradesAsViewed(Long studentId) {
+    submissionRepository.markAllAsViewedByStudentId(studentId);
+  }
+
+  @Override
+  public int countNewGradesForStudent(Long studentId) {
+    return submissionRepository.countNewGradesForStudent(studentId);
   }
 }

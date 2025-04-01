@@ -39,4 +39,7 @@ public class AssignmentSubmission {
   @ManyToOne
   @JoinColumn(name = "project_id")
   private Project project;
+
+  @Column(name = "grade_viewed", nullable = false)
+  private boolean gradeViewed = false;
 }

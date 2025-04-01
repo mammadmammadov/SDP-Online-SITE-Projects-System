@@ -15,5 +15,5 @@ public class AssignmentSubmissionDTO {
   private String feedback;
   private Long studentId;
   private Long projectId;
-
+  private boolean gradeViewed;
 }

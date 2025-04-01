@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -382,6 +383,7 @@ public class StudentManagementController {
 
         submission.setGrade(grade);
         submission.setFeedback(feedback);
+        submission.setGradeViewed(false);
         assignmentSubmissionService.saveSubmission(submission);
       } else {
         if (studentId == null) {
@@ -400,6 +402,7 @@ public class StudentManagementController {
 
         submission.setGrade(grade);
         submission.setFeedback(feedback);
+        submission.setGradeViewed(false);
         assignmentSubmissionService.saveSubmission(submission);
       }
 
@@ -416,9 +419,12 @@ public class StudentManagementController {
   }
 
   @GetMapping("/student/assignments")
+  @Transactional
   public String viewStudentAssignments(Model model, Principal principal) {
     StudentDTO studentDTO = studentService.getStudentByEmail(principal.getName())
         .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
+
+    assignmentSubmissionService.markGradesAsViewed(studentDTO.getId());
 
     try {
       ProjectDTO projectDTO = studentDTO.getProjects().stream()

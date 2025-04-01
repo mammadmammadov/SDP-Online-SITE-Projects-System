@@ -17,6 +17,7 @@ import az.edu.ada.SITE.Repository.UserRepository;
 import az.edu.ada.SITE.Repository.DeliverableRepository;
 import az.edu.ada.SITE.Service.ProjectService;
 import az.edu.ada.SITE.Service.StudentService;
+import az.edu.ada.SITE.Service.AssignmentSubmissionService;
 
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +52,7 @@ public class ProjectController {
     private final UserRepository userRepository;
     private final StudentService studentService;
     private final ProjectMapper projectMapper;
-
+    private final AssignmentSubmissionService assignmentSubmissionService;
     private final ProjectRepository projectRepository;
     private final DeliverableRepository deliverableRepository;
     private final StudentRepository studentRepository;
@@ -63,7 +64,8 @@ public class ProjectController {
     public ProjectController(ProjectService projectService, UserRepository userRepository,
             StudentService studentService, ProjectMapper projectMapper,
             ProjectRepository projectRepository, StudentRepository studentRepository,
-            DeliverableRepository deliverableRepository, StudentMapper studentMapper) {
+            DeliverableRepository deliverableRepository, StudentMapper studentMapper,
+            AssignmentSubmissionService assignmentSubmissionService) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.studentService = studentService;
@@ -72,6 +74,7 @@ public class ProjectController {
         this.studentRepository = studentRepository;
         this.deliverableRepository = deliverableRepository;
         this.studentMapper = studentMapper;
+        this.assignmentSubmissionService = assignmentSubmissionService;
     }
 
     @GetMapping("/admin/students")
@@ -206,6 +209,9 @@ public class ProjectController {
 
         List<String> categories = List.of("Artificial Intelligence", "Software Engineering", "Cybersecurity",
                 "Data Science", "Networks", "Web Development", "Software Development");
+
+        int newGradesCount = assignmentSubmissionService.countNewGradesForStudent(studentDTO.getId());
+        model.addAttribute("newGradesCount", newGradesCount);
 
         model.addAttribute("student", studentDTO);
         model.addAttribute("studentName", studentDTO.getName() + " " + studentDTO.getSurname());

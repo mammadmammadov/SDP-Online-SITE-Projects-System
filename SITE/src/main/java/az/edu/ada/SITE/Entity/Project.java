@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Hibernate;
+
 @Entity
 @Table(name = "projects")
 @Data
@@ -25,7 +27,7 @@ public class Project {
     @Column(length = 1000)
     private String description;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @Column(nullable = false, length = 500)
     private List<String> objectives;
 
@@ -36,22 +38,32 @@ public class Project {
 
     @ElementCollection
     @NotEmpty(message = "At least one research focus must be selected")
+    @CollectionTable(name = "project_research_focus", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "research_focus")
     private List<String> researchFocus = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @NotEmpty(message = "At least one category must be selected")
+    @CollectionTable(name = "project_categories", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "category")
     private List<String> category = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @NotEmpty(message = "At least one study year restriction must be selected")
+    @CollectionTable(name = "project_study_year_restrictions", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "study_year")
     private List<String> studyYearRestriction = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @NotEmpty(message = "At least one degree restriction must be selected")
+    @CollectionTable(name = "project_degree_restrictions", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "degree")
     private List<String> degreeRestriction = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @NotEmpty(message = "At least one major restriction must be selected")
+    @CollectionTable(name = "project_major_restrictions", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "major")
     private List<String> majorRestriction = new ArrayList<>();
 
     public enum ProjectType {
@@ -73,24 +85,24 @@ public class Project {
     @JoinColumn(name = "staff_id", nullable = false)
     private Staff supervisor;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "project_co_supervisors", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<Staff> coSupervisors = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "project_students", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> students = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "project_requests", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> requestedStudents = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "project_subcategories", joinColumns = @JoinColumn(name = "project_id"))
     @Column(name = "subcategory")
     private List<String> subcategories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Assignment> assignments = new ArrayList<>();
 
     public enum ApplicationStatus {
@@ -143,10 +155,25 @@ public class Project {
         }
     }
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Deliverable> deliverables = new ArrayList<>();
 
     public void toggleStatus() {
         this.status = (this.status == Status.OPEN) ? Status.CLOSED : Status.OPEN;
+    }
+
+    public void initializeAllCollections() {
+        Hibernate.initialize(this.objectives);
+        Hibernate.initialize(this.researchFocus);
+        Hibernate.initialize(this.category);
+        Hibernate.initialize(this.studyYearRestriction);
+        Hibernate.initialize(this.degreeRestriction);
+        Hibernate.initialize(this.majorRestriction);
+        Hibernate.initialize(this.subcategories);
+        Hibernate.initialize(this.assignments);
+        Hibernate.initialize(this.deliverables);
+        Hibernate.initialize(this.coSupervisors);
+        Hibernate.initialize(this.students);
+        Hibernate.initialize(this.requestedStudents);
     }
 }

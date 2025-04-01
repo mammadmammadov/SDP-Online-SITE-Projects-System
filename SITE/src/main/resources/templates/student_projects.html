@@ -37,9 +37,16 @@
         <nav>
           <a
             th:href="@{/student/assignments}"
-            class="btn btn-outline-light me-2"
+            class="btn btn-outline-light me-2 position-relative"
           >
             <i class="fas fa-chart-line ms-2"></i>View My Assignment
+            <span
+              th:if="${newGradesCount > 0}"
+              class="position-absolute top-0 start-100 translate-middle notification-badge rounded-pill bg-danger"
+            >
+              <span th:text="${newGradesCount}"></span>
+              <span class="visually-hidden">new graded assignments</span>
+            </span>
           </a>
           <a href="/logout" class="btn btn-danger ms-2">
             <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -127,56 +134,56 @@
         <div class="col" th:each="project : ${projects}">
           <div class="card h-100 project-card shadow-sm">
             <div class="card-clickable">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="fas fa-project-diagram me-2 text-secondary"></i>
-                <span th:text="${project.title}"></span>
-              </h5>
-              <p
-                class="card-text description text-muted"
-                th:text="${project.description}"
-              ></p>
-              <p>
-                <strong>Supervisor:</strong>
-                <span
-                  th:text="${project.supervisor.name} + ' ' + ${project.supervisor.surname}"
-                ></span>
-              </p>
+              <div class="card-body">
+                <h5 class="card-title">
+                  <i class="fas fa-project-diagram me-2 text-secondary"></i>
+                  <span th:text="${project.title}"></span>
+                </h5>
+                <p
+                  class="card-text description text-muted"
+                  th:text="${project.description}"
+                ></p>
+                <p>
+                  <strong>Supervisor:</strong>
+                  <span
+                    th:text="${project.supervisor.name} + ' ' + ${project.supervisor.surname}"
+                  ></span>
+                </p>
+              </div>
+              <div class="card-footer text-end bg-transparent border-top-0">
+                <a
+                  th:if="${#lists.contains(project.students, student)}"
+                  class="btn btn-success btn-sm disabled"
+                >
+                  <i class="fas fa-check-circle me-2"></i>Accepted
+                </a>
+                <a
+                  th:if="${!#lists.contains(project.students, student) and #lists.contains(project.requestedStudents, student)}"
+                  class="btn btn-secondary btn-sm disabled"
+                >
+                  <i class="fas fa-clock me-2"></i>Pending
+                </a>
+                <a
+                  th:if="${(project.type.name() == 'INDIVIDUAL' and project.students.size() >= 1) or (project.type.name() == 'GROUP' and project.students.size() >= project.maxStudents)}"
+                  class="btn btn-danger btn-sm disabled"
+                >
+                  <i class="fas fa-ban me-2"></i>FULL
+                </a>
+                <a
+                  th:if="${!( (project.type.name() == 'INDIVIDUAL' and project.students.size() >= 1) or (project.type.name() == 'GROUP' and project.students.size() >= project.maxStudents) ) and !#lists.contains(project.students, student) and !#lists.contains(project.requestedStudents, student)}"
+                  th:href="@{${student.accepted} ? '#' : '/student/projects/join/' + ${project.id}}"
+                  class="btn btn-outline-primary btn-sm join-btn"
+                  th:classappend="${student.accepted} ? ' disabled' : ''"
+                  th:disabled="${student.accepted}"
+                >
+                  <i class="fas fa-user-plus me-2"></i>
+                  <span
+                    th:text="${student.accepted} ? 'Already Accepted' : 'Join'"
+                  ></span>
+                </a>
+              </div>
             </div>
-            <div class="card-footer text-end bg-transparent border-top-0">
-              <a
-                th:if="${#lists.contains(project.students, student)}"
-                class="btn btn-success btn-sm disabled"
-              >
-                <i class="fas fa-check-circle me-2"></i>Accepted
-              </a>
-              <a
-                th:if="${!#lists.contains(project.students, student) and #lists.contains(project.requestedStudents, student)}"
-                class="btn btn-secondary btn-sm disabled"
-              >
-                <i class="fas fa-clock me-2"></i>Pending
-              </a>
-              <a
-                th:if="${(project.type.name() == 'INDIVIDUAL' and project.students.size() >= 1) or (project.type.name() == 'GROUP' and project.students.size() >= project.maxStudents)}"
-                class="btn btn-danger btn-sm disabled"
-              >
-                <i class="fas fa-ban me-2"></i>FULL
-              </a>
-              <a
-                th:if="${!( (project.type.name() == 'INDIVIDUAL' and project.students.size() >= 1) or (project.type.name() == 'GROUP' and project.students.size() >= project.maxStudents) ) and !#lists.contains(project.students, student) and !#lists.contains(project.requestedStudents, student)}"
-                th:href="@{${student.accepted} ? '#' : '/student/projects/join/' + ${project.id}}"
-                class="btn btn-outline-primary btn-sm join-btn"
-                th:classappend="${student.accepted} ? ' disabled' : ''"
-                th:disabled="${student.accepted}"
-              >
-                <i class="fas fa-user-plus me-2"></i>
-                <span
-                  th:text="${student.accepted} ? 'Already Accepted' : 'Join'"
-                ></span>
-              </a>
-            </div>
-            </div>
-            <div style="display:none">
+            <div style="display: none">
               <button
                 type="button"
                 class="btn btn-outline-primary btn-sm"
