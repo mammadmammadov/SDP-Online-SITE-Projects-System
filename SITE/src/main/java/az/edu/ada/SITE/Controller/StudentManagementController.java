@@ -31,10 +31,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -465,9 +462,20 @@ public class StudentManagementController {
     StudentDTO studentDTO = studentService.getStudentByEmail(email)
         .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
 
-    if (!file.getContentType().equalsIgnoreCase("application/pdf")) {
+    Set<String> allowedMimeTypes = Set.of(
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    String contentType = file.getContentType().toLowerCase();
+    if (!allowedMimeTypes.contains(contentType)) {
       redirectAttributes.addFlashAttribute("errorMessage",
-          "Invalid file type. Only PDF files are allowed.");
+              "Invalid file type. Allowed types: PDF, Word, PowerPoint, Excel.");
       return "redirect:/student/assignments";
     }
 
