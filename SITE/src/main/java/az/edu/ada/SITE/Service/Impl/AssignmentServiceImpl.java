@@ -49,7 +49,16 @@ public class AssignmentServiceImpl implements AssignmentService {
 
   @Override
   public void deleteAssignment(Long id) {
-    assignmentRepository.deleteById(id);
+
+    Assignment assignment = assignmentRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Assignment not found"));
+
+    Project project = assignment.getProject();
+    if (project != null) {
+      project.getAssignments().remove(assignment);
+    }
+
+    assignmentRepository.delete(assignment);
   }
 
   @Override
