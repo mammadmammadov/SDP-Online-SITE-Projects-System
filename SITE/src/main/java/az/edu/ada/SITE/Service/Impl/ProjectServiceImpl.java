@@ -228,4 +228,14 @@ public class ProjectServiceImpl implements ProjectService {
     return projectRepository.findByIdWithDeliverables(id)
         .orElseThrow(() -> new EntityNotFoundException("Project not found"));
   }
+
+  @Override
+  public boolean titleExists(String title) {
+    return projectRepository.existsByTitle(title);
+  }
+
+  @Override
+  public boolean titleExistsForOtherProject(String title, Long projectId) {
+    return projectRepository.existsByTitleAndIdNot(title, projectId);
+  }
 }

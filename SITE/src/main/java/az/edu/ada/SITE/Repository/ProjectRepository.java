@@ -51,4 +51,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
         @Query("SELECT p FROM Project p LEFT JOIN FETCH p.deliverables WHERE p.id = :id")
         Optional<Project> findByIdWithDeliverables(@Param("id") Long id);
+
+        boolean existsByTitle(String title);
+
+        boolean existsByTitleAndIdNot(String title, Long id);
 }

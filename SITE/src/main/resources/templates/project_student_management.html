@@ -86,13 +86,13 @@
                 <strong><i class="fas fa-bullseye me-2"></i>Objectives:</strong>
               </p>
               <div class="d-flex flex-wrap gap-2 mt-2">
-                      <span
-                              th:each="obj : ${project.objectives}"
-                              class="objective-badge"
-                      >
-                        <i class="fas fa-hashtag me-1"></i>
-                        <span th:text="${obj}"></span>
-                      </span>
+                <span
+                  th:each="obj : ${project.objectives}"
+                  class="objective-badge"
+                >
+                  <i class="fas fa-hashtag me-1"></i>
+                  <span th:text="${obj}"></span>
+                </span>
               </div>
             </div>
           </div>
