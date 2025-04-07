@@ -72,6 +72,7 @@
                 <tr>
                   <th>Submission</th>
                   <th>Submitted By</th>
+                  <th>Status</th>
                   <th>Grade</th>
                   <th>Feedback</th>
                   <th>Actions</th>
@@ -79,6 +80,42 @@
               </thead>
               <tbody>
                 <tr th:each="submission : ${submissions}">
+                  <td>
+                    <div
+                      th:if="${submission.submittedAt != null and assignment.dueDate != null}"
+                    >
+                      <span
+                        th:if="${submission.submittedAt.isAfter(assignment.dueDate)}"
+                        class="badge bg-danger"
+                      >
+                        <i class="fas fa-clock me-1"></i>Late
+                      </span>
+                      <span
+                        th:unless="${submission.submittedAt.isAfter(assignment.dueDate)}"
+                        class="badge bg-success"
+                      >
+                        <i class="fas fa-check-circle me-1"></i>On Time
+                      </span>
+                      <div class="text-muted small mt-1">
+                        Submitted:
+                        <span
+                          th:text="${#temporals.format(submission.submittedAt, 'MMM dd, yyyy HH:mm')}"
+                        ></span>
+                      </div>
+                    </div>
+                    <div
+                      th:if="${submission.submittedAt == null}"
+                      class="text-muted"
+                    >
+                      Not Submitted
+                    </div>
+                    <div
+                      th:if="${assignment.dueDate == null}"
+                      class="text-muted"
+                    >
+                      No Due Date
+                    </div>
+                  </td>
                   <td>
                     <a
                       th:if="${submission.filePath}"
