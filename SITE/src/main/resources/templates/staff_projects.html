@@ -83,72 +83,72 @@
           <div class="col" th:each="project : ${projects}">
             <div class="card h-100 shadow-sm">
               <div class="card-clickable">
-              <div
-                class="card-header d-flex justify-content-between align-items-center"
-              >
-                <h5 class="card-title mb-0" th:text="${project.title}"></h5>
-                <span
-                  th:text="${project.status}"
-                  th:class="${#strings.equalsIgnoreCase(project.status, 'OPEN')} ? 'status-open' : 'status-closed'"
-                  class="status-badge"
-                ></span>
-              </div>
-              <div class="card-body">
-                <div class="mb-3">
-                  <h6 class="text-secondary mb-2">Research Focus</h6>
-                  <p
-                    class="mb-0"
-                    th:text="${#strings.listJoin(project.researchFocus, ', ')}"
-                  ></p>
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="card-title mb-0" th:text="${project.title}"></h5>
+                  <span
+                    th:text="${project.status}"
+                    th:class="${#strings.equalsIgnoreCase(project.status, 'OPEN')} ? 'status-open' : 'status-closed'"
+                    class="status-badge"
+                  ></span>
                 </div>
-
-                <div class="mb-3">
-                  <h6 class="text-secondary mb-2">Category</h6>
-                  <p
-                    class="mb-0"
-                    th:text="${#strings.listJoin(project.category, ', ')}"
-                  ></p>
-                </div>
-
-                <div class="mb-3">
-                  <h6 class="text-secondary mb-2">Restrictions</h6>
-                  <ul class="list-unstyled mb-0">
-                    <li>
-                      <strong>Year:</strong>
-                      <span
-                        th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"
-                      ></span>
-                    </li>
-                    <li>
-                      <strong>Degree:</strong>
-                      <span
-                        th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"
-                      ></span>
-                    </li>
-                    <li>
-                      <strong>Major:</strong>
-                      <span
-                        th:text="${#strings.listJoin(project.majorRestriction, ', ')}"
-                      ></span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div class="row">
-                  <div class="col-6">
-                    <h6 class="text-secondary">Max Students</h6>
-                    <p class="mb-0" th:text="${project.maxStudents}"></p>
-                  </div>
-                  <div class="col-6">
-                    <h6 class="text-secondary">Accepted</h6>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <h6 class="text-secondary mb-2">Research Focus</h6>
                     <p
-                      class="mb-0 applicant-count"
-                      th:text="${project.students.size()}"
+                      class="mb-0"
+                      th:text="${#strings.listJoin(project.researchFocus, ', ')}"
                     ></p>
                   </div>
+
+                  <div class="mb-3">
+                    <h6 class="text-secondary mb-2">Category</h6>
+                    <p
+                      class="mb-0"
+                      th:text="${#strings.listJoin(project.category, ', ')}"
+                    ></p>
+                  </div>
+
+                  <div class="mb-3">
+                    <h6 class="text-secondary mb-2">Restrictions</h6>
+                    <ul class="list-unstyled mb-0">
+                      <li>
+                        <strong>Year:</strong>
+                        <span
+                          th:text="${#strings.listJoin(project.studyYearRestriction, ', ')}"
+                        ></span>
+                      </li>
+                      <li>
+                        <strong>Degree:</strong>
+                        <span
+                          th:text="${#strings.listJoin(project.degreeRestriction, ', ')}"
+                        ></span>
+                      </li>
+                      <li>
+                        <strong>Major:</strong>
+                        <span
+                          th:text="${#strings.listJoin(project.majorRestriction, ', ')}"
+                        ></span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-6">
+                      <h6 class="text-secondary">Max Students</h6>
+                      <p class="mb-0" th:text="${project.maxStudents}"></p>
+                    </div>
+                    <div class="col-6">
+                      <h6 class="text-secondary">Accepted</h6>
+                      <p
+                        class="mb-0 applicant-count"
+                        th:text="${project.students.size()}"
+                      ></p>
+                    </div>
+                  </div>
                 </div>
               </div>
-                </div>
               <div class="card-footer bg-transparent">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="d-flex gap-2">
@@ -161,9 +161,8 @@
                     <button
                       data-bs-toggle="modal"
                       th:attr="data-bs-target='#projectModal-' + ${project.id}"
-                      style="display:none"
-                    >
-                    </button>
+                      style="display: none"
+                    ></button>
                   </div>
 
                   <div class="action-buttons">
@@ -183,14 +182,26 @@
                     >
                       <i class="fas fa-trash-alt"></i>
                     </a>
-
-                    <a
+                    <div
                       th:if="${project.supervisor == null or project.supervisor.id != staffId}"
-                      class="btn btn-outline-secondary btn-sm disabled"
-                      href="javascript:void(0)"
                     >
-                      <i class="fas fa-ban"></i> No Permission
-                    </a>
+                      <a
+                        th:if="${#lists.contains(project.coSupervisors.![id], staffId)}"
+                        class="btn btn-outline-info btn-sm disabled"
+                        href="javascript:void(0)"
+                        title="You are a co-supervisor"
+                      >
+                        <i class="fas fa-user-tie me-1"></i>Co-Supervisor
+                      </a>
+
+                      <a
+                        th:unless="${#lists.contains(project.coSupervisors.![id], staffId)}"
+                        class="btn btn-outline-secondary btn-sm disabled"
+                        href="javascript:void(0)"
+                      >
+                        <i class="fas fa-ban"></i> No Permission
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

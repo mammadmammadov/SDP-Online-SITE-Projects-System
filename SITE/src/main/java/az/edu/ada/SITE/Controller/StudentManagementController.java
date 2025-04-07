@@ -61,10 +61,19 @@ public class StudentManagementController {
     String email = principal.getName();
     Staff staff = (Staff) userRepository.findByEmail(email)
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
     List<ProjectDTO> projects = projectService.getAllProjects().stream()
-        .filter(p -> p.getSupervisor().getId().equals(staff.getId()))
+        .filter(p -> {
+          boolean isSupervisor = p.getSupervisor() != null &&
+              p.getSupervisor().getId().equals(staff.getId());
+          boolean isCoSupervisor = p.getCoSupervisors().stream()
+              .anyMatch(co -> co != null && co.getId().equals(staff.getId()));
+          return isSupervisor || isCoSupervisor;
+        })
         .collect(Collectors.toList());
+
     model.addAttribute("projects", projects);
+    model.addAttribute("staffId", staff.getId());
     return "student_management_staff";
   }
 
@@ -73,6 +82,7 @@ public class StudentManagementController {
       Model model,
       Principal principal,
       RedirectAttributes redirectAttributes) {
+
     String email = principal.getName();
     Staff staff = (Staff) userRepository.findByEmail(email)
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -81,7 +91,13 @@ public class StudentManagementController {
       ProjectDTO projectDTO = projectService.getProjectById(projectId)
           .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
-      if (!projectDTO.getSupervisor().getId().equals(staff.getId())) {
+      boolean isSupervisor = projectDTO.getSupervisor() != null &&
+          projectDTO.getSupervisor().getId().equals(staff.getId());
+
+      boolean isCoSupervisor = projectDTO.getCoSupervisors().stream()
+          .anyMatch(co -> co != null && co.getId().equals(staff.getId()));
+
+      if (!isSupervisor && !isCoSupervisor) {
         redirectAttributes.addFlashAttribute("errorMessage",
             "You don't have permission to view this project");
         return "redirect:/staff/student-management";
@@ -90,6 +106,7 @@ public class StudentManagementController {
       List<Assignment> assignments = projectDTO.getAssignments();
       model.addAttribute("project", projectDTO);
       model.addAttribute("assignments", assignments);
+      model.addAttribute("isSupervisor", isSupervisor);
       return "project_student_management";
 
     } catch (IllegalArgumentException e) {
@@ -463,19 +480,18 @@ public class StudentManagementController {
         .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
 
     Set<String> allowedMimeTypes = Set.of(
-            "application/pdf",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.ms-powerpoint",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-            "application/vnd.ms-excel",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    );
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
     String contentType = file.getContentType().toLowerCase();
     if (!allowedMimeTypes.contains(contentType)) {
       redirectAttributes.addFlashAttribute("errorMessage",
-              "Invalid file type. Allowed types: PDF, Word, PowerPoint, Excel.");
+          "Invalid file type. Allowed types: PDF, Word, PowerPoint, Excel.");
       return "redirect:/student/assignments";
     }
 

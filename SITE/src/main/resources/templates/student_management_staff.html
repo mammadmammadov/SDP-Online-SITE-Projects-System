@@ -94,6 +94,13 @@
                   >
                     <i class="fas fa-user-edit me-2"></i>Manage
                   </a>
+                  <span
+                    th:if="${#lists.contains(project.coSupervisors.![id], staffId) && 
+                    project.supervisor.id != staffId}"
+                    class="badge bg-info text-dark"
+                  >
+                    <i class="fas fa-user-tie me-1"></i>Co-Supervisor
+                  </span>
                 </td>
               </tr>
             </tbody>

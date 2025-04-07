@@ -68,6 +68,9 @@ public class DataInitializer implements CommandLineRunner {
                         Staff supervisor2 = (Staff) userRepository.findByEmail("staff2@ada.edu.az")
                                         .orElseThrow(() -> new IllegalArgumentException("Supervisor not found"));
 
+                        Staff supervisor3 = (Staff) userRepository.findByEmail("staff3@ada.edu.az")
+                                        .orElseThrow(() -> new IllegalArgumentException("Supervisor not found"));
+
                         Project project1 = new Project();
                         project1.setCategory(List.of("Artificial Intelligence"));
                         project1.setSubcategories(List.of("Machine Learning", "Natural Language Processing"));
@@ -187,6 +190,50 @@ public class DataInitializer implements CommandLineRunner {
                         project6.setMaxStudents(3);
 
                         projectRepository.save(project6);
+
+                        Project project7 = new Project();
+                        project7.setCategory(List.of("Cybersecurity"));
+                        project7.setSubcategories(List.of("Ethical Hacking"));
+                        project7.setTitle("Cybersecurity (Ethical Hacking) Project");
+                        project7.setDescription(
+                                        "A project focused on ethical hacking practices to identify and secure vulnerabilities in systems.");
+                        project7.setObjectives(
+                                        List.of(
+                                                        "Identify common security vulnerabilities",
+                                                        "Simulate penetration testing scenarios",
+                                                        "Develop a report with mitigation strategies"));
+                        project7.setStatus(Project.Status.OPEN);
+                        project7.setSupervisor(supervisor3); // make sure supervisor3 is already defined
+                        project7.setResearchFocus(List.of("Research Project"));
+                        project7.setDegreeRestriction(List.of("Undergraduate"));
+                        project7.setMajorRestriction(List.of("Information Security", "Computer Science"));
+                        project7.setStudyYearRestriction(List.of("Junior", "Senior"));
+                        project7.setType(ProjectType.INDIVIDUAL);
+                        project7.setMaxStudents(1);
+
+                        projectRepository.save(project7);
+
+                        Project project8 = new Project();
+                        project8.setCategory(List.of("Software Engineering"));
+                        project8.setSubcategories(List.of("Agile Development"));
+                        project8.setTitle("Agile Software Engineering Project");
+                        project8.setDescription(
+                                        "A team-based project focused on applying Agile methodologies such as Scrum to develop a functional software product.");
+                        project8.setObjectives(
+                                        List.of(
+                                                        "Plan and manage sprints",
+                                                        "Implement iterative development practices",
+                                                        "Conduct regular reviews and retrospectives"));
+                        project8.setStatus(Project.Status.OPEN);
+                        project8.setSupervisor(supervisor3);
+                        project8.setResearchFocus(List.of("Capstone Project"));
+                        project8.setDegreeRestriction(List.of("Undergraduate"));
+                        project8.setMajorRestriction(List.of("Computer Engineering", "Information Technologies"));
+                        project8.setStudyYearRestriction(List.of("Junior", "Senior"));
+                        project8.setType(ProjectType.GROUP);
+                        project8.setMaxStudents(4);
+
+                        projectRepository.save(project8);
                 }
         }
 }

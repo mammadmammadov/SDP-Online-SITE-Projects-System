@@ -131,6 +131,7 @@
           <a
             th:href="@{'/staff/student-management/' + ${project.id} + '/assignments/new'}"
             class="btn btn-success"
+            th:if="${isSupervisor}"
           >
             <i class="fas fa-plus me-2"></i>Create New Assignment
           </a>
@@ -181,6 +182,7 @@
                     <a
                       th:href="@{'/staff/student-management/' + ${project.id} + '/assignments/edit/' + ${assignment.id}}"
                       class="btn btn-outline-primary btn-sm"
+                      th:if="${isSupervisor}"
                     >
                       <i class="fas fa-edit"></i>
                     </a>
@@ -188,6 +190,7 @@
                       th:href="@{'/staff/student-management/' + ${project.id} + '/assignments/delete/' + ${assignment.id}}"
                       class="btn btn-outline-danger btn-sm"
                       onclick="return confirm('Are you sure you want to delete this assignment?')"
+                      th:if="${isSupervisor}"
                     >
                       <i class="fas fa-trash"></i>
                     </a>
