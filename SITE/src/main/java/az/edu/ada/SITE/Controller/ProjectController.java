@@ -247,8 +247,18 @@ public class ProjectController {
                     .getContent();
 
             List<ProjectDTO> mergedProjects = new ArrayList<>();
-            mergedProjects.addAll(staffProjects);
-            mergedProjects.addAll(otherProjects);
+            Set<Long> projectIds = new HashSet<>();
+
+            for (ProjectDTO p : staffProjects) {
+                if (projectIds.add(p.getId())) {
+                    mergedProjects.add(p);
+                }
+            }
+            for (ProjectDTO p : otherProjects) {
+                if (projectIds.add(p.getId())) {
+                    mergedProjects.add(p);
+                }
+            }
 
             int totalProjects = mergedProjects.size();
             int fromIndex = page * pageSize;
