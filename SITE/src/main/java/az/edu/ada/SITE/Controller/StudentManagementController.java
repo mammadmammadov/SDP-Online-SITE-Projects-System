@@ -104,9 +104,15 @@ public class StudentManagementController {
       }
 
       List<Assignment> assignments = projectDTO.getAssignments();
+      List<Staff> availableGraders = new ArrayList<>();
+      availableGraders.add(projectDTO.getSupervisor());
+      availableGraders.addAll(projectDTO.getCoSupervisors());
+
+      model.addAttribute("availableGraders", availableGraders);
       model.addAttribute("project", projectDTO);
       model.addAttribute("assignments", assignments);
       model.addAttribute("isSupervisor", isSupervisor);
+      model.addAttribute("staffId", staff.getId());
       return "project_student_management";
 
     } catch (IllegalArgumentException e) {
@@ -170,6 +176,7 @@ public class StudentManagementController {
     }
 
     assignmentDTO.setProjectId(projectId);
+    assignmentDTO.setGrader(projectDTO.getSupervisor());
     assignmentService.saveAssignment(assignmentDTO);
     redirectAttributes.addFlashAttribute("successMessage", "Assignment created successfully.");
 
@@ -362,14 +369,35 @@ public class StudentManagementController {
       @RequestParam(required = false) Long studentId,
       @RequestParam(required = false) Double grade,
       @RequestParam(required = false) String feedback,
+      Principal principal,
       RedirectAttributes redirectAttributes) {
 
     try {
+      String email = principal.getName();
+      Staff currentStaff = (Staff) userRepository.findByEmail(email)
+          .orElseThrow(() -> new UsernameNotFoundException("Staff not found"));
+
       AssignmentDTO assignment = assignmentService.getAssignmentById(assignmentId)
           .orElseThrow(() -> new IllegalArgumentException("Invalid assignment ID"));
 
       ProjectDTO project = projectService.getProjectById(projectId)
           .orElseThrow(() -> new IllegalArgumentException("Invalid project ID"));
+
+      boolean isAuthorized = false;
+
+      if (assignment.getGrader() != null) {
+        isAuthorized = assignment.getGrader().getId().equals(currentStaff.getId());
+      } else {
+        isAuthorized = project.getSupervisor().getId().equals(currentStaff.getId());
+      }
+
+      if (!isAuthorized) {
+        redirectAttributes.addFlashAttribute("errorMessage",
+            "You are not authorized to grade this assignment");
+        return "redirect:/staff/student-management/" + projectId +
+            "/assignments/" + assignmentId +
+            "/submissions";
+      }
 
       if (grade != null) {
         if (grade < 0)
@@ -397,7 +425,6 @@ public class StudentManagementController {
 
         submission.setGrade(grade);
         submission.setFeedback(feedback);
-        submission.setGradeViewed(false);
         assignmentSubmissionService.saveSubmission(submission);
       } else {
         if (studentId == null) {
@@ -416,7 +443,6 @@ public class StudentManagementController {
 
         submission.setGrade(grade);
         submission.setFeedback(feedback);
-        submission.setGradeViewed(false);
         assignmentSubmissionService.saveSubmission(submission);
       }
 
@@ -437,8 +463,6 @@ public class StudentManagementController {
   public String viewStudentAssignments(Model model, Principal principal) {
     StudentDTO studentDTO = studentService.getStudentByEmail(principal.getName())
         .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
-
-    assignmentSubmissionService.markGradesAsViewed(studentDTO.getId());
 
     try {
       ProjectDTO projectDTO = studentDTO.getProjects().stream()
@@ -462,6 +486,7 @@ public class StudentManagementController {
 
       model.addAttribute("project", projectDTO);
       model.addAttribute("assignments", assignments);
+
     } catch (IllegalArgumentException e) {
       model.addAttribute("message", "You are not enrolled in any project");
       model.addAttribute("assignments", Collections.emptyList());
@@ -530,5 +555,53 @@ public class StudentManagementController {
     assignmentSubmissionService.saveSubmission(submissionDTO);
     redirectAttributes.addFlashAttribute("successMessage", "Assignment submitted successfully!");
     return "redirect:/student/assignments";
+  }
+
+  @PostMapping("/staff/student-management/{projectId}/assignments/{assignmentId}/set-grader")
+  public String setAssignmentGrader(
+      @PathVariable Long projectId,
+      @PathVariable Long assignmentId,
+      @RequestParam Long graderId,
+      Principal principal,
+      RedirectAttributes redirectAttributes) {
+
+    String email = principal.getName();
+    Staff staff = (Staff) userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+    AssignmentDTO assignmentDTO = assignmentService.getAssignmentById(assignmentId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid assignment ID"));
+
+    ProjectDTO project = projectService.getProjectById(projectId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid project ID"));
+
+    if (!project.getSupervisor().getId().equals(staff.getId())) {
+      redirectAttributes.addFlashAttribute("errorMessage",
+          "Only project supervisors can assign graders");
+      return "redirect:/staff/student-management/" + projectId;
+    }
+
+    List<Long> validGraderIds = project.getCoSupervisors().stream()
+        .map(Staff::getId)
+        .collect(Collectors.toList());
+    validGraderIds.add(project.getSupervisor().getId());
+
+    if (!validGraderIds.contains(graderId)) {
+      redirectAttributes.addFlashAttribute("errorMessage",
+          "Invalid grader selection");
+      return "redirect:/staff/student-management/" + projectId;
+    }
+
+    Staff grader = userRepository.findById(graderId)
+        .filter(u -> u instanceof Staff)
+        .map(u -> (Staff) u)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid grader ID"));
+
+    assignmentDTO.setGrader(grader);
+    assignmentService.saveAssignment(assignmentDTO);
+
+    redirectAttributes.addFlashAttribute("successMessage",
+        "Grader assigned successfully");
+    return "redirect:/staff/student-management/" + projectId;
   }
 }

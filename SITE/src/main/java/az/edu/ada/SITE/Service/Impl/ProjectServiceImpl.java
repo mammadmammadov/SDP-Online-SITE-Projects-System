@@ -21,8 +21,6 @@ import az.edu.ada.SITE.Mapper.StudentMapper;
 import az.edu.ada.SITE.Repository.ProjectRepository;
 import az.edu.ada.SITE.Repository.StudentRepository;
 import az.edu.ada.SITE.Service.ProjectService;
-import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -51,13 +49,13 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<ProjectDTO> getProjectById(Long id) {
-    return projectRepository.findById(id)
-        .map(project -> {
-          project.initializeAllCollections();
-          return projectMapper.projectToProjectDTO(project);
-        });
+    Project project = projectRepository.findById(id).orElse(null);
+    if (project == null) {
+      return Optional.empty();
+    }
+    ProjectDTO projectDTO = projectMapper.projectToProjectDTO(project);
+    return Optional.of(projectDTO);
   }
 
   @Override
@@ -222,11 +220,6 @@ public class ProjectServiceImpl implements ProjectService {
       return false;
     }
     return true;
-  }
-
-  public Project getProjectWithDeliverables(Long id) {
-    return projectRepository.findByIdWithDeliverables(id)
-        .orElseThrow(() -> new EntityNotFoundException("Project not found"));
   }
 
   @Override

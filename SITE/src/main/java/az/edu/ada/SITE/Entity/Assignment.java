@@ -36,4 +36,8 @@ public class Assignment {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", nullable = false)
   private Project project;
+
+  @ManyToOne
+  @JoinColumn(name = "grader_id")
+  private Staff grader;
 }

@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
@@ -48,9 +47,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
         @Query("SELECT p FROM Project p LEFT JOIN p.coSupervisors cosup WHERE p.supervisor = :staff OR cosup = :staff")
         Page<Project> findProjectsBySupervisorOrCoSupervisor(@Param("staff") Staff staff, Pageable pageable);
-
-        @Query("SELECT p FROM Project p LEFT JOIN FETCH p.deliverables WHERE p.id = :id")
-        Optional<Project> findByIdWithDeliverables(@Param("id") Long id);
 
         boolean existsByTitle(String title);
 

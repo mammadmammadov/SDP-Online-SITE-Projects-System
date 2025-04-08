@@ -3,9 +3,7 @@ package az.edu.ada.SITE.Service.Impl;
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import az.edu.ada.SITE.CustomException.ResourceNotFound;
 import az.edu.ada.SITE.DTO.ProjectDTO;
@@ -16,23 +14,19 @@ import az.edu.ada.SITE.Mapper.ProjectMapper;
 import az.edu.ada.SITE.Mapper.StudentMapper;
 import az.edu.ada.SITE.Repository.StudentRepository;
 import az.edu.ada.SITE.Service.StudentService;
-import az.edu.ada.SITE.Service.AssignmentSubmissionService;
 
 @Service
 public class StudentServiceImpl implements StudentService {
   private final StudentRepository studentRepository;
   private final StudentMapper studentMapper;
   private final ProjectMapper projectMapper;
-  private final AssignmentSubmissionService assignmentSubmissionService;
 
   public StudentServiceImpl(StudentRepository studentRepository,
       StudentMapper studentMapper,
-      ProjectMapper projectMapper,
-      AssignmentSubmissionService assignmentSubmissionService) {
+      ProjectMapper projectMapper) {
     this.studentRepository = studentRepository;
     this.studentMapper = studentMapper;
     this.projectMapper = projectMapper;
-    this.assignmentSubmissionService = assignmentSubmissionService;
   }
 
   @Override
@@ -62,16 +56,13 @@ public class StudentServiceImpl implements StudentService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<StudentDTO> getStudentByEmail(String email) {
-    return studentRepository.findByEmail(email)
-        .map(student -> {
-          Hibernate.initialize(student.getProjects());
-          if (student.getProjects() != null) {
-            student.getProjects().forEach(Project::initializeAllCollections);
-          }
-          return studentMapper.studentToStudentDTO(student);
-        });
+    Student student = studentRepository.findByEmail(email)
+        .orElseThrow(() -> new ResourceNotFound("Student", "email", email));
+
+    StudentDTO studentDTO = studentMapper.studentToStudentDTO(student);
+
+    return Optional.of(studentDTO);
   }
 
   @Override
@@ -90,10 +81,5 @@ public class StudentServiceImpl implements StudentService {
     List<Student> students = studentRepository.findAll();
     List<StudentDTO> studentDTOs = studentMapper.studentListToStudentDTOList(students);
     return studentDTOs;
-  }
-
-  @Override
-  public int getNewGradedCount(Long studentId) {
-    return assignmentSubmissionService.countNewGradesForStudent(studentId);
   }
 }

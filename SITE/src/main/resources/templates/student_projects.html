@@ -40,13 +40,6 @@
             class="btn btn-outline-light me-2 position-relative"
           >
             <i class="fas fa-chart-line ms-2"></i>View My Assignment
-            <span
-              th:if="${newGradesCount > 0}"
-              class="position-absolute top-0 start-100 translate-middle notification-badge rounded-pill bg-danger"
-            >
-              <span th:text="${newGradesCount}"></span>
-              <span class="visually-hidden">new graded assignments</span>
-            </span>
           </a>
           <a href="/logout" class="btn btn-danger ms-2">
             <i class="fas fa-sign-out-alt me-2"></i>Logout

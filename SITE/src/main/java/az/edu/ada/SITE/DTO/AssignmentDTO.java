@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import az.edu.ada.SITE.Entity.Staff;
+
 @Data
 public class AssignmentDTO {
   private Long id;
@@ -25,4 +27,5 @@ public class AssignmentDTO {
   private AssignmentSubmissionDTO submission;
   private List<AssignmentSubmissionDTO> submissions = new ArrayList<>();
 
+  private Staff grader;
 }

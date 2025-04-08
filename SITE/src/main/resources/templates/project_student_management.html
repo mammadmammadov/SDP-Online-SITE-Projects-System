@@ -143,6 +143,7 @@
                 <th>Title</th>
                 <th>Description</th>
                 <th>Due Date</th>
+                <th>Grader</th>
                 <th>Submission Required</th>
                 <th>Actions</th>
               </tr>
@@ -162,6 +163,39 @@
                                       'No due date'}"
                     ></span>
                   </div>
+                </td>
+                <td>
+                  <form
+                    th:action="@{'/staff/student-management/' + ${project.id} + '/assignments/' + ${assignment.id} + '/set-grader'}"
+                    method="post"
+                    th:if="${isSupervisor}"
+                  >
+                    <select
+                      name="graderId"
+                      class="form-select form-select-sm"
+                      onchange="this.form.submit()"
+                    >
+                      <option
+                        th:each="grader : ${availableGraders}"
+                        th:value="${grader.id}"
+                        th:text="${grader.name} + ' ' + ${grader.surname}"
+                        th:selected="${assignment.grader != null} ? 
+                                   ${assignment.grader.id == grader.id} : 
+                                   ${grader.id == project.supervisor.id}"
+                      ></option>
+                    </select>
+                  </form>
+                  <span th:unless="${isSupervisor}">
+                    <span
+                      th:if="${assignment.grader != null}"
+                      th:text="${assignment.grader.name} + ' ' + ${assignment.grader.surname}"
+                    ></span>
+                    <span
+                      th:if="${assignment.grader == null}"
+                      class="text-muted"
+                      >Not assigned</span
+                    >
+                  </span>
                 </td>
                 <td>
                   <span
@@ -197,6 +231,7 @@
                     <a
                       th:href="@{'/staff/student-management/' + ${project.id} + '/assignments/' + ${assignment.id} + '/submissions'}"
                       class="btn btn-outline-info btn-sm"
+                      th:if="${(assignment.grader != null and assignment.grader.id == staffId) or (assignment.grader == null and isSupervisor)}"
                     >
                       <i class="fas fa-file-alt"></i>
                     </a>

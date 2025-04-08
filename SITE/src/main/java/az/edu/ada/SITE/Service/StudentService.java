@@ -19,6 +19,4 @@ public interface StudentService {
   void addStudentToProject(StudentDTO studentDTO, ProjectDTO project);
 
   List<StudentDTO> getAllStudents();
-
-  int getNewGradedCount(Long studentId);
 }

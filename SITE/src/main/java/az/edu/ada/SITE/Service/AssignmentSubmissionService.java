@@ -20,8 +20,4 @@ public interface AssignmentSubmissionService {
   AssignmentSubmissionDTO getOrCreateIndividualSubmission(Long assignmentId, Long studentId);
 
   List<AssignmentSubmissionDTO> getSubmissionsByAssignmentAndProject(Long assignmentId, Long projectId);
-
-  void markGradesAsViewed(Long studentId);
-
-  int countNewGradesForStudent(Long studentId);
 }
