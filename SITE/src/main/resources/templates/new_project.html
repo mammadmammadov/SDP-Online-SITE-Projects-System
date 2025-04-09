@@ -57,10 +57,6 @@
             enctype="multipart/form-data"
             id="projectForm"
           >
-            <div th:if="${errorMessageTitle}" class="alert alert-danger mt-2">
-              <i class="fas fa-exclamation-circle me-2"></i>
-              <span th:text="${errorMessageTitle}"></span>
-            </div>
             <div class="mb-4">
               <label for="title" class="form-label">
                 <i class="bi bi-card-heading me-2 text-primary"></i>Project
@@ -70,7 +66,6 @@
                 type="text"
                 class="form-control form-control-lg"
                 id="title"
-                th:classappend="${errorMessageTitle != null} ? 'is-invalid'"
                 th:field="*{title}"
                 placeholder="Enter project title"
                 required

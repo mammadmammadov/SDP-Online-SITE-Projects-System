@@ -47,8 +47,4 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
         @Query("SELECT p FROM Project p LEFT JOIN p.coSupervisors cosup WHERE p.supervisor = :staff OR cosup = :staff")
         Page<Project> findProjectsBySupervisorOrCoSupervisor(@Param("staff") Staff staff, Pageable pageable);
-
-        boolean existsByTitle(String title);
-
-        boolean existsByTitleAndIdNot(String title, Long id);
 }

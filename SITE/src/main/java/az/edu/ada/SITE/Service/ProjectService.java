@@ -33,8 +33,4 @@ public interface ProjectService {
     public Page<ProjectDTO> getProjectsSupervisedByUser(User user, Pageable pageable);
 
     boolean isStudentEligibleForProject(StudentDTO student, ProjectDTO project);
-
-    boolean titleExists(String title);
-
-    boolean titleExistsForOtherProject(String title, Long projectId);
 }

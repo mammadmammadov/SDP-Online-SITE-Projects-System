@@ -467,12 +467,6 @@ public class ProjectController {
             Principal principal,
             RedirectAttributes redirectAttributes) throws Exception {
 
-        if (projectService.titleExists(projectDTO.getTitle())) {
-            redirectAttributes.addFlashAttribute("errorMessageTitle",
-                    "Project title already exists. Please choose a unique title.");
-            return "redirect:/staff/projects/new";
-        }
-
         Path uploadDir = Paths.get("uploads");
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
@@ -593,12 +587,6 @@ public class ProjectController {
             RedirectAttributes redirectAttributes) throws IOException {
         ProjectDTO existingProject = projectService.getProjectById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Project ID"));
-
-        if (projectService.titleExistsForOtherProject(projectDTO.getTitle(), id)) {
-            redirectAttributes.addFlashAttribute("errorMessageTitle",
-                    "Project title already exists. Please choose a unique title.");
-            return "redirect:/staff/projects/edit/" + id;
-        }
 
         existingProject.setTitle(projectDTO.getTitle());
         existingProject.setDescription(projectDTO.getDescription());
