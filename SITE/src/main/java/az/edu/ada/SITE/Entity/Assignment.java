@@ -22,8 +22,8 @@ public class Assignment {
   @Column(nullable = false, length = 50)
   private String title;
 
-  @Size(max = 200, message = "Description cannot be longer than 200 characters")
-  @Column(length = 200)
+  @Size(max = 1500, message = "Description cannot be longer than 1500 characters")
+  @Column(length = 1500)
   private String description;
 
   private LocalDateTime dueDate;

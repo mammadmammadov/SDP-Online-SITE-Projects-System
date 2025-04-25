@@ -17,7 +17,7 @@ public class AssignmentDTO {
   @Size(max = 50, message = "Title cannot be longer than 50 characters")
   private String title;
 
-  @Size(max = 200, message = "Description cannot be longer than 200 characters")
+  @Size(max = 1500, message = "Description cannot be longer than 1500 characters")
   private String description;
 
   private LocalDateTime dueDate;
