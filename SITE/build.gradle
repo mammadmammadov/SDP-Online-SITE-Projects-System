@@ -40,6 +40,11 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 }
 
+javadoc {
+	source = sourceSets.main.java
+	destinationDir = file("${buildDir}/docs/javadoc")
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

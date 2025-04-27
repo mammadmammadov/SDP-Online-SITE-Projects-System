@@ -26,6 +26,17 @@ public class AssignmentSubmissionServiceImpl implements AssignmentSubmissionServ
   private final StudentRepository studentRepository;
   private final ProjectRepository projectRepository;
 
+  /**
+   * Constructor for the AssignmentSubmissionServiceImpl class.
+   * 
+   * @param submissionRepository The repository for managing assignment
+   *                             submissions.
+   * @param submissionMapper     The mapper for converting between DTOs and
+   *                             entities for assignment submissions.
+   * @param assignmentRepository The repository for managing assignments.
+   * @param studentRepository    The repository for managing students.
+   * @param projectRepository    The repository for managing projects.
+   */
   public AssignmentSubmissionServiceImpl(AssignmentSubmissionRepository submissionRepository,
       AssignmentSubmissionMapper submissionMapper, AssignmentRepository assignmentRepository,
       StudentRepository studentRepository,
@@ -37,6 +48,14 @@ public class AssignmentSubmissionServiceImpl implements AssignmentSubmissionServ
     this.projectRepository = projectRepository;
   }
 
+  /**
+   * Saves or updates an assignment submission.
+   * 
+   * @param submissionDTO The DTO containing the assignment submission data to be
+   *                      saved or updated.
+   * @return The saved or updated assignment submission as a DTO.
+   * @throws IllegalArgumentException if the feedback exceeds 300 characters.
+   */
   @Override
   public AssignmentSubmissionDTO saveSubmission(AssignmentSubmissionDTO submissionDTO) {
     if (submissionDTO.getFileName() == null) {
@@ -61,12 +80,27 @@ public class AssignmentSubmissionServiceImpl implements AssignmentSubmissionServ
     }
   }
 
+  /**
+   * Retrieves an assignment submission by its ID.
+   * 
+   * @param id The ID of the assignment submission to retrieve.
+   * @return An Optional containing the assignment submission DTO if found, or an
+   *         empty Optional if not found.
+   */
   @Override
   public Optional<AssignmentSubmissionDTO> getSubmissionById(Long id) {
     return submissionRepository.findById(id)
         .map(submissionMapper::assignmentSubmissionToAssignmentSubmissionDTO);
   }
 
+  /**
+   * Retrieves all submissions for a specific assignment.
+   * 
+   * @param assignmentId The ID of the assignment whose submissions are to be
+   *                     retrieved.
+   * @return A list of assignment submission DTOs associated with the specified
+   *         assignment.
+   */
   @Override
   public List<AssignmentSubmissionDTO> getSubmissionsByAssignmentId(Long assignmentId) {
     List<AssignmentSubmission> submissions = submissionRepository.findByAssignmentId(assignmentId);
@@ -75,17 +109,39 @@ public class AssignmentSubmissionServiceImpl implements AssignmentSubmissionServ
         .collect(Collectors.toList());
   }
 
+  /**
+   * Retrieves a specific assignment submission by its assignment ID and student
+   * ID.
+   * 
+   * @param assignmentId The ID of the assignment.
+   * @param studentId    The ID of the student.
+   * @return An Optional containing the assignment submission DTO if found, or an
+   *         empty Optional if not found.
+   */
   @Override
   public Optional<AssignmentSubmissionDTO> getSubmissionByAssignmentAndStudent(Long assignmentId, Long studentId) {
     return submissionRepository.findByAssignmentIdAndStudentId(assignmentId, studentId)
         .map(submissionMapper::assignmentSubmissionToAssignmentSubmissionDTO);
   }
 
+  /**
+   * Deletes an assignment submission by its ID.
+   * 
+   * @param id The ID of the assignment submission to delete.
+   */
   @Override
   public void deleteSubmission(Long id) {
     submissionRepository.deleteById(id);
   }
 
+  /**
+   * Retrieves or creates a team assignment submission for a specific assignment
+   * and project.
+   * 
+   * @param assignmentId The ID of the assignment.
+   * @param projectId    The ID of the project.
+   * @return The assignment submission DTO, either retrieved or newly created.
+   */
   @Override
   public AssignmentSubmissionDTO getOrCreateTeamSubmission(Long assignmentId, Long projectId) {
     Assignment assignment = assignmentRepository.findById(assignmentId)
@@ -109,6 +165,14 @@ public class AssignmentSubmissionServiceImpl implements AssignmentSubmissionServ
         });
   }
 
+  /**
+   * Retrieves or creates an individual assignment submission for a specific
+   * assignment and student.
+   * 
+   * @param assignmentId The ID of the assignment.
+   * @param studentId    The ID of the student.
+   * @return The assignment submission DTO, either retrieved or newly created.
+   */
   @Override
   public AssignmentSubmissionDTO getOrCreateIndividualSubmission(Long assignmentId, Long studentId) {
     Assignment assignment = assignmentRepository.findById(assignmentId)
@@ -130,6 +194,14 @@ public class AssignmentSubmissionServiceImpl implements AssignmentSubmissionServ
         });
   }
 
+  /**
+   * Retrieves all submissions for a specific assignment and project.
+   * 
+   * @param assignmentId The ID of the assignment.
+   * @param projectId    The ID of the project.
+   * @return A list of assignment submission DTOs associated with the specified
+   *         assignment and project.
+   */
   @Override
   public List<AssignmentSubmissionDTO> getSubmissionsByAssignmentAndProject(Long assignmentId, Long projectId) {
     return submissionRepository.findByAssignmentIdAndProjectId(assignmentId, projectId)

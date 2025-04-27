@@ -23,8 +23,14 @@ import az.edu.ada.SITE.Repository.StudentRepository;
 import az.edu.ada.SITE.Service.ProjectService;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the {@link ProjectService} interface.
+ * Handles operations related to projects such as saving, retrieving, deleting,
+ * and assigning students to projects.
+ */
 @Service
 public class ProjectServiceImpl implements ProjectService {
+
   private final ProjectRepository projectRepository;
   private final ProjectMapper projectMapper;
   private final StudentRepository studentRepository;
@@ -32,6 +38,17 @@ public class ProjectServiceImpl implements ProjectService {
 
   private final UserRepository userRepository;
 
+  /**
+   * Constructor for ProjectServiceImpl.
+   * 
+   * @param projectRepository Repository for project data.
+   * @param projectMapper     Mapper for converting between Project and
+   *                          ProjectDTO.
+   * @param studentRepository Repository for student data.
+   * @param userRepository    Repository for user data.
+   * @param studentMapper     Mapper for converting between Student and
+   *                          StudentDTO.
+   */
   public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper,
       StudentRepository studentRepository, UserRepository userRepository, StudentMapper studentMapper) {
     this.projectRepository = projectRepository;
@@ -41,6 +58,11 @@ public class ProjectServiceImpl implements ProjectService {
     this.studentMapper = studentMapper;
   }
 
+  /**
+   * Retrieves all projects.
+   * 
+   * @return List of ProjectDTO objects representing all projects.
+   */
   @Override
   public List<ProjectDTO> getAllProjects() {
     List<Project> projects = projectRepository.findAll();
@@ -48,6 +70,12 @@ public class ProjectServiceImpl implements ProjectService {
     return projectDTOs;
   }
 
+  /**
+   * Retrieves a project by its ID.
+   * 
+   * @param id ID of the project.
+   * @return Optional containing ProjectDTO if found, or empty if not found.
+   */
   @Override
   public Optional<ProjectDTO> getProjectById(Long id) {
     Project project = projectRepository.findById(id).orElse(null);
@@ -58,6 +86,12 @@ public class ProjectServiceImpl implements ProjectService {
     return Optional.of(projectDTO);
   }
 
+  /**
+   * Saves a project. If the project already exists, it updates it.
+   * 
+   * @param projectDTO Project data to be saved.
+   * @return The saved ProjectDTO.
+   */
   @Override
   public ProjectDTO saveProject(ProjectDTO projectDTO) {
     Project project;
@@ -106,6 +140,11 @@ public class ProjectServiceImpl implements ProjectService {
     return projectMapper.projectToProjectDTO(project);
   }
 
+  /**
+   * Deletes a project by its ID.
+   * 
+   * @param id ID of the project to be deleted.
+   */
   @Override
   public void deleteProject(Long id) {
     if (projectRepository.existsById(id)) {
@@ -113,6 +152,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
   }
 
+  /**
+   * Toggles the status of a project between OPEN and CLOSED.
+   * 
+   * @param projectDTO Project data to be updated.
+   */
   @Override
   public void toggleProjectStatus(ProjectDTO projectDTO) {
     Project project = projectRepository.findById(projectDTO.getId())
@@ -122,6 +166,13 @@ public class ProjectServiceImpl implements ProjectService {
     projectRepository.save(project);
   }
 
+  /**
+   * Retrieves projects by staff ID.
+   * 
+   * @param userId   ID of the staff member.
+   * @param pageable Pageable object for pagination.
+   * @return Page of ProjectDTO objects.
+   */
   @Override
   public Page<ProjectDTO> getProjectsByStaffId(Long userId, Pageable pageable) {
 
@@ -138,6 +189,13 @@ public class ProjectServiceImpl implements ProjectService {
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
 
+  /**
+   * Retrieves projects excluding those assigned to a specific staff member.
+   * 
+   * @param staffId  ID of the staff member to exclude.
+   * @param pageable Pageable object for pagination.
+   * @return Page of ProjectDTO objects.
+   */
   @Override
   public Page<ProjectDTO> getProjectsExceptStaff(Long staffId, Pageable pageable) {
     Page<Project> projectsPage = projectRepository.findAll(pageable);
@@ -150,6 +208,12 @@ public class ProjectServiceImpl implements ProjectService {
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
 
+  /**
+   * Adds a student to a project.
+   * 
+   * @param studentDTO Student data to be added.
+   * @param projectDTO Project data to which the student will be added.
+   */
   @Override
   public void addStudentToProject(StudentDTO studentDTO, ProjectDTO projectDTO) {
     Project projectEntity = projectRepository.findById(projectDTO.getId())
@@ -164,6 +228,17 @@ public class ProjectServiceImpl implements ProjectService {
     projectRepository.save(projectEntity);
   }
 
+  /**
+   * Retrieves projects eligible for a student based on various filters.
+   * 
+   * @param student           The student data.
+   * @param category          Category filter.
+   * @param keywords          Keywords filter.
+   * @param supervisorName    Supervisor's first name.
+   * @param supervisorSurname Supervisor's last name.
+   * @param pageable          Pageable object for pagination.
+   * @return Page of ProjectDTO objects.
+   */
   @Override
   public Page<ProjectDTO> getEligibleProjectsForStudent(StudentDTO student, String category, String keywords,
       String supervisorName, String supervisorSurname, Pageable pageable) {
@@ -181,6 +256,13 @@ public class ProjectServiceImpl implements ProjectService {
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
 
+  /**
+   * Retrieves projects supervised by a specific user.
+   * 
+   * @param user     The user to be checked.
+   * @param pageable Pageable object for pagination.
+   * @return Page of ProjectDTO objects.
+   */
   @Override
   @Transactional(readOnly = true)
   public Page<ProjectDTO> getProjectsSupervisedByUser(User user, Pageable pageable) {
@@ -203,6 +285,14 @@ public class ProjectServiceImpl implements ProjectService {
     return new PageImpl<>(projectDTOs, pageable, projectsPage.getTotalElements());
   }
 
+  /**
+   * Checks if a student is eligible for a project based on the student's
+   * restrictions.
+   * 
+   * @param student The student data to check eligibility.
+   * @param project The project data to check against.
+   * @return True if the student is eligible, otherwise false.
+   */
   @Override
   public boolean isStudentEligibleForProject(StudentDTO student, ProjectDTO project) {
     if (!project.getStudyYearRestriction().isEmpty()

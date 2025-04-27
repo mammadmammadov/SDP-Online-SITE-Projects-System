@@ -15,6 +15,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * DataInitializer is responsible for initializing the application with default
+ * user and project data
+ * when the application is first run. This class implements the
+ * CommandLineRunner interface and runs
+ * the data initialization code during application startup.
+ */
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -22,6 +29,14 @@ public class DataInitializer implements CommandLineRunner {
         private final PasswordEncoder passwordEncoder;
         private final ProjectRepository projectRepository;
 
+        /**
+         * Constructs the DataInitializer with the required repositories for user and
+         * project data.
+         * 
+         * @param userRepository    the repository for user data
+         * @param passwordEncoder   the encoder for password encryption
+         * @param projectRepository the repository for project data
+         */
         @Autowired
         public DataInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder,
                         ProjectRepository projectRepository) {
@@ -30,6 +45,16 @@ public class DataInitializer implements CommandLineRunner {
                 this.projectRepository = projectRepository;
         }
 
+        /**
+         * Initializes the user and project data if the database is empty.
+         * It creates default users (Admin, Staff, and Students) and default projects
+         * with relevant details.
+         * This method is invoked during application startup by the Spring Boot
+         * framework.
+         * 
+         * @param args command line arguments (not used)
+         * @throws Exception if an error occurs during initialization
+         */
         @Override
         public void run(String... args) throws Exception {
                 if (userRepository.count() == 0) {

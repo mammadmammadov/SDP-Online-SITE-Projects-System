@@ -15,11 +15,40 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
+        /**
+         * Finds projects by the supervisor's details using a StaffDTO object.
+         * 
+         * @param supervisor The StaffDTO object containing the supervisor's
+         *                   information.
+         * @return A list of projects that are supervised by the given supervisor.
+         */
         List<Project> findBySupervisor(StaffDTO supervisor);
 
+        /**
+         * Finds projects assigned to a specific staff member by their staff ID.
+         * 
+         * @param staffId  The ID of the staff member.
+         * @param pageable The pagination information for the query.
+         * @return A page of projects assigned to the specified staff member.
+         */
         @Query("SELECT p FROM Project p WHERE p.supervisor.id = :staffId")
         Page<Project> findProjectsByStaffId(@Param("staffId") Long staffId, Pageable pageable);
 
+        /**
+         * Retrieves a list of projects along with their deliverables, filtered by
+         * various criteria.
+         * 
+         * @param category          The category of the project (optional).
+         * @param keywords          The keywords to search for in the project title,
+         *                          description, or objectives (optional).
+         * @param supervisorName    The name of the supervisor (optional).
+         * @param supervisorSurname The surname of the supervisor (optional).
+         * @param studyYear         The study year restriction (optional).
+         * @param degree            The degree restriction (optional).
+         * @param major             The major restriction (optional).
+         * @param pageable          The pagination information for the query.
+         * @return A page of projects that match the given filtering criteria.
+         */
         @EntityGraph(attributePaths = { "deliverables" })
         @Query("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.deliverables WHERE " +
                         "(:category IS NULL OR :category = '' OR :category MEMBER OF p.category) AND " +
@@ -45,6 +74,15 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
                         @Param("major") String major,
                         Pageable pageable);
 
+        /**
+         * Finds projects assigned to a staff member either as a supervisor or as a
+         * co-supervisor.
+         * 
+         * @param staff    The staff member (supervisor or co-supervisor) to search for.
+         * @param pageable The pagination information for the query.
+         * @return A page of projects where the specified staff member is either a
+         *         supervisor or a co-supervisor.
+         */
         @Query("SELECT p FROM Project p LEFT JOIN p.coSupervisors cosup WHERE p.supervisor = :staff OR cosup = :staff")
         Page<Project> findProjectsBySupervisorOrCoSupervisor(@Param("staff") Staff staff, Pageable pageable);
 }

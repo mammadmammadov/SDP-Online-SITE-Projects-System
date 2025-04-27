@@ -15,15 +15,31 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import java.util.Optional;
 
+/**
+ * Configuration class for Spring Security settings.
+ * Defines authentication, authorization, and security filter chain.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Defines the password encoder bean using BCrypt algorithm.
+     *
+     * @return PasswordEncoder instance.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Defines the UserDetailsService bean, which loads user-specific data during
+     * authentication.
+     *
+     * @param userRepository the repository to access user data.
+     * @return UserDetailsService that loads user by email.
+     */
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
         return email -> {
@@ -32,6 +48,12 @@ public class SecurityConfig {
         };
     }
 
+    /**
+     * Defines the authentication success handler bean.
+     * Redirects users to different pages based on their role after login.
+     *
+     * @return AuthenticationSuccessHandler instance.
+     */
     @Bean
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
@@ -45,6 +67,14 @@ public class SecurityConfig {
         };
     }
 
+    /**
+     * Defines the security filter chain, configuring security policies such as
+     * access restrictions, login, and logout behavior.
+     *
+     * @param http HttpSecurity instance to configure security.
+     * @return SecurityFilterChain built from the configuration.
+     * @throws Exception in case of configuration errors.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
