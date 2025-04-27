@@ -44,6 +44,10 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Controller class that manages the project-related operations 
+ * for administrators, staff, and students.
+ */
 @Controller
 @RequestMapping
 public class ProjectController {
@@ -59,6 +63,18 @@ public class ProjectController {
     @Autowired
     private DeliverableMapper deliverableMapper;
 
+    /**
+     * Constructs a ProjectController with required services, repositories, and mappers.
+     *
+     * @param projectService Service for managing projects
+     * @param userRepository Repository for managing users
+     * @param studentService Service for managing student-related operations
+     * @param projectMapper Mapper for converting between Project and ProjectDTO
+     * @param projectRepository Repository for managing project entities
+     * @param studentRepository Repository for managing student entities
+     * @param deliverableRepository Repository for managing deliverable entities
+     * @param studentMapper Mapper for converting between Student and StudentDTO
+     */
     public ProjectController(ProjectService projectService, UserRepository userRepository,
             StudentService studentService, ProjectMapper projectMapper,
             ProjectRepository projectRepository, StudentRepository studentRepository,
@@ -73,6 +89,12 @@ public class ProjectController {
         this.studentMapper = studentMapper;
     }
 
+    /**
+     * Displays a list of all students to the administrator.
+     *
+     * @param model Spring model to pass data to the view
+     * @return Name of the view template
+     */
     @GetMapping("/admin/students")
     public String showStudents(Model model) {
         List<Student> students = userRepository.findAll().stream()
@@ -84,6 +106,12 @@ public class ProjectController {
         return "admin_students";
     }
 
+    /**
+     * Displays a list of all staff members to the administrator.
+     *
+     * @param model Spring model to pass data to the view
+     * @return Name of the view template
+     */
     @GetMapping("/admin/staff")
     public String showStaff(Model model) {
         List<Staff> staff_members = userRepository.findAll().stream()
@@ -95,6 +123,12 @@ public class ProjectController {
         return "admin_staff";
     }
 
+    /**
+     * Displays a list of all projects to the administrator.
+     *
+     * @param model Spring model to pass data to the view
+     * @return Name of the view template
+     */
     @GetMapping("/admin/projects")
     public String showProjects(Model model) {
         List<ProjectDTO> projects = projectService.getAllProjects();
@@ -102,12 +136,26 @@ public class ProjectController {
         return "admin_projects";
     }
 
+    /**
+     * Deletes a project with the specified ID.
+     *
+     * @param id ID of the project to be deleted
+     * @return Redirect URL after deletion
+     */
     @GetMapping("/admin/projects/delete/{id}")
     public String deleteProjectAdmin(@PathVariable Long id) {
         projectService.deleteProject(id);
         return "redirect:/admin/projects";
     }
 
+    /**
+     * Displays the project edit form for administrators.
+     *
+     * @param id ID of the project to edit
+     * @param model Spring model to pass data to the view
+     * @param principal Principal object to access authenticated user information
+     * @return Name of the view template
+     */
     @GetMapping("/admin/projects/edit/{id}")
     public String editProjectFormAdmin(@PathVariable Long id, Model model, Principal principal) {
 
@@ -140,6 +188,15 @@ public class ProjectController {
         return "edit_project_admin";
     }
 
+    /**
+     * Updates a project's information based on the administrator's input.
+     *
+     * @param id ID of the project to update
+     * @param projectDTO Updated project details
+     * @param coSupervisorIds IDs of selected co-supervisors
+     * @param redirectAttributes Redirect attributes for post-update messaging
+     * @return Redirect URL after update
+     */
     @PostMapping("/admin/projects/update/{id}")
     public String updateProjectAdmin(@PathVariable Long id, @ModelAttribute ProjectDTO projectDTO,
             @RequestParam(value = "coSupervisorIds", required = false) List<Long> coSupervisorIds,
@@ -181,6 +238,18 @@ public class ProjectController {
         return "redirect:/admin/projects";
     }
 
+    /**
+     * Displays available projects to the student with optional filtering and pagination.
+     *
+     * @param category Project category filter
+     * @param keywords Keywords for search
+     * @param supervisorName Supervisor's first name filter
+     * @param supervisorSurname Supervisor's surname filter
+     * @param page Page number for pagination
+     * @param model Spring model to pass data to the view
+     * @param principal Principal object to access authenticated student
+     * @return Name of the view template
+     */
     @GetMapping("/student/projects")
     public String viewProjects(@RequestParam(required = false) String category,
             @RequestParam(required = false) String keywords,
@@ -220,6 +289,14 @@ public class ProjectController {
         return "student_projects";
     }
 
+    /**
+     * Displays projects relevant to the logged-in staff member.
+     *
+     * @param model Spring model to pass data to the view
+     * @param principal Principal object to access authenticated staff
+     * @param page Page number for pagination
+     * @return Name of the view template
+     */
     @GetMapping("/staff/projects")
     public String viewProjects(Model model, Principal principal,
             @RequestParam(defaultValue = "0") int page) {
@@ -277,6 +354,15 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Displays the list of applicants and eligible students for a specific project.
+     *
+     * @param projectId ID of the project
+     * @param searchEmail Optional search query for student's email
+     * @param model Spring model to pass data to the view
+     * @param principal Principal object to access authenticated staff
+     * @return Name of the view template
+     */
     @GetMapping("/staff/projects/applicants/{projectId}")
     public String viewApplicants(@PathVariable Long projectId, @RequestParam(required = false) String searchEmail,
             Model model, Principal principal) {
@@ -322,6 +408,14 @@ public class ProjectController {
         return "applicants";
     }
 
+    /**
+     * Accepts a student's application for a specific project.
+     *
+     * @param studentId ID of the student to accept
+     * @param projectId ID of the project
+     * @param redirectAttributes Redirect attributes for messaging
+     * @return Redirect URL after accepting the student
+     */
     @GetMapping("/staff/projects/applicant/accept/{studentId}/{projectId}")
     public String acceptApplicant(@PathVariable Long studentId,
             @PathVariable Long projectId,
@@ -363,6 +457,13 @@ public class ProjectController {
         return "redirect:/staff/projects/applicants/" + projectId;
     }
 
+    /**
+     * Rejects a student's application to a project.
+     *
+     * @param studentId the ID of the student
+     * @param projectId the ID of the project
+     * @return redirect to the list of applicants for the project
+     */
     @GetMapping("/staff/projects/applicant/reject/{studentId}/{projectId}")
     public String rejectApplicant(@PathVariable Long studentId, @PathVariable Long projectId) {
         ProjectDTO projectDTO = projectService.getProjectById(projectId)
@@ -376,6 +477,14 @@ public class ProjectController {
         return "redirect:/staff/projects/applicants/" + projectId;
     }
 
+    /**
+     * Removes an accepted student from a project.
+     *
+     * @param studentId the ID of the student to remove
+     * @param projectId the ID of the project
+     * @param redirectAttributes attributes to pass flash messages
+     * @return redirect to the list of applicants for the project
+     */
     @GetMapping("/staff/projects/remove/{studentId}/{projectId}")
     public String removeAcceptedStudent(@PathVariable Long studentId,
             @PathVariable Long projectId,
@@ -397,6 +506,14 @@ public class ProjectController {
         return "redirect:/staff/projects/applicants/" + projectId;
     }
 
+    /**
+     * Allows a student to request to join a project.
+     *
+     * @param projectId the ID of the project to join
+     * @param principal the currently authenticated student
+     * @param redirectAttributes attributes to pass flash messages
+     * @return redirect to the list of available projects
+     */
     @GetMapping("/student/projects/join/{projectId}")
     public String joinProject(@PathVariable Long projectId, Principal principal,
             RedirectAttributes redirectAttributes) {
@@ -455,12 +572,28 @@ public class ProjectController {
         return "redirect:/student/projects";
     }
 
+    /**
+     * Displays the form to create a new project.
+     *
+     * @param model the model to hold the new project object
+     * @return the new project form view
+     */
     @GetMapping("/staff/projects/new")
     public String newProjectForm(Model model) {
         model.addAttribute("project", new Project());
         return "new_project";
     }
 
+    /**
+     * Saves a new project along with optional deliverable files.
+     *
+     * @param projectDTO the project details
+     * @param files optional uploaded files
+     * @param principal the currently authenticated staff user
+     * @param redirectAttributes attributes to pass flash messages
+     * @return redirect to the list of staff projects
+     * @throws Exception if file handling fails
+     */
     @PostMapping("/staff/projects/save")
     public String saveProject(@ModelAttribute ProjectDTO projectDTO,
             @RequestParam(value = "files", required = false) MultipartFile[] files,
@@ -533,6 +666,13 @@ public class ProjectController {
             Paths.get("student_submissions"),
             Paths.get("uploads"));
 
+    /**
+     * Downloads a file from either the student submissions or uploads directory.
+     *
+     * @param filename the name of the file to download
+     * @return the file resource as a response
+     * @throws IOException if file access fails
+     */
     @GetMapping("/download/{filename:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws IOException {
         for (Path basePath : FILE_PATHS) {
@@ -548,6 +688,14 @@ public class ProjectController {
         throw new FileNotFoundException("File not found: " + filename);
     }
 
+    /**
+     * Displays the form to edit an existing project.
+     *
+     * @param id the ID of the project to edit
+     * @param model the model to populate with project data
+     * @param principal the currently authenticated staff user
+     * @return the edit project form view or redirect if not authorized
+     */
     @GetMapping("/staff/projects/edit/{id}")
     public String editProjectForm(@PathVariable Long id, Model model, Principal principal) {
         String email = principal.getName();
@@ -581,6 +729,16 @@ public class ProjectController {
         return "edit_project";
     }
 
+    /**
+     * Updates an existing project with new details and optional new deliverable files.
+     *
+     * @param id the ID of the project to update
+     * @param projectDTO the updated project data
+     * @param files optional uploaded files
+     * @param redirectAttributes attributes to pass flash messages
+     * @return redirect to the list of staff projects
+     * @throws IOException if file handling fails
+     */
     @PostMapping("/staff/projects/update/{id}")
     public String updateProject(@PathVariable Long id, @ModelAttribute ProjectDTO projectDTO,
             @RequestParam(value = "files", required = false) MultipartFile[] files,
@@ -648,6 +806,12 @@ public class ProjectController {
         return "redirect:/staff/projects";
     }
 
+    /**
+     * Deletes a deliverable file associated with a project.
+     *
+     * @param deliverableId the ID of the deliverable to delete
+     * @return HTTP response indicating success or failure
+     */
     @DeleteMapping("/staff/projects/delete-file/{deliverableId}")
     public ResponseEntity<?> deleteFile(@PathVariable Long deliverableId) {
         Optional<Deliverable> deliverableOpt = deliverableRepository.findById(deliverableId);
@@ -676,6 +840,13 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Uploads a file as a deliverable for a specific project.
+     *
+     * @param id   the ID of the project to associate the uploaded file with
+     * @param file the file to be uploaded
+     * @return a ResponseEntity containing success status and message
+     */
     @PostMapping("/staff/projects/upload/{id}")
     public ResponseEntity<?> uploadFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         Optional<Project> projectOpt = projectRepository.findById(id);
@@ -711,6 +882,13 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Deletes a project owned by the logged-in staff member.
+     *
+     * @param id        the ID of the project to delete
+     * @param principal the currently authenticated user's principal
+     * @return a redirect URL to the staff projects page with success or error message
+     */
     @GetMapping("/staff/projects/delete/{id}")
     public String deleteProject(@PathVariable Long id, Principal principal) {
 
@@ -729,6 +907,12 @@ public class ProjectController {
         return "redirect:/staff/projects";
     }
 
+    /**
+     * Toggles the status of a project.
+     *
+     * @param projectDTO the project to toggle the status for
+     * @return a redirect URL to the staff projects page
+     */
     @GetMapping("/toggle-status/{id}")
     public String toggleProjectStatus(@PathVariable ProjectDTO projectDTO) {
         projectService.toggleProjectStatus(projectDTO);

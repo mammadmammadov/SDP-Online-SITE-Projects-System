@@ -34,6 +34,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for managing student-related functionalities for staff members.
+ */
 @Controller
 public class StudentManagementController {
 
@@ -44,6 +47,16 @@ public class StudentManagementController {
   private final AssignmentSubmissionService assignmentSubmissionService;
   private final ProjectMapper projectMapper;
 
+  /**
+   * Constructs a StudentManagementController with the required services and repositories.
+   *
+   * @param projectService Service for managing projects
+   * @param userRepository Repository for managing users
+   * @param assignmentService Service for managing assignments
+   * @param studentService Service for managing student-related operations
+   * @param assignmentSubmissionService Service for handling assignment submissions
+   * @param projectMapper Mapper for converting between Project and ProjectDTO
+   */
   public StudentManagementController(ProjectService projectService,
       UserRepository userRepository,
       AssignmentService assignmentService, StudentService studentService,
@@ -56,6 +69,14 @@ public class StudentManagementController {
     this.projectMapper = projectMapper;
   }
 
+  /**
+   * Displays a list of projects managed by the logged-in staff member
+   * for student management purposes.
+   *
+   * @param model     the model to pass data to the view
+   * @param principal the authenticated user
+   * @return the student management projects view
+   */
   @GetMapping("/staff/student-management")
   public String viewProjectsForStudentManagement(Model model, Principal principal) {
     String email = principal.getName();
@@ -77,6 +98,15 @@ public class StudentManagementController {
     return "student_management_staff";
   }
 
+  /**
+   * Displays the detailed student management page for a specific project.
+   *
+   * @param projectId          the ID of the project
+   * @param model              the model to pass data to the view
+   * @param principal          the authenticated user
+   * @param redirectAttributes attributes used for redirection messages
+   * @return the project student management view or redirects on error
+   */
   @GetMapping("/staff/student-management/{projectId}")
   public String viewProjectStudentManagement(@PathVariable Long projectId,
       Model model,
@@ -123,6 +153,15 @@ public class StudentManagementController {
     }
   }
 
+  /**
+   * Displays the form for creating a new assignment for a specific project.
+   *
+   * @param projectId          the ID of the project
+   * @param model              the model to pass data to the view
+   * @param principal          the authenticated user
+   * @param redirectAttributes attributes used for redirection messages
+   * @return the new assignment form view or redirects on unauthorized access
+   */
   @GetMapping("/staff/student-management/{projectId}/assignments/new")
   public String newAssignmentForm(@PathVariable Long projectId, Model model, Principal principal,
       RedirectAttributes redirectAttributes) {
@@ -146,6 +185,17 @@ public class StudentManagementController {
     return "new_assignment";
   }
 
+  /**
+   * Handles the saving of a newly created assignment.
+   * Validates the assignment and ensures total grades do not exceed 100%.
+   *
+   * @param projectId          the ID of the project
+   * @param assignmentDTO      the assignment data
+   * @param bindingResult      validation result
+   * @param model              the model to pass data to the view
+   * @param redirectAttributes attributes used for redirection messages
+   * @return redirect to project management page or redisplays the form on validation errors
+   */
   @PostMapping("/staff/student-management/{projectId}/assignments/save")
   public String saveAssignment(@PathVariable Long projectId,
       @Valid @ModelAttribute("assignment") AssignmentDTO assignmentDTO,
@@ -183,6 +233,16 @@ public class StudentManagementController {
     return "redirect:/staff/student-management/" + projectId;
   }
 
+  /**
+   * Displays the form for editing an existing assignment.
+   *
+   * @param projectId          the ID of the project
+   * @param assignmentId       the ID of the assignment
+   * @param model              the model to pass data to the view
+   * @param principal          the authenticated user
+   * @param redirectAttributes attributes used for redirection messages
+   * @return the edit assignment form view or redirects on unauthorized access
+   */
   @GetMapping("/staff/student-management/{projectId}/assignments/edit/{assignmentId}")
   public String editAssignmentForm(@PathVariable Long projectId,
       @PathVariable Long assignmentId,
@@ -211,6 +271,18 @@ public class StudentManagementController {
     return "edit_assignment";
   }
 
+  /**
+   * Handles the updating of an existing assignment.
+   * Validates updated fields and ensures the total assignment grades remain within allowed limits.
+   *
+   * @param projectId          the ID of the project
+   * @param assignmentId       the ID of the assignment
+   * @param assignmentDTO      the updated assignment data
+   * @param bindingResult      validation result
+   * @param model              the model to pass data to the view
+   * @param redirectAttributes attributes used for redirection messages
+   * @return redirect to project management page or redisplays the form on validation errors
+   */
   @PostMapping("/staff/student-management/{projectId}/assignments/update/{assignmentId}")
   public String updateAssignment(@PathVariable Long projectId,
       @PathVariable Long assignmentId,
@@ -255,6 +327,16 @@ public class StudentManagementController {
     return "redirect:/staff/student-management/" + projectId;
   }
 
+  /**
+   * Deletes a specific student submission file and its database record.
+   *
+   * @param projectId          the ID of the project
+   * @param assignmentId       the ID of the assignment
+   * @param submissionId       the ID of the submission
+   * @param redirectAttributes attributes used for redirection messages
+   * @param principal          the authenticated user
+   * @return redirect to the assignment submissions page
+   */
   @GetMapping("/staff/student-management/{projectId}/assignments/{assignmentId}/submissions/{submissionId}/delete")
   public String deleteSubmission(
       @PathVariable Long projectId,
@@ -292,6 +374,15 @@ public class StudentManagementController {
     return "redirect:/staff/student-management/" + projectId + "/assignments/" + assignmentId + "/submissions";
   }
 
+  /**
+   * Deletes a specific assignment from a project.
+   *
+   * @param projectId          the ID of the project
+   * @param assignmentId       the ID of the assignment
+   * @param redirectAttributes attributes used for redirection messages
+   * @param principal          the authenticated user
+   * @return redirect to the project management page
+   */
   @GetMapping("/staff/student-management/{projectId}/assignments/delete/{assignmentId}")
   public String deleteAssignment(@PathVariable Long projectId,
       @PathVariable Long assignmentId,
@@ -312,6 +403,14 @@ public class StudentManagementController {
     return "redirect:/staff/student-management/" + projectId;
   }
 
+  /**
+   * Displays the list of assignment submissions for a specific assignment within a project.
+   *
+   * @param projectId    the ID of the project
+   * @param assignmentId the ID of the assignment
+   * @param model        the model to pass data to the view
+   * @return the submissions view page
+   */
   @GetMapping("/staff/student-management/{projectId}/assignments/{assignmentId}/submissions")
   public String viewSubmissions(@PathVariable Long projectId,
       @PathVariable Long assignmentId,
@@ -361,6 +460,19 @@ public class StudentManagementController {
     return "assignment_submissions";
   }
 
+  /**
+   * Grades a student's assignment submission or an individual student's assignment without submission.
+   *
+   * @param projectId the ID of the project associated with the assignment
+   * @param assignmentId the ID of the assignment being graded
+   * @param submissionId (optional) the ID of the assignment submission (required if the assignment requires submission)
+   * @param studentId (optional) the ID of the student (required if the assignment does not require submission)
+   * @param grade (optional) the grade to assign
+   * @param feedback (optional) the feedback to provide
+   * @param principal the currently authenticated staff member
+   * @param redirectAttributes attributes used for passing success or error messages after redirection
+   * @return the redirection URL back to the submissions page
+   */
   @PostMapping("/staff/student-management/{projectId}/assignments/{assignmentId}/submissions")
   public String gradeSubmission(
       @PathVariable Long projectId,
@@ -458,6 +570,14 @@ public class StudentManagementController {
         "/submissions?t=" + System.currentTimeMillis();
   }
 
+  /**
+   * Displays a list of assignments for the currently logged-in student.
+   * If the assignment requires submission, team submissions are loaded; otherwise, individual submissions are loaded.
+   *
+   * @param model the model to pass attributes to the view
+   * @param principal the currently authenticated student
+   * @return the view name for displaying the student's assignments
+   */
   @GetMapping("/student/assignments")
   @Transactional
   public String viewStudentAssignments(Model model, Principal principal) {
@@ -495,6 +615,17 @@ public class StudentManagementController {
     return "student_assignments";
   }
 
+  /**
+   * Allows a student to submit a file for an assignment.
+   * Only certain file types (PDF, Word, PowerPoint, Excel) are accepted.
+   *
+   * @param assignmentId the ID of the assignment being submitted
+   * @param file the uploaded file
+   * @param principal the currently authenticated student
+   * @param redirectAttributes attributes used for passing success or error messages after redirection
+   * @return the redirection URL back to the student's assignments page
+   * @throws Exception if an error occurs during file upload or saving the submission
+   */
   @PostMapping("/student/assignments/{assignmentId}/submit")
   public String submitAssignment(@PathVariable Long assignmentId,
       @RequestParam("file") MultipartFile file,
@@ -557,6 +688,16 @@ public class StudentManagementController {
     return "redirect:/student/assignments";
   }
 
+  /**
+   * Sets the grader (staff or supervisor) for a specific assignment within a project.
+   *
+   * @param projectId the ID of the project containing the assignment
+   * @param assignmentId the ID of the assignment to set the grader for
+   * @param graderId the ID of the staff member who will be the grader
+   * @param principal the currently authenticated staff member (must be the project supervisor)
+   * @param redirectAttributes attributes used for passing success or error messages after redirection
+   * @return the redirection URL back to the project's management page
+   */
   @PostMapping("/staff/student-management/{projectId}/assignments/{assignmentId}/set-grader")
   public String setAssignmentGrader(
       @PathVariable Long projectId,

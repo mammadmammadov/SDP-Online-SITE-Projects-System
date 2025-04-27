@@ -27,5 +27,25 @@ The system is only accessible within the **ADA University Campus** Network.
 3. Click "Join" on a project card to apply a project; await staff approval.  
 4. Click "View My Assignment" on the navigation menu and upload deliverables via your assigned project dashboard.  
 
+## 📄 Generating Javadoc Documentation
+
+To generate the *Javadoc* for this project, you can use *Gradle*. Ensure that you have *Gradle* installed and properly set up.
+
+1. Navigate to the project directory in your terminal or command prompt.
+
+2. Run the following *Gradle* command to generate *Javadoc*:
+
+   ```bash
+   gradle javadoc
+   ```
+
+   or
+
+   ```bash
+   ./gradlew javadoc
+   ```
+
+3. Open the *Javadoc* in your browser by navigating to the *build/docs/javadoc/* folder and opening the *index.html* file. This will open the *Javadoc* documentation in your default web browser.
+
 ---  
 *Developed by four senior IT students - Rauf Rasulzada, Mammad Mammadov, Abdullah Bayramov, and Amin Eylazov under the supervision of Dr. Najam Nazar as part of the Senior Design Project.*  
